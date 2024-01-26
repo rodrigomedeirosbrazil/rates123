@@ -6,36 +6,39 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Livewire\Attributes\Layout;
-use Livewire\Volt\Component;
 
-new #[Layout('layouts.guest')] class extends Component
-{
-    public string $name = '';
-    public string $email = '';
-    public string $password = '';
-    public string $password_confirmation = '';
+use function Livewire\Volt\layout;
+use function Livewire\Volt\rules;
+use function Livewire\Volt\state;
 
-    /**
-     * Handle an incoming registration request.
-     */
-    public function register(): void
-    {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+layout('layouts.guest');
 
-        $validated['password'] = Hash::make($validated['password']);
+state([
+    'name' => '',
+    'email' => '',
+    'password' => '',
+    'password_confirmation' => ''
+]);
 
-        event(new Registered($user = User::create($validated)));
+rules([
+    'name' => ['required', 'string', 'max:255'],
+    'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+    'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+]);
 
-        Auth::login($user);
+$register = function () {
+    $validated = $this->validate();
 
-        $this->redirect(RouteServiceProvider::HOME, navigate: true);
-    }
-}; ?>
+    $validated['password'] = Hash::make($validated['password']);
+
+    event(new Registered($user = User::create($validated)));
+
+    Auth::login($user);
+
+    $this->redirect(RouteServiceProvider::HOME, navigate: true);
+};
+
+?>
 
 <div>
     <form wire:submit="register">
@@ -77,7 +80,7 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}" wire:navigate>
+            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}" wire:navigate>
                 {{ __('Already registered?') }}
             </a>
 
