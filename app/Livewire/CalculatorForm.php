@@ -73,13 +73,13 @@ class CalculatorForm extends Component implements HasForms
                     ->minValue(0)
                     ->numeric(),
 
-            ]);
+            ])
+            ->statePath('data');
     }
 
     public function calc(): void
     {
-        dd($this->form->getState());
-        // $data = $this->form->getState();
+        $data = $this->form->getState();
 
         Notification::make()
             ->title('Calculation')
