@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class CalculatorForm extends Component implements HasForms
@@ -20,6 +21,8 @@ class CalculatorForm extends Component implements HasForms
 
     public ?array $data = [];
 
+    public ?Collection $receiptItems;
+
     public function __construct()
     {
     }
@@ -27,13 +30,14 @@ class CalculatorForm extends Component implements HasForms
     public function mount(): void
     {
         $this->form->fill();
+        $this->receiptItems = collect();
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Fieldset::make('Season')->schema([
+                Fieldset::make(__('Season'))->schema([
                     Toggle::make('is_high_season')
                         ->label(__('Is high season'))
                         ->inline(false)
@@ -44,11 +48,12 @@ class CalculatorForm extends Component implements HasForms
                         ->default(50)
                         ->minValue(0)
                         ->maxValue(100)
+                        ->live(onBlur: true)
                         ->numeric()
                         ->hidden(fn (Get $get) => ! $get('is_high_season')),
                 ]),
 
-                Fieldset::make('Weekend')->schema([
+                Fieldset::make(__('Weekends'))->schema([
                     Toggle::make('is_weekend')
                         ->label(__('Is weekend'))
                         ->inline(false)
@@ -59,11 +64,12 @@ class CalculatorForm extends Component implements HasForms
                         ->default(50)
                         ->minValue(0)
                         ->maxValue(100)
+                        ->live(onBlur: true)
                         ->numeric()
                         ->hidden(fn (Get $get) => ! $get('is_weekend')),
                 ]),
 
-                Fieldset::make('Holiday')->schema([
+                Fieldset::make(__('Holidays'))->schema([
                     Toggle::make('is_holiday')
                         ->label(__('Is holiday'))
                         ->inline(false)
@@ -74,26 +80,28 @@ class CalculatorForm extends Component implements HasForms
                         ->default(50)
                         ->minValue(0)
                         ->maxValue(100)
+                        ->live(onBlur: true)
                         ->numeric()
                         ->hidden(fn (Get $get) => ! $get('is_holiday')),
                 ]),
 
-                Fieldset::make('Weather')->schema([
-                    Toggle::make('is_raining')
-                        ->label(__('Is raining'))
+                Fieldset::make(__('Weather'))->schema([
+                    Toggle::make('is_bad_weather')
+                        ->label(__('Is bad weather'))
                         ->inline(false)
                         ->live(),
 
-                    TextInput::make('raining_rate')
-                        ->label(__('Raining rate (%)'))
+                    TextInput::make('bad_weather_rate')
+                        ->label(__('Bad weather rate (%)'))
                         ->default(50)
                         ->minValue(0)
                         ->maxValue(100)
+                        ->live(onBlur: true)
                         ->numeric()
-                        ->hidden(fn (Get $get) => ! $get('is_raining')),
+                        ->hidden(fn (Get $get) => ! $get('is_bad_weather')),
                 ]),
 
-                Fieldset::make('Events')->schema([
+                Fieldset::make(__('Events'))->schema([
                     Toggle::make('is_event')
                         ->label(__('Is event'))
                         ->inline(false)
@@ -104,6 +112,7 @@ class CalculatorForm extends Component implements HasForms
                         ->default(50)
                         ->minValue(0)
                         ->maxValue(100)
+                        ->live(onBlur: true)
                         ->numeric()
                         ->hidden(fn (Get $get) => ! $get('is_event')),
                 ]),
@@ -114,12 +123,14 @@ class CalculatorForm extends Component implements HasForms
                         ->label(__('Minimum price'))
                         ->default(0)
                         ->minValue(0)
+                        ->live(onBlur: true)
                         ->numeric(),
 
                     TextInput::make('max_price')
                         ->label(__('Maximum price'))
                         ->default(0)
                         ->minValue(0)
+                        ->live(onBlur: true)
                         ->numeric(),
                 ])->columns(2),
 
@@ -130,18 +141,21 @@ class CalculatorForm extends Component implements HasForms
                         ->default(50)
                         ->minValue(0)
                         ->maxValue(100)
+                        ->live(onBlur: true)
                         ->numeric(),
 
                     TextInput::make('days_to_arrival')
                         ->label(__('Days to arrival'))
                         ->default(0)
                         ->minValue(0)
+                        ->live(onBlur: true)
                         ->numeric(),
 
                     TextInput::make('competitor_price')
                         ->label(__('Competitor price'))
                         ->default(0)
                         ->minValue(0)
+                        ->live(onBlur: true)
                         ->numeric(),
                 ])->columns(3),
             ])
@@ -159,6 +173,69 @@ class CalculatorForm extends Component implements HasForms
             ->send();
 
         // $this->form->fill();
+
+        $this->receiptItems = collect([]);
+
+        $minPrice = (float) data_get($data, 'min_price', 0);
+
+        if (data_get($data, 'is_high_season', false)) {
+            $subTotal = ($minPrice * (1 + (data_get($data, 'high_season_rate', 0) / 100))) - $minPrice;
+            $this->receiptItems->push(
+                (object) [
+                    'name' => 'High season',
+                    'amount' => $subTotal,
+                ]
+            );
+        }
+
+        if (data_get($data, 'is_weekend', false)) {
+            $subTotal = ($minPrice * (1 + (data_get($data, 'weekend_rate', 0) / 100))) - $minPrice;
+            $this->receiptItems->push(
+                (object) [
+                    'name' => 'Weekend',
+                    'amount' => $subTotal,
+                ]
+            );
+        }
+
+        if (data_get($data, 'is_holiday', false)) {
+            $subTotal = ($minPrice * (1 + (data_get($data, 'holiday_rate', 0) / 100))) - $minPrice;
+            $this->receiptItems->push(
+                (object) [
+                    'name' => 'Holiday',
+                    'amount' => $subTotal,
+                ]
+            );
+        }
+
+        if (data_get($data, 'is_bad_weather', false)) {
+            $subTotal = (($minPrice * (1 + (data_get($data, 'bad_weather_rate', 0) / 100))) - $minPrice) * -1;
+            $this->receiptItems->push(
+                (object) [
+                    'name' => 'Bad weather',
+                    'amount' => $subTotal,
+                ]
+            );
+        }
+
+        if (data_get($data, 'is_event', false)) {
+            $subTotal = ($minPrice * (1 + (data_get($data, 'event_rate', 0) / 100))) - $minPrice;
+            $this->receiptItems->push(
+                (object) [
+                    'name' => 'Event',
+                    'amount' => $subTotal,
+                ]
+            );
+        }
+
+        $this->receiptItems->push(
+            (object) [
+                'name' => 'Total',
+                'amount' => $minPrice + $this->receiptItems->sum('amount'),
+            ]
+        );
+
+        dump($this->receiptItems->toArray());
     }
 
     public function render(): View
