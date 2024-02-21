@@ -1,0 +1,23 @@
+{
+    "Is high season": "Será alta temporada",
+    "High season rate (%)": "Taxa de alta temporada (%)",
+    "Is weekend": "Será fim de semana",
+    "Weekend rate (%)": "Taxa de fim de semana (%)",
+    "Is holiday": "Será feriado",
+    "Holiday rate (%)": "Taxa de feriado (%)",
+    "Is bad weather": "Terá mau tempo",
+    "Bad weather rate (%)": "Taxa de mau tempo (%)",
+    "Is event": "Terá evento",
+    "Event rate (%)": "Taxa de evento (%)",
+    "Minimum price": "Preço mínimo",
+    "Maximum price": "Preço máximo",
+    "Occupancy (%)": "Ocupação (%)",
+    "Days to arrival": "Dias para chegada",
+    "Competitor price": "Preço do concorrente",
+    "Calculate": "Calcular",
+    "Season": "Temporada",
+    "Weekends": "Finais de semana",
+    "Holidays": "Feriados",
+    "Weather": "Clima",
+    "Events": "Eventos"
+}
