@@ -187,4 +187,7 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    'scrap' => [
+        'url' => env('SCRAP_URL'),
+    ],
 ];
