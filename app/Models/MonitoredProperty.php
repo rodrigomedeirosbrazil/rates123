@@ -14,6 +14,7 @@ class MonitoredProperty extends Model
     protected $fillable = [
         'name',
         'url',
+        'capture_months_number',
         'extra',
     ];
 

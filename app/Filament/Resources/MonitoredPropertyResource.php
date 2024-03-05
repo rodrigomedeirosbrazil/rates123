@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MonitoredPropertyResource\Pages;
-use App\Filament\Resources\MonitoredPropertyResource\RelationManagers;
 use App\Models\MonitoredProperty;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MonitoredPropertyResource extends Resource
 {
@@ -26,6 +23,9 @@ class MonitoredPropertyResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required(),
                 Forms\Components\TextInput::make('url')
+                    ->required(),
+                Forms\Components\TextInput::make('capture_months_number')
+                    ->numeric()
                     ->required(),
                 Forms\Components\Textarea::make('extra')
                     ->columnSpanFull(),

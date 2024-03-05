@@ -14,6 +14,7 @@ return new class () extends Migration {
             $table->id();
             $table->string('name');
             $table->string('url');
+            $table->integer('capture_months_number')->default(6);
             $table->json('extra')->nullable();
             $table->timestamps();
             $table->softDeletes();
