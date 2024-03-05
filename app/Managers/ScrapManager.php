@@ -9,13 +9,15 @@ class ScrapManager
 {
     public function getPrices(string $propertyUrl, int $pages): Collection
     {
-        $prices = Http::get(
-            config('app.scrap_url'),
+        $response = Http::get(
+            config('app.scrap.url') . '/booking/prices',
             [
                 'url' => $propertyUrl,
                 'pages' => $pages,
             ]
         );
+
+        $prices = $response->json();
 
         return collect($prices);
     }

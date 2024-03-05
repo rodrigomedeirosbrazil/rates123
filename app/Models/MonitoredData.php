@@ -9,6 +9,8 @@ class MonitoredData extends Model
 {
     use HasFactory;
 
+    protected $table = 'monitored_datas';
+
     protected $fillable = [
         'monitored_property_id',
         'price',
