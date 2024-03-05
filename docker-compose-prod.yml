@@ -12,7 +12,8 @@ services:
         environment:
             WWWUSER: '${WWWUSER}'
         volumes:
-            - '.:/app'
+            - '.:/var/www'
+            - './docker/prod/sites:/etc/nginx/sites-available'
         networks:
             - medeirostec-network
         depends_on:
