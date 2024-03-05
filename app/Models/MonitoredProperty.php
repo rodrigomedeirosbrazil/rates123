@@ -20,5 +20,6 @@ class MonitoredProperty extends Model
 
     protected $casts = [
         'extra' => 'array',
+        'capture_months_number' => 'integer',
     ];
 }
