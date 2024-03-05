@@ -39,7 +39,7 @@ class MonitoreCommand extends Command
                 $prices->each(function ($price) use ($property) {
                     MonitoredData::create([
                         'monitored_property_id' => $property->id,
-                        'price' => $this->humanReadableSizeToInt(data_get($price, 'avgPriceFormatted') ?? '0'),
+                        'price' => human_readable_size_to_int(data_get($price, 'avgPriceFormatted') ?? '0'),
                         'checkin' => data_get($price, 'checkin'),
                         'available' => data_get($price, 'available') ?? false,
                         'extra' => [
@@ -48,24 +48,5 @@ class MonitoreCommand extends Command
                     ]);
                 });
             });
-    }
-
-    public function humanReadableSizeToInt(string $value): int
-    {
-        $number = (float) preg_replace('/[^0-9\.]/', '', $value);
-
-        $prefix = strtolower(preg_replace('/[^tgmk]/i', '', $value));
-
-        switch ($prefix) {
-            case 't': $number *= 1000;
-                // no break
-            case 'g': $number *= 1000;
-                // no break
-            case 'm': $number *= 1000;
-                // no break
-            case 'k': $number *= 1000;
-        }
-
-        return (int) $number;
     }
 }
