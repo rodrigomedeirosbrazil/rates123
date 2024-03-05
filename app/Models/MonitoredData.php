@@ -15,6 +15,7 @@ class MonitoredData extends Model
         'monitored_property_id',
         'price',
         'checkin',
+        'available',
         'extra',
     ];
 

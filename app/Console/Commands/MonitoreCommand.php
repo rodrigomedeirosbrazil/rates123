@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Managers\ScrapManager;
+use App\Models\MonitoredData;
 use App\Models\MonitoredProperty;
 use Illuminate\Console\Command;
 
@@ -32,15 +33,19 @@ class MonitoreCommand extends Command
         MonitoredProperty::all()
             ->each(function (MonitoredProperty $property) use ($scrapManager) {
                 $prices = $scrapManager->getPrices($property->url, 2);
+
                 $this->info("Scrapped {$prices->count()} prices from {$property->name}");
 
-                $prices->map(function ($price) use ($property) {
-                    return [
+                $prices->each(function ($price) use ($property) {
+                    MonitoredData::create([
                         'monitored_property_id' => $property->id,
-                        'price' => $this->humanReadableSizeToInt(data_get($price, 'avgPriceFormatted')),
+                        'price' => $this->humanReadableSizeToInt(data_get($price, 'avgPriceFormatted') ?? '0'),
                         'checkin' => data_get($price, 'checkin'),
-                        'available' => data_get($price, 'available'),
-                    ];
+                        'available' => data_get($price, 'available') ?? false,
+                        'extra' => [
+                            'minLengthOfStay' => data_get($price, 'minLengthOfStay'),
+                        ],
+                    ]);
                 });
             });
     }

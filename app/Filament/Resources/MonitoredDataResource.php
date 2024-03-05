@@ -3,15 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MonitoredDataResource\Pages;
-use App\Filament\Resources\MonitoredDataResource\RelationManagers;
 use App\Models\MonitoredData;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MonitoredDataResource extends Resource
 {
@@ -43,14 +43,14 @@ class MonitoredDataResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('monitored_property_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('monitoredProperty.name')
+                    ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('checkin')
-                    ->date()
+                    ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),
                 Tables\Columns\IconColumn::make('available')
                     ->boolean(),
@@ -63,17 +63,18 @@ class MonitoredDataResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->searchOnBlur()
             ->filters([
-                //
-            ])
+                Filter::make('Available')
+                    ->query(fn (Builder $query): Builder => $query->whereAvailable(true)),
+                Filter::make('Unavailable')
+                    ->query(fn (Builder $query): Builder => $query->whereAvailable(false)),
+            ], layout: FiltersLayout::Modal)
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('checkin', 'desc')
+            ->paginated([10, 25, 50, 100]);
     }
 
     public static function getRelations(): array
