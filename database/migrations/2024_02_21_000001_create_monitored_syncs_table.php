@@ -16,7 +16,7 @@ return new class () extends Migration {
             $table->boolean('successful');
             $table->integer('prices_count');
             $table->dateTime('started_at');
-            $table->dateTime('finished_at');
+            $table->dateTime('finished_at')->nullable();
         });
     }
 
