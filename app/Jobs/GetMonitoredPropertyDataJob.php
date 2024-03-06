@@ -12,10 +12,13 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class GetMonitoredPropertyDataJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $tries = 10;
 
     public function __construct(
         public int $monitoredPropertyId
@@ -39,7 +42,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         $sync->prices_count = count($prices);
         $sync->save();
 
-        $prices
+        $importedPrices = $prices
             ->map(fn ($price) => [
                 'monitored_property_id' => $property->id,
                 'price' => human_readable_size_to_int(
@@ -54,11 +57,16 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             ->filter(fn ($price) => $this->validator($price))
             ->each(
                 fn ($price) => MonitoredData::create($price)
-            );
+            )->count();
 
-        $sync->successful = true;
+        $sync->successful = $importedPrices > 0;
         $sync->finished_at = now();
+        $sync->prices_count = $importedPrices;
         $sync->save();
+
+        if (! $sync->successful) {
+            $this->release(now()->addMinutes(15));
+        }
     }
 
     public function validator(array $price): bool
@@ -70,6 +78,12 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             'available' => 'required|boolean',
         ]);
 
-        return ! $validator->fails();
+        if (! $validator->fails()) {
+            return true;
+        }
+
+        Log::warning('Invalid price data', $validator->errors()->toArray());
+
+        return false;
     }
 }
