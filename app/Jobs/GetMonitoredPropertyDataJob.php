@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Validator;
 
 class GetMonitoredPropertyDataJob implements ShouldQueue
 {
@@ -38,8 +39,8 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         $sync->prices_count = count($prices);
         $sync->save();
 
-        $prices->each(
-            fn ($price) => MonitoredData::create([
+        $prices
+            ->map(fn ($price) => [
                 'monitored_property_id' => $property->id,
                 'price' => human_readable_size_to_int(
                     data_get($price, 'avgPriceFormatted') ?? '0'
@@ -50,10 +51,25 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
                     'minLengthOfStay' => data_get($price, 'minLengthOfStay'),
                 ],
             ])
-        );
+            ->filter(fn ($price) => $this->validator($price))
+            ->each(
+                fn ($price) => MonitoredData::create($price)
+            );
 
         $sync->successful = true;
         $sync->finished_at = now();
         $sync->save();
+    }
+
+    public function validator(array $price): bool
+    {
+        $validator = Validator::make($price, [
+            'monitored_property_id' => 'required|numeric',
+            'price' => 'required|numeric',
+            'checkin' => 'required|date',
+            'available' => 'required|boolean',
+        ]);
+
+        return ! $validator->fails();
     }
 }

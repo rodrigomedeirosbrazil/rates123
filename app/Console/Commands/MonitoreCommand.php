@@ -32,7 +32,7 @@ class MonitoreCommand extends Command
                 fn (MonitoredProperty $property, int $index) => dispatch(
                     new GetMonitoredPropertyDataJob($property->id)
                 )
-                    ->delay(now()->addMinutes($index * 5))
+                    ->delay(now()->addMinutes($index * 1))
             );
     }
 }
