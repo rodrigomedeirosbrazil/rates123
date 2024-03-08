@@ -8,8 +8,11 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
@@ -60,10 +63,8 @@ class MonitoredDataResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('monitoredProperty.name')
-                    ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('checkin')
                     ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
@@ -76,11 +77,39 @@ class MonitoredDataResource extends Resource
             ])
             ->searchOnBlur()
             ->filters([
+
+                Filter::make('monitored_property_id')
+                    ->form([
+                        Select::make('monitored_property_id')
+                            ->label('Property')
+                            ->searchable(['name'])
+                            ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
+                    ])
+                    ->query(
+                        fn (Builder $query, array $data): Builder => $query
+                            ->when(
+                                $data['monitored_property_id'],
+                                fn (Builder $query, $value): Builder => $query->where('monitored_property_id', $value),
+                            )
+                    ),
+
                 Filter::make('Available')
                     ->query(fn (Builder $query): Builder => $query->whereAvailable(true)),
 
                 Filter::make('Unavailable')
                     ->query(fn (Builder $query): Builder => $query->whereAvailable(false)),
+
+                Filter::make('checkin')
+                    ->form([
+                        DatePicker::make('checkin'),
+                    ])
+                    ->query(
+                        fn (Builder $query, array $data): Builder => $query
+                            ->when(
+                                $data['checkin'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('checkin', '=', $date),
+                            )
+                    ),
 
                 Filter::make('created_at')
                     ->form([
@@ -99,7 +128,31 @@ class MonitoredDataResource extends Resource
                             );
                     }),
 
+                Filter::make('price')
+                    ->form([
+                        TextInput::make('price_from')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric(),
+                        TextInput::make('price_until')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            ->numeric(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['price_from'],
+                                fn (Builder $query, $value): Builder => $query->where('price', '>=', $value),
+                            )
+                            ->when(
+                                $data['price_until'],
+                                fn (Builder $query, $value): Builder => $query->where('price', '<=', $value),
+                            );
+                    }),
+
             ], layout: FiltersLayout::Modal)
+            ->deferFilters()
             ->actions([
                 Tables\Actions\ViewAction::make(),
             ])
