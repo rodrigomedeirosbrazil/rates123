@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\MonitoredDataResource\Pages;
 
-use App\Filament\Resources\MonitoredDataResource;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\MonitoredDataResource;
 
-class ListMonitoredData extends ListRecords
+class ManageMonitoredDatas extends ManageRecords
 {
     protected static string $resource = MonitoredDataResource::class;
 

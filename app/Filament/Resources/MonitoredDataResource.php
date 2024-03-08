@@ -5,6 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MonitoredDataResource\Pages;
 use App\Models\MonitoredData;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,18 +26,31 @@ class MonitoredDataResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('monitored_property_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
-                Forms\Components\DatePicker::make('checkin')
-                    ->required(),
-                Forms\Components\Toggle::make('available')
-                    ->required(),
+
+                Grid::make([])->schema([
+                    Placeholder::make('monitoredProperty.name')
+                        ->label('Property')
+                        ->content(
+                            fn ($record) => $record->monitoredProperty->name
+                        ),
+                    Forms\Components\TextInput::make('price')
+                        ->numeric()
+                        ->prefix('$'),
+                    Forms\Components\Toggle::make('available')
+                        ->inline(false),
+                ])->columns(3),
+
+
+                Grid::make([])->schema([
+                    Forms\Components\DatePicker::make('checkin'),
+                    Forms\Components\DatePicker::make('created_at'),
+                ])->columns(2),
+
                 Forms\Components\Textarea::make('extra')
+                    ->afterStateHydrated(function ($component, $state) {
+                        $component->state(json_encode($state, JSON_PRETTY_PRINT));
+                    })
+                    ->rows(5)
                     ->columnSpanFull(),
             ]);
     }
@@ -56,24 +72,38 @@ class MonitoredDataResource extends Resource
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
             ->searchOnBlur()
             ->filters([
                 Filter::make('Available')
                     ->query(fn (Builder $query): Builder => $query->whereAvailable(true)),
+
                 Filter::make('Unavailable')
                     ->query(fn (Builder $query): Builder => $query->whereAvailable(false)),
+
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    }),
+
             ], layout: FiltersLayout::Modal)
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
-            ->defaultSort('checkin', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->paginated([10, 25, 50, 100]);
     }
 
@@ -87,9 +117,7 @@ class MonitoredDataResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMonitoredData::route('/'),
-            'create' => Pages\CreateMonitoredData::route('/create'),
-            'edit' => Pages\EditMonitoredData::route('/{record}/edit'),
+            'index' => Pages\ManageMonitoredDatas::route('/'),
         ];
     }
 }

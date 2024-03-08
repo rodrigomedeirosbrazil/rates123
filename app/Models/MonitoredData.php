@@ -23,6 +23,8 @@ class MonitoredData extends Model
         'price' => 'decimal:2',
         'checkin' => 'date',
         'extra' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function monitoredProperty()
