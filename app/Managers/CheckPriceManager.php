@@ -12,6 +12,15 @@ class CheckPriceManager
 {
     public function checkPropertyPrices(int $propertyId): void
     {
+        $hasNotificationToday = PriceNotification::query()
+            ->whereMonitoredPropertyId($propertyId)
+            ->whereDate('created_at', now())
+            ->exists();
+
+        if ($hasNotificationToday) {
+            return;
+        }
+
         $lastPrice = MonitoredData::query()
             ->where('monitored_property_id', $propertyId)
             ->orderBy('checkin', 'desc')
