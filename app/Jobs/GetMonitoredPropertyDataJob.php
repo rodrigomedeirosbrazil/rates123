@@ -36,10 +36,11 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             'finished_at' => null,
         ]);
 
-        $property = MonitoredProperty::findOrFail($this->monitoredPropertyId);
+        $property = MonitoredProperty::with('platform')
+            ->findOrFail($this->monitoredPropertyId);
 
         $prices = $property->platform->slug === 'booking'
-            ? $scrapManager->getBookingPrices($property->url, $property->capture_months_number)
+            ? $scrapManager->getBookingPrices($property->url, 6)
             : $scrapManager->getAirbnbPrices($property->url, now()->addDay(), 15);
 
         $sync->prices_count = count($prices);

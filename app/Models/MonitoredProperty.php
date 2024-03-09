@@ -24,6 +24,6 @@ class MonitoredProperty extends Model
 
     public function platform()
     {
-        return $this->belongsTo(MonitoredPlatform::class);
+        return $this->belongsTo(MonitoredPlatform::class, 'monitored_platform_id', 'id');
     }
 }

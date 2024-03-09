@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MonitoredPropertyResource\Pages;
 use App\Models\MonitoredProperty;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -22,10 +23,12 @@ class MonitoredPropertyResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required(),
-                Forms\Components\TextInput::make('url')
+                Select::make('monitored_platform_id')
+                    ->label('Platform')
+                    ->relationship(name: 'platform', titleAttribute: 'name')
+                    ->preload() // ->searchable(['name'])
                     ->required(),
-                Forms\Components\TextInput::make('capture_months_number')
-                    ->numeric()
+                Forms\Components\TextInput::make('url')
                     ->required(),
                 Forms\Components\Textarea::make('extra')
                     ->columnSpanFull(),
@@ -38,6 +41,8 @@ class MonitoredPropertyResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('platform.name')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('url')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -58,11 +63,6 @@ class MonitoredPropertyResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
