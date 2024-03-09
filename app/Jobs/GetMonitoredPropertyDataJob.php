@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -37,27 +38,16 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         $property = MonitoredProperty::findOrFail($this->monitoredPropertyId);
 
-        $prices = $scrapManager->getPrices($property->url, $property->capture_months_number);
+        $prices = $property->platform->slug === 'booking'
+            ? $scrapManager->getBookingPrices($property->url, $property->capture_months_number)
+            : $scrapManager->getAirbnbPrices($property->url, now()->addDay(), 15);
 
         $sync->prices_count = count($prices);
         $sync->save();
 
-        $importedPrices = $prices
-            ->map(fn ($price) => [
-                'monitored_property_id' => $property->id,
-                'price' => human_readable_size_to_int(
-                    data_get($price, 'avgPriceFormatted') ?? '0'
-                ),
-                'checkin' => data_get($price, 'checkin'),
-                'available' => data_get($price, 'available') ?? false,
-                'extra' => [
-                    'minLengthOfStay' => data_get($price, 'minLengthOfStay'),
-                ],
-            ])
-            ->filter(fn ($price) => $this->validator($price))
-            ->each(
-                fn ($price) => MonitoredData::create($price)
-            )->count();
+        $importedPrices = $property->platform->slug === 'booking'
+            ? $this->importBookingPrices($prices, $property->id)
+            : $this->importAirbnbPrices($prices, $property->id);
 
         $sync->successful = $importedPrices > 0;
         $sync->finished_at = now();
@@ -69,7 +59,42 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         }
     }
 
-    public function validator(array $price): bool
+    public function importBookingPrices(Collection $prices, int $propertyId): int
+    {
+        return $prices
+            ->map(fn ($price) => [
+                'monitored_property_id' => $propertyId,
+                'price' => human_readable_size_to_int(
+                    data_get($price, 'avgPriceFormatted') ?? '0'
+                ),
+                'checkin' => data_get($price, 'checkin'),
+                'available' => data_get($price, 'available') ?? false,
+                'extra' => [
+                    'minLengthOfStay' => data_get($price, 'minLengthOfStay'),
+                ],
+            ])
+            ->filter(fn ($price) => $this->bookingValidator($price))
+            ->each(
+                fn ($price) => MonitoredData::create($price)
+            )->count();
+    }
+
+    public function importAirbnbPrices(Collection $prices, int $propertyId): int
+    {
+        return $prices
+            ->map(fn ($price) => [
+                'monitored_property_id' => $propertyId,
+                'price' => data_get($price, 'price') ?? '0',
+                'checkin' => data_get($price, 'checkin'),
+                'available' => data_get($price, 'available') ?? false,
+                'extra' => [],
+            ])
+            ->each(
+                fn ($price) => MonitoredData::create($price)
+            )->count();
+    }
+
+    public function bookingValidator(array $price): bool
     {
         $validator = Validator::make($price, [
             'monitored_property_id' => 'required|numeric',

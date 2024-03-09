@@ -2,12 +2,13 @@
 
 namespace App\Managers;
 
+use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class ScrapManager
 {
-    public function getPrices(string $propertyUrl, int $pages): Collection
+    public function getBookingPrices(string $propertyUrl, int $pages): Collection
     {
         $response = Http::timeout(110)
             ->get(
@@ -15,6 +16,23 @@ class ScrapManager
                 [
                     'url' => $propertyUrl,
                     'pages' => $pages,
+                ]
+            );
+
+        $prices = $response->json();
+
+        return collect($prices);
+    }
+
+    public function getAirbnbPrices(string $propertyUrl, CarbonInterface $fromDate, int $days): Collection
+    {
+        $response = Http::timeout(110)
+            ->get(
+                config('app.scrap.url') . '/airbnb/prices',
+                [
+                    'url' => $propertyUrl,
+                    'fromDate' => $fromDate->toDateString(),
+                    'days' => $days,
                 ]
             );
 
