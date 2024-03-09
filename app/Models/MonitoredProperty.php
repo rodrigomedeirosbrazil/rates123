@@ -12,14 +12,18 @@ class MonitoredProperty extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'monitored_platform_id',
         'name',
         'url',
-        'capture_months_number',
         'extra',
     ];
 
     protected $casts = [
         'extra' => 'array',
-        'capture_months_number' => 'integer',
     ];
+
+    public function platform()
+    {
+        return $this->belongsTo(MonitoredPlatform::class);
+    }
 }

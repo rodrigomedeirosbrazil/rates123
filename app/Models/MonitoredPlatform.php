@@ -11,6 +11,8 @@ class MonitoredPlatform extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'slug',
