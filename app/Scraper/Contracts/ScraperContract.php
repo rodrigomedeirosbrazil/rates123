@@ -3,13 +3,16 @@
 namespace App\Scraper\Contracts;
 
 use App\Scraper\DTOs\DayPriceDTO;
-use App\Scraper\DTOs\PropertyDTO;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Collection;
 
 interface ScraperContract
 {
     public string $endpoint;
 
-    public function parsePrice(PropertyDTO $propertyDTO, array $price): DayPriceDTO;
+    public function getPrices(string $url, CarbonInterface $from, int $days): Collection;
 
-    public function validatePrice(array $price): bool;
+    public function parsePrice(array $responsePrice): DayPriceDTO;
+
+    public function validatePrice(array $responsePrice): bool;
 }
