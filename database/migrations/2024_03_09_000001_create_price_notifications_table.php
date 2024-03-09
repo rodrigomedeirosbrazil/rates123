@@ -13,6 +13,7 @@ return new class () extends Migration {
         Schema::create('price_notifications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('monitored_property_id')->constrained();
+            $table->date('checkin');
             $table->string('type');
             $table->text('message');
             $table->timestamps();
