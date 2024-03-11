@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Scraper\DTOs\PropertyDTO;
+use App\Property\DTOs\PropertyDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

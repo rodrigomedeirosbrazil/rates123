@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Scraper\DTOs;
+namespace App\Property\DTOs;
 
 class PropertyDTO
 {
@@ -9,7 +9,7 @@ class PropertyDTO
         public string $platformSlug,
         public string $name,
         public string $url,
-        public array $extra
+        public ?array $extra = []
     ) {
     }
 }

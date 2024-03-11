@@ -2,10 +2,10 @@
 
 namespace App\Managers;
 
+use App\Property\DTOs\PropertyDTO;
 use App\Scraper\AirbnbScraper;
 use App\Scraper\BookingScraper;
 use App\Scraper\Contracts\ScraperContract;
-use App\Scraper\DTOs\PropertyDTO;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 

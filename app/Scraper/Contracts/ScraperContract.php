@@ -8,8 +8,6 @@ use Illuminate\Support\Collection;
 
 interface ScraperContract
 {
-    public string $endpoint;
-
     public function getPrices(string $url, CarbonInterface $from, int $days): Collection;
 
     public function parsePrice(array $responsePrice): DayPriceDTO;
