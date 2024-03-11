@@ -42,7 +42,11 @@ class MonitoreCommand extends Command
                     }
 
                     dispatch(
-                        new GetMonitoredPropertyDataJob($property->id)
+                        new GetMonitoredPropertyDataJob(
+                            monitoredPropertyId: $property->id,
+                            propertyName: $property->name,
+                            platformSlug: $property->platform->slug,
+                        )
                     )
                         ->delay(now()->addMinutes($index * 1));
                 }
