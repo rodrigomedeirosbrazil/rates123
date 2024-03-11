@@ -2,42 +2,28 @@
 
 namespace App\Managers;
 
+use App\Property\DTOs\PropertyDTO;
+use App\Scraper\AirbnbScraper;
+use App\Scraper\BookingScraper;
+use App\Scraper\Contracts\ScraperContract;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 
 class ScrapManager
 {
-    public function getBookingPrices(string $propertyUrl, int $pages): Collection
+    public function getPrices(PropertyDTO $propertyDTO, CarbonInterface $from, int $days): Collection
     {
-        $response = Http::timeout(110)
-            ->get(
-                config('app.scrap.url') . '/booking/prices',
-                [
-                    'url' => $propertyUrl,
-                    'pages' => $pages,
-                ]
-            );
+        $scraper = $this->loadScraper($propertyDTO->platformSlug);
 
-        $prices = $response->json();
-
-        return collect($prices);
+        return $scraper->getPrices($propertyDTO->url, $from, $days);
     }
 
-    public function getAirbnbPrices(string $propertyUrl, CarbonInterface $fromDate, int $days): Collection
+    public function loadScraper(string $platformSlug): ScraperContract
     {
-        $response = Http::timeout(110)
-            ->get(
-                config('app.scrap.url') . '/airbnb/prices',
-                [
-                    'url' => $propertyUrl,
-                    'fromDate' => $fromDate->toDateString(),
-                    'days' => $days,
-                ]
-            );
-
-        $prices = $response->json();
-
-        return collect($prices);
+        return match ($platformSlug) {
+            'booking' => new BookingScraper(),
+            'airbnb' => new AirbnbScraper(),
+            default => throw new \Exception('Invalid platform slug'),
+        };
     }
 }
