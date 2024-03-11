@@ -18,7 +18,7 @@ class BookingScraper extends Scraper implements ScraperContract
     public function getPrices(string $url, CarbonInterface $from, int $days): Collection
     {
         $to = $from->addDays($days);
-        $months = $from->diffInMonths($to);
+        $months = $from->diffInMonths($to) === 0 ? 1 : $from->diffInMonths($to);
 
         $response = Http::timeout($this->timeout)
             ->get(
