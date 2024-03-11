@@ -26,6 +26,16 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
     public function handle(ScrapManager $scrapManager): void
     {
+        $isSyncedSuccesfulToday = MonitoredSync::query()
+            ->whereMonitoredPropertyId($this->monitoredPropertyId)
+            ->whereDate('started_at', now())
+            ->whereSuccessful(true)
+            ->exists();
+
+        if ($isSyncedSuccesfulToday) {
+            return;
+        }
+
         $sync = MonitoredSync::create([
             'monitored_property_id' => $this->monitoredPropertyId,
             'successful' => false,
