@@ -42,18 +42,23 @@ class BookingScraper extends Scraper implements ScraperContract
     {
         return new DayPriceDTO(
             checkin: Carbon::parse(data_get($responsePrice, 'checkin')),
-            price: data_get($responsePrice, 'price') ?? 0,
+            price: human_readable_size_to_int(
+                data_get($responsePrice, 'avgPriceFormatted') ?? '0'
+            ),
             available: data_get($responsePrice, 'available', false),
-            extra: data_get($responsePrice, 'extra', []),
+            extra: [
+                'minLengthOfStay' => data_get($responsePrice, 'minLengthOfStay'),
+            ],
         );
     }
 
     public function validatePrice(array $responsePrice): bool
     {
         $validator = Validator::make($responsePrice, [
-            'price' => 'required|numeric',
+            'avgPriceFormatted' => 'nullable|string',
             'checkin' => 'required|date',
-            'available' => 'required|boolean',
+            'available' => 'nullable|boolean',
+            'minLengthOfStay' => 'nullable|integer',
         ]);
 
         if (! $validator->fails()) {
