@@ -16,12 +16,23 @@ class CheckPropertyPricesJob implements ShouldQueue
     public $tries = 1;
 
     public function __construct(
-        public int $monitoredPropertyId
+        public int $monitoredPropertyId,
+        public string $propertyName,
+        public string $platformSlug,
     ) {
     }
 
     public function handle(CheckPriceManager $checkPriceManager): void
     {
         $checkPriceManager->checkPropertyPrices($this->monitoredPropertyId);
+    }
+
+    public function tags(): array
+    {
+        return [
+            'platform: ' . $this->platformSlug,
+            'property: ' . $this->propertyName,
+            'propertyId: ' . $this->monitoredPropertyId,
+        ];
     }
 }

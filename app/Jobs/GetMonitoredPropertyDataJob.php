@@ -87,7 +87,9 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         dispatch(
             new CheckPropertyPricesJob(
-                monitoredPropertyId: $this->monitoredPropertyId
+                monitoredPropertyId: $this->monitoredPropertyId,
+                propertyName: $this->propertyName,
+                platformSlug: $this->platformSlug,
             )
         );
     }
