@@ -7,7 +7,7 @@ RUN apt-get update \
     gettext libzip-dev libxml2-dev libpng-dev \
     nginx nano cron git unzip supervisor \
     certbot python3-certbot-nginx \
-    nodejs \
+    nodejs logrotate \
     && rm -r /var/lib/apt/lists/*
 
 RUN pecl install --force redis \
@@ -28,6 +28,7 @@ COPY ./supervisord.conf /etc/supervisord.conf
 COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./php.ini /usr/local/etc/php/php.ini
+COPY ./laravel.logrotate /etc/logrotate.d/laravel
 
 #change ownership of our applications
 RUN chown -R www-data:www-data $APP_HOME
