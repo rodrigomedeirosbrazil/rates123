@@ -51,8 +51,8 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         try {
             $prices = $propertyDTO->platformSlug === 'booking'
-                ? $scrapManager->getPrices($propertyDTO, now()->addDay(), 180)
-                : $scrapManager->getPrices($propertyDTO, now()->addDay(), 6);
+                ? $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.booking.scrap_days'))
+                : $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.airbnb.scrap_days'));
         } catch (\Exception $e) {
             $sync->successful = false;
             $sync->finished_at = now();
