@@ -10,7 +10,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('app:monitore')->dailyAt('12:00');
-        $schedule->command('app:check-prices')->dailyAt('15:00');
     }
 
     protected function commands(): void

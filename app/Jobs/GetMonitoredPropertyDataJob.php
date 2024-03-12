@@ -81,7 +81,15 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         if (! $sync->successful) {
             $this->release(now()->addMinutes(15));
+
+            return;
         }
+
+        dispatch(
+            new CheckPropertyPricesJob(
+                monitoredPropertyId: $this->monitoredPropertyId
+            )
+        );
     }
 
     public function tags(): array
