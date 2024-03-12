@@ -6,5 +6,4 @@
 	notifempty
 	create 0640 www-data www-data
 	sharedscripts
-	endscript
 }
