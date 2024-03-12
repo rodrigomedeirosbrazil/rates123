@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Managers\ScrapManager;
+use App\Models\MonitoredData;
 use App\Models\MonitoredProperty;
 use App\Models\MonitoredSync;
 use Illuminate\Bus\Queueable;
@@ -62,6 +63,16 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
             return;
         }
+
+        $prices->each(function ($price) {
+            MonitoredData::create([
+                'monitored_property_id' => $this->monitoredPropertyId,
+                'price' => $price->price,
+                'checkin' => $price->checkin,
+                'available' => $price->available,
+                'extra' => $price->extra ?? '[]',
+            ]);
+        });
 
         $sync->successful = $prices->count() > 0;
         $sync->finished_at = now();
