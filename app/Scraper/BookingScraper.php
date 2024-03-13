@@ -29,6 +29,22 @@ class BookingScraper extends Scraper implements ScraperContract
                 ]
             );
 
+        if (! $response->ok()) {
+            Log::error(
+                'Failed to get prices',
+                [
+                    'url' => $url,
+                    'from' => $from->toDateString(),
+                    'to' => $to->toDateString(),
+                    'days' => $days,
+                    'response' => $response->json(),
+                    'platform' => 'booking',
+                ]
+            );
+
+            return collect();
+        }
+
         $responsePrices = $response->json();
 
         return collect($responsePrices)

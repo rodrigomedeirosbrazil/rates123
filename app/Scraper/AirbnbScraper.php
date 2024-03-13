@@ -29,6 +29,21 @@ class AirbnbScraper extends Scraper implements ScraperContract
 
         $responsePrices = $response->json();
 
+        if (! $response->ok()) {
+            Log::error(
+                'Failed to get prices',
+                [
+                    'url' => $url,
+                    'from' => $from->toDateString(),
+                    'days' => $days,
+                    'response' => $response->json(),
+                    'platform' => 'airbnb',
+                ]
+            );
+
+            return collect();
+        }
+
         return collect($responsePrices)
             ->filter(fn ($responsePrice) => $this->validatePrice($responsePrice))
             ->map(fn ($price) => $this->parsePrice($price))
