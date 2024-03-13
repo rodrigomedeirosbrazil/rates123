@@ -58,7 +58,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             $sync->finished_at = now();
             $sync->save();
 
-            $this->release(now()->addMinutes(15));
+            $this->release(900);
             // TODO: Save exception to MonitoredSync
 
             return;
@@ -80,7 +80,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         $sync->save();
 
         if (! $sync->successful) {
-            $this->release(now()->addMinutes(15));
+            $this->release(900);
 
             return;
         }
