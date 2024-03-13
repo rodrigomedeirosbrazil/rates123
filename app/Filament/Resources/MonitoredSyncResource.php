@@ -78,10 +78,6 @@ class MonitoredSyncResource extends Resource
                     ),
             ], layout: FiltersLayout::Modal)
             ->deferFilters()
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
             ->defaultSort('started_at', 'desc')
             ->paginated([10, 25, 50, 100]);
     }
