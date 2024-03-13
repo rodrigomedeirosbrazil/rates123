@@ -9,6 +9,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,7 +76,8 @@ class MonitoredSyncResource extends Resource
                                 fn (Builder $query, $date): Builder => $query->whereDate('started_at', '=', $date),
                             )
                     ),
-            ])
+            ], layout: FiltersLayout::Modal)
+            ->deferFilters()
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
