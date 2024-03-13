@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MonitoredSyncResource\Pages;
 use App\Models\MonitoredSync;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -62,6 +63,18 @@ class MonitoredSyncResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereSuccessful(true)),
                 Filter::make('Unsuccessful')
                     ->query(fn (Builder $query): Builder => $query->whereSuccessful(false)),
+
+                Filter::make('started_at')
+                    ->form([
+                        DatePicker::make('started_at'),
+                    ])
+                    ->query(
+                        fn (Builder $query, array $data): Builder => $query
+                            ->when(
+                                $data['started_at'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('started_at', '=', $date),
+                            )
+                    ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
