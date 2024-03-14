@@ -35,7 +35,7 @@ it('should get prices', function () {
     $from = Carbon::parse('2022-01-01');
     $days = 10;
 
-    $to = $from->addDays($days);
+    $to = $from->copy()->addDays($days);
     $months = $from->diffInMonths($to) === 0 ? 1 : $from->diffInMonths($to);
 
     $urlToHttpFake = config('app.scrap.url')
