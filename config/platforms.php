@@ -6,6 +6,6 @@ return [
     ],
 
     'airbnb' => [
-        'scrap_days' => env('AIRBNB_SCRAP_DAYS', 15),
+        'scrap_days' => env('AIRBNB_SCRAP_DAYS', 30),
     ],
 ];
