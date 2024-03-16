@@ -45,7 +45,11 @@ class GetPricesFromPropertyCommand extends Command
                 ? $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.booking.scrap_days'))
                 : $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.airbnb.scrap_days'));
 
-        $this->table(['Check In', 'Price', 'Available'], $prices->map(fn ($price) => [$price->checkin->toDateString(), $price->price, $price->available])->toArray());
+        $this->table(['Check In', 'Price', 'Available', 'Extra'], $prices->map(fn ($price) => [
+            $price->checkin->toDateString(),
+            $price->price, $price->available,
+            json_encode($price->extra),
+        ])->toArray());
 
         $this->line('Started at: ' . $startTimestamp->toDateTimeString());
         $this->line('Finished at: ' . now()->toDateTimeString());
