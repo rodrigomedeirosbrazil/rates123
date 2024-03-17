@@ -6,5 +6,5 @@ use App\Scraper\Contracts\ScraperContract;
 
 abstract class Scraper implements ScraperContract
 {
-    public int $timeout = 110;
+    public int $timeout = 500;
 }
