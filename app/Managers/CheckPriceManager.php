@@ -30,7 +30,7 @@ class CheckPriceManager
 
         while ($lastPrice->checkin->gte($date)) {
             $this->checkPriceDate($propertyId, $date);
-            $date->copy()->addDay();
+            $date->addDay();
         }
     }
 
