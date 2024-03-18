@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MonitoredPropertyResource\Pages;
 
 use App\Filament\Resources\MonitoredPropertyResource;
+use App\Filament\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertyOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -14,6 +15,13 @@ class EditMonitoredProperty extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            MonitoredPropertyOverview::class,
         ];
     }
 }
