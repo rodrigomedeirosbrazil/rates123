@@ -30,7 +30,12 @@ class DateEventResource extends Resource
                 Forms\Components\Select::make('type')
                     ->options(DateEventTypeEnum::toArray())
                     ->required(),
-                Forms\Components\TextInput::make('country'),
+                Forms\Components\Select::make('country')
+                    ->options([
+                        'Brasil' => 'Brasil',
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->default('Brasil'),
                 Forms\Components\TextInput::make('state'),
                 Forms\Components\TextInput::make('city'),
             ]);
@@ -43,10 +48,10 @@ class DateEventResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('begin')
-                    ->date()
+                    ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end')
-                    ->date()
+                    ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(),
