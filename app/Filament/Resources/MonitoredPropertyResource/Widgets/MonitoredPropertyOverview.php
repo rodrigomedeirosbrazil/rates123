@@ -27,7 +27,7 @@ class MonitoredPropertyOverview extends ChartWidget
                 ],
             ],
             'labels' => $prices->pluck('checkin')->map(
-                fn ($date) => $date->format('l, d F Y')
+                fn ($date) => $date->format('D, d M y')
             )->toArray(),
         ];
     }

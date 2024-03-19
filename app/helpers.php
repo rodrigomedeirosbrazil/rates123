@@ -20,7 +20,7 @@ if (! function_exists('format_date_with_weekday')) {
             return null;
         }
 
-        return Carbon::parse($data)->format('l, d F Y');
+        return Carbon::parse($data)->format('D, d M y');
     }
 }
 
