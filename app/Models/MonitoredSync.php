@@ -32,4 +32,13 @@ class MonitoredSync extends Model
     {
         return $this->belongsTo(MonitoredProperty::class);
     }
+
+    public static function propertyIsSyncedToday(int $monitoredPropertyId): bool
+    {
+        return self::query()
+            ->whereMonitoredPropertyId($monitoredPropertyId)
+            ->whereDate('started_at', now())
+            ->whereSuccessful(true)
+            ->exists();
+    }
 }

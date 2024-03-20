@@ -41,14 +41,8 @@ class CapturePricesFromPropertyCommand extends Command
             return 1;
         }
 
-        $isSyncedSuccesfulToday = MonitoredSync::query()
-            ->whereMonitoredPropertyId($propertyId)
-            ->whereDate('started_at', now())
-            ->whereSuccessful(true)
-            ->exists();
-
         if (
-            $isSyncedSuccesfulToday
+            MonitoredSync::propertyIsSyncedToday($propertyId)
             && ! confirm('This property has already been synced sucessful today. Do you want to continue?', false)
         ) {
             return 0;
