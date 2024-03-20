@@ -16,7 +16,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $tries = 10;
+    public $tries = 1;
 
     public function __construct(
         public int $monitoredPropertyId,
@@ -58,7 +58,6 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             $sync->finished_at = now();
             $sync->save();
 
-            $this->release(900);
             // TODO: Save exception to MonitoredSync
 
             return;
@@ -80,8 +79,6 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         $sync->save();
 
         if (! $sync->successful) {
-            $this->release(900);
-
             return;
         }
 
