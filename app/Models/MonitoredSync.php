@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SyncStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,14 +16,15 @@ class MonitoredSync extends Model
 
     protected $fillable = [
         'monitored_property_id',
-        'successful',
+        'status',
         'prices_count',
         'started_at',
         'finished_at',
+        'exception',
     ];
 
     protected $casts = [
-        'successful' => 'boolean',
+        'status' => SyncStatusEnum::class,
         'prices_count' => 'integer',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
@@ -38,7 +40,7 @@ class MonitoredSync extends Model
         return self::query()
             ->whereMonitoredPropertyId($monitoredPropertyId)
             ->whereDate('started_at', now())
-            ->whereSuccessful(true)
+            ->where('status', SyncStatusEnum::Successful)
             ->exists();
     }
 }
