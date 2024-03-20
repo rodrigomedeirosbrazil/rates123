@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\SyncStatusEnum;
 use App\Managers\ScrapManager;
 use App\Models\MonitoredData;
 use App\Models\MonitoredProperty;
@@ -33,7 +34,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         $sync = MonitoredSync::create([
             'monitored_property_id' => $this->monitoredPropertyId,
-            'successful' => false,
+            'status' => SyncStatusEnum::InProgress,
             'prices_count' => 0,
             'started_at' => now(),
             'finished_at' => null,
@@ -48,11 +49,10 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
                 ? $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.booking.scrap_days'))
                 : $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.airbnb.scrap_days'));
         } catch (\Exception $e) {
-            $sync->successful = false;
+            $sync->status = SyncStatusEnum::Failed;
             $sync->finished_at = now();
+            $sync->exception = $e->getMessage();
             $sync->save();
-
-            // TODO: Save exception to MonitoredSync
 
             return;
         }
@@ -67,12 +67,12 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             ]);
         });
 
-        $sync->successful = $prices->count() > 0;
+        $sync->status = $prices->count() > 0 ? SyncStatusEnum::Successful : SyncStatusEnum::Failed;
         $sync->finished_at = now();
         $sync->prices_count = $prices->count();
         $sync->save();
 
-        if (! $sync->successful) {
+        if (! $sync->status === SyncStatusEnum::Successful) {
             return;
         }
 
