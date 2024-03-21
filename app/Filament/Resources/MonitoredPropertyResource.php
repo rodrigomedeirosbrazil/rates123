@@ -9,7 +9,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MonitoredPropertyResource extends Resource
 {
@@ -59,7 +61,13 @@ class MonitoredPropertyResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('Not Synced Today')
+                    ->query(
+                        fn (Builder $query): Builder => $query->whereDoesntHave(
+                            'priceDatas',
+                            fn (Builder $query) => $query->whereDate('created_at', now())
+                        )
+                    ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
