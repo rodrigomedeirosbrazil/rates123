@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\SyncStatusEnum;
 use App\Jobs\CheckPropertyPricesJob;
 use App\Managers\ScrapManager;
 use App\Models\MonitoredData;
@@ -41,14 +42,8 @@ class CapturePricesFromPropertyCommand extends Command
             return 1;
         }
 
-        $isSyncedSuccesfulToday = MonitoredSync::query()
-            ->whereMonitoredPropertyId($propertyId)
-            ->whereDate('started_at', now())
-            ->whereSuccessful(true)
-            ->exists();
-
         if (
-            $isSyncedSuccesfulToday
+            MonitoredSync::propertyIsSyncedToday($propertyId)
             && ! confirm('This property has already been synced sucessful today. Do you want to continue?', false)
         ) {
             return 0;
@@ -62,7 +57,7 @@ class CapturePricesFromPropertyCommand extends Command
 
         $sync = MonitoredSync::create([
             'monitored_property_id' => $propertyId,
-            'successful' => false,
+            'status' => SyncStatusEnum::InProgress,
             'prices_count' => 0,
             'started_at' => now(),
             'finished_at' => null,
@@ -73,8 +68,9 @@ class CapturePricesFromPropertyCommand extends Command
                 ? $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.booking.scrap_days'))
                 : $scrapManager->getPrices($propertyDTO, now()->addDay(), config('platforms.airbnb.scrap_days'));
         } catch (\Exception $e) {
-            $sync->successful = false;
+            $sync->status = SyncStatusEnum::Failed;
             $sync->finished_at = now();
+            $sync->exception = $e->getMessage();
             $sync->save();
 
             $this->error($e->getMessage());
@@ -92,10 +88,16 @@ class CapturePricesFromPropertyCommand extends Command
             ])
         );
 
-        $sync->successful = $prices->count() > 0;
+        $sync->status = $prices->count() > 0 ? SyncStatusEnum::Successful : SyncStatusEnum::Failed;
         $sync->finished_at = now();
         $sync->prices_count = $prices->count();
         $sync->save();
+
+        if (! $sync->status === SyncStatusEnum::Failed) {
+            $this->error('Sync failed');
+
+            return 1;
+        }
 
         $this->info('Dispatching CheckPropertyPricesJob...');
         dispatch(

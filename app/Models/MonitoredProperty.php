@@ -28,6 +28,16 @@ class MonitoredProperty extends Model
         return $this->belongsTo(MonitoredPlatform::class, 'monitored_platform_id', 'id');
     }
 
+    public function syncs()
+    {
+        return $this->hasMany(MonitoredSync::class, 'monitored_property_id', 'id');
+    }
+
+    public function priceDatas()
+    {
+        return $this->hasMany(MonitoredData::class, 'monitored_property_id', 'id');
+    }
+
     public function toPropertyDTO(): PropertyDTO
     {
         return new PropertyDTO(

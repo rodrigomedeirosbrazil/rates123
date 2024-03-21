@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MonitoredSyncResource\Widgets;
 
+use App\Enums\SyncStatusEnum;
 use App\Models\MonitoredProperty;
 use App\Models\MonitoredSync;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -20,7 +21,7 @@ class MonitoredSyncOverview extends BaseWidget
             ),
             Stat::make(
                 'Properties last synced',
-                MonitoredSync::where('successful', true)
+                MonitoredSync::where('status', SyncStatusEnum::Successful->value)
                     ->whereDate('started_at', $lastSync->started_at)
                     ->count()
                 . '/' . MonitoredProperty::count()
