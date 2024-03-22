@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MonitoredPropertyResource\Widgets;
 
+use App\Enums\SyncStatusEnum;
 use App\Models\MonitoredSync;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -24,8 +25,8 @@ class MonitoredPropertySyncOverview extends BaseWidget
                 $lastSync->started_at->toDateTimeString()
                 . '(' . $lastSync->started_at->diffForHumans() . ')',
             )
-                ->color($lastSync->successful ? 'success' : 'danger')
-                ->description($lastSync->successful ? 'Successful' : 'Failed'),
+                ->color($lastSync->status === SyncStatusEnum::Successful ? 'success' : 'danger')
+                ->description($lastSync->status === SyncStatusEnum::Successful ? 'Successful' : 'Failed'),
 
         ];
     }
