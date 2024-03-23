@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MonitoredPropertyResource\Pages;
 
 use App\Filament\Resources\MonitoredPropertyResource;
 use App\Filament\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertySyncOverview;
+use App\Filament\Widgets\CalendarWidget;
 use App\Filament\Widgets\MonitoredPropertyPricesOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -24,6 +25,9 @@ class EditMonitoredProperty extends EditRecord
         return [
             MonitoredPropertyPricesOverview::class,
             MonitoredPropertySyncOverview::class,
+            CalendarWidget::make([
+                'property' => $this->record,
+            ]),
         ];
     }
 }
