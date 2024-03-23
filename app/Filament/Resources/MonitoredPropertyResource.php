@@ -4,8 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MonitoredPropertyResource\Pages;
 use App\Models\MonitoredProperty;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,16 +24,39 @@ class MonitoredPropertyResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required(),
+
                 Select::make('monitored_platform_id')
                     ->label('Platform')
                     ->relationship(name: 'platform', titleAttribute: 'name')
                     ->preload() // ->searchable(['name'])
                     ->required(),
-                Forms\Components\TextInput::make('url')
+
+                TextInput::make('url')
                     ->required(),
-                Forms\Components\Textarea::make('extra')
+
+                TextInput::make('country'),
+
+                TextInput::make('state'),
+
+                TextInput::make('city'),
+
+                TextInput::make('neighborhood'),
+
+                TextInput::make('address'),
+
+                TextInput::make('number'),
+
+                TextInput::make('complement'),
+
+                TextInput::make('postal_code'),
+
+                TextInput::make('latitude'),
+
+                TextInput::make('longitude'),
+
+                Textarea::make('extra')
                     ->columnSpanFull(),
             ]);
     }

@@ -17,10 +17,22 @@ class MonitoredProperty extends Model
         'name',
         'url',
         'extra',
+        'country',
+        'state',
+        'city',
+        'neighborhood',
+        'address',
+        'number',
+        'complement',
+        'postal_code',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [
         'extra' => 'array',
+        'latitude' => 'decimal:2',
+        'longitude' => 'decimal:2',
     ];
 
     public function platform()
