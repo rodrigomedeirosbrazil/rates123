@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 // Route::view('/', 'welcome');
 
-Route::get('/', App\Filament\Pages\Calculator::class)
-    ->name('calculator');
+// Route::get('/', App\Filament\Pages\Calculator::class)
+//     ->name('calculator');
 
 // Route::view('dashboard', 'dashboard')
 //     ->middleware(['auth', 'verified'])
