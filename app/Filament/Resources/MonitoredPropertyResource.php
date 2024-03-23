@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\BrasilStatesEnum;
 use App\Filament\Resources\MonitoredPropertyResource\Pages;
 use App\Models\MonitoredProperty;
 use Filament\Forms\Components\Select;
@@ -36,9 +37,16 @@ class MonitoredPropertyResource extends Resource
                 TextInput::make('url')
                     ->required(),
 
-                TextInput::make('country'),
+                Select::make('country')
+                    ->options([
+                        'Brasil' => 'Brasil',
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->default('Brasil'),
 
-                TextInput::make('state'),
+                Select::make('state')
+                    ->options(BrasilStatesEnum::toArray())
+                    ->default('SP'),
 
                 TextInput::make('city'),
 
