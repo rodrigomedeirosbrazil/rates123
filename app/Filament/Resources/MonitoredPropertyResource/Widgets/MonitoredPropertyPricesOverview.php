@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Widgets;
+namespace App\Filament\Resources\MonitoredPropertyResource\Widgets;
 
 use App\Models\DateEvent;
 use App\Models\MonitoredData;
