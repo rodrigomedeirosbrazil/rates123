@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\MonitoredPropertyResource\Pages;
 
 use App\Filament\Resources\MonitoredPropertyResource;
-use App\Filament\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertyPricesOverview;
 use App\Filament\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertySyncOverview;
+use App\Filament\Widgets\MonitoredPropertyPricesOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
