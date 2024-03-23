@@ -16,8 +16,8 @@ return new class () extends Migration {
             $table->string('number')->nullable();
             $table->string('complement')->nullable();
             $table->string('postal_code')->nullable();
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
+            $table->decimal('latitude', 8, 6)->nullable();
+            $table->decimal('longitude', 9, 6)->nullable();
         });
     }
 

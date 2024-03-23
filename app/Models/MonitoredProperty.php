@@ -31,8 +31,8 @@ class MonitoredProperty extends Model
 
     protected $casts = [
         'extra' => 'array',
-        'latitude' => 'decimal:2',
-        'longitude' => 'decimal:2',
+        'latitude' => 'decimal:6',
+        'longitude' => 'decimal:6',
     ];
 
     public function platform()
