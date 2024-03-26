@@ -19,5 +19,16 @@
     "Weekends": "Finais de semana",
     "Holidays": "Feriados",
     "Weather": "Clima",
-    "Events": "Eventos"
+    "Events": "Eventos",
+    "Rates123 - Price Notifications": "Rates123 - Notificações de Preço",
+    "Hi": "Olá",
+    "Thanks": "Obrigado",
+    "price-notification-mail-text" : "Essas são as notificações de preço de hoje:",
+    "Property": "Propriedade",
+    "Type": "Tipo",
+    "Price": "Preço",
+    "price-up": "Preço subiu",
+    "price-down": "Preço desceu",
+    "price-unavailable": "Preço indisponível",
+    "price-available": "Preço disponível"
 }
