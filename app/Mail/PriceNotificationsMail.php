@@ -59,7 +59,7 @@ class PriceNotificationsMail extends Mailable
                 __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
                 __('Before') . ': ' . __($priceNotification->before) . PHP_EOL,
                 __('After') . ': ' . __($priceNotification->after) . PHP_EOL,
-                __('Change') . ': ' . __($priceNotification->change_percent) . PHP_EOL,
+                __('Change') . ': ' . __($priceNotification->change_percent) . '%' . PHP_EOL,
                 PHP_EOL,
             ]
         )->flatten()->implode('');
