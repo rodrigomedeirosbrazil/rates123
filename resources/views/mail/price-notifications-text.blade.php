@@ -1,6 +1,6 @@
 {{__('Hi')}} {{ $user->name }},
 
-{{__('price-notification-mail-text')}}
+{{__('These are today's price notifications')}}
 
 {{$priceNotificationsTextTable}}
 
