@@ -1,6 +1,6 @@
 {{__('Hi')}} {{ $user->name }},
 
-{{__('These are today/'s price notifications')}}
+{{__("These are today/'s price notifications")}}
 
 {{$priceNotificationsTextTable}}
 
