@@ -57,8 +57,8 @@ class PriceNotificationsMail extends Mailable
                 __('Checkin') . ': ' . format_date_with_weekday($priceNotification->checkin) . PHP_EOL,
                 __('Property') . ': ' . $priceNotification->monitoredProperty->name . PHP_EOL,
                 __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
-                __('Before') . ': ' . __($priceNotification->before) . PHP_EOL,
-                __('After') . ': ' . __($priceNotification->after) . PHP_EOL,
+                __('Before') . ': $' . __($priceNotification->before) . PHP_EOL,
+                __('After') . ': $' . __($priceNotification->after) . PHP_EOL,
                 __('Change') . ': ' . __($priceNotification->change_percent) . '%' . PHP_EOL,
                 PHP_EOL,
             ]
