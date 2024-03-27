@@ -6,7 +6,6 @@ use App\Enums\PriceNotificationTypeEnum;
 use App\Models\MonitoredData;
 use App\Models\PriceNotification;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Collection;
 
 class CheckPriceManager
 {
@@ -24,7 +23,7 @@ class CheckPriceManager
         $lastPrice = MonitoredData::query()
             ->where('monitored_property_id', $propertyId)
             ->orderBy('checkin', 'desc')
-            ->first();
+            ->firstOrFail();
 
         $date = now()->addDay();
 
@@ -50,14 +49,14 @@ class CheckPriceManager
             ($prices[0]->available
                 && $prices[1]->available
                 && $prices[0]->price === $prices[1]->price)
-            || (!$prices[0]->available && !$prices[1]->available)
+            || (! $prices[0]->available && ! $prices[1]->available)
         ) {
             return;
         }
 
         if (
             $prices[0]->available
-            && !$prices[1]->available
+            && ! $prices[1]->available
         ) {
             PriceNotification::create([
                 'monitored_property_id' => $propertyId,
@@ -72,7 +71,7 @@ class CheckPriceManager
         }
 
         if (
-            !$prices[0]->available
+            ! $prices[0]->available
             && $prices[1]->available
         ) {
             PriceNotification::create([
