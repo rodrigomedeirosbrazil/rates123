@@ -48,6 +48,7 @@ class PriceNotificationsMail extends Mailable
     {
         $priceNotifications = PriceNotification::query()
             ->whereDate('created_at', now())
+            ->orderBy('checkin', 'asc')
             ->get();
 
 
