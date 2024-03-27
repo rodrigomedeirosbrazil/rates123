@@ -47,7 +47,7 @@ return new class() extends Migration
                     || $price->type === PriceNotificationTypeEnum::PriceAvailable
                     ? 0
                     : number_format(
-                        (($priceDateBefore->price - $priceDateAfter->price) / $priceDateBefore->price) * 100,
+                        (($priceDateAfter->price - $priceDateBefore->price) / $priceDateBefore->price) * 100,
                         2
                     );
 
