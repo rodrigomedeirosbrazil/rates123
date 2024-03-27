@@ -6,8 +6,10 @@ use App\Filament\Resources\PriceNotificationResource\Pages;
 use App\Models\PriceNotification;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -26,14 +28,29 @@ class PriceNotificationResource extends Resource
     {
         return $form
             ->schema([
-                Placeholder::make('Property')
-                    ->content(fn ($record) => $record->monitoredProperty->name),
-                Forms\Components\TextInput::make('type'),
-                Forms\Components\DatePicker::make('checkin'),
-                Forms\Components\DatePicker::make('created_at'),
-                Forms\Components\Textarea::make('message')
-                    ->rows(10)
-                    ->columnSpanFull(),
+                Grid::make([])->schema([
+                    Placeholder::make('Property')
+                        ->content(fn ($record) => $record->monitoredProperty->name),
+                    Forms\Components\TextInput::make('type'),
+                ])->columns(2),
+
+                Grid::make([])->schema([
+                    TextInput::make('checkin')
+                        ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
+                    TextInput::make('created_at')
+                        ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
+                ])->columns(2),
+
+                Grid::make([])->schema([
+                    TextInput::make('before')
+                        ->prefix('$'),
+
+                    TextInput::make('after')
+                        ->prefix('$'),
+
+                    TextInput::make('change_percent')
+                        ->suffix('%'),
+                ])->columns(3),
             ]);
     }
 
@@ -46,6 +63,10 @@ class PriceNotificationResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('change_percent'),
+                Tables\Columns\TextColumn::make('before'),
+                Tables\Columns\TextColumn::make('after'),
                 Tables\Columns\TextColumn::make('checkin')
                     ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),

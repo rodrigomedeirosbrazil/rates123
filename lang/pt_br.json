@@ -30,5 +30,8 @@
     "price-up": "Preço subiu",
     "price-down": "Preço desceu",
     "price-unavailable": "Preço indisponível",
-    "price-available": "Preço disponível"
+    "price-available": "Preço disponível",
+    "Before": "Antes",
+    "After": "Depois",
+    "Change": "Variação"
 }
