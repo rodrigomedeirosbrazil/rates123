@@ -16,7 +16,9 @@ class PriceNotification extends Model
         'monitored_property_id',
         'checkin',
         'type',
-        'message',
+        'change_percent',
+        'before',
+        'after',
     ];
 
     protected $casts = [
@@ -24,10 +26,18 @@ class PriceNotification extends Model
         'checkin' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'change_percent' => 'decimal:2',
+        'before' => 'decimal:2',
+        'after' => 'decimal:2',
     ];
 
     public function monitoredProperty()
     {
         return $this->belongsTo(MonitoredProperty::class, 'monitored_property_id', 'id');
+    }
+
+    public function monitoredDatas()
+    {
+        return $this->hasMany(MonitoredData::class, 'monitored_property_id', 'monitored_property_id');
     }
 }
