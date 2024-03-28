@@ -67,6 +67,7 @@ class PriceNotificationResource extends Resource
                             ->where('created_at', '<=', $record->created_at)
                             ->orderBy('created_at', 'desc')
                             ->groupBy('price')
+                            ->limit(10)
                             ->get()
                             ->map(function (MonitoredData $data): string {
                                 return "{$data->created_at->translatedFormat('l, d F y')} - $ {$data->price}";
