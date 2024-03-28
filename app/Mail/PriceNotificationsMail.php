@@ -54,7 +54,7 @@ class PriceNotificationsMail extends Mailable
 
         return $priceNotifications->map(
             fn (PriceNotification $priceNotification) => [
-                __('Checkin') . ': ' . format_date_with_weekday($priceNotification->checkin) . PHP_EOL,
+                __('Checkin') . ': ' . $priceNotification->checkin->translatedFormat('l, d F y') . PHP_EOL,
                 __('Property') . ': ' . $priceNotification->monitoredProperty->name . PHP_EOL,
                 __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
                 __('Before') . ': $' . __($priceNotification->before) . PHP_EOL,
