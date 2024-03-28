@@ -69,7 +69,7 @@ class PriceNotificationResource extends Resource
                             ->groupBy('price')
                             ->get()
                             ->map(function (MonitoredData $data): string {
-                                return "{$data->created_at->translatedFormat('l, d F y')}: {$data->price}";
+                                return "{$data->created_at->translatedFormat('l, d F y')} - $ {$data->price}";
                             })
                             ->join('<br>'));
                     }),
