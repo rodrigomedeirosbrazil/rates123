@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PriceNotificationResource\Pages;
+use App\Models\MonitoredData;
 use App\Models\PriceNotification;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -17,6 +18,8 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 
 class PriceNotificationResource extends Resource
 {
@@ -51,6 +54,25 @@ class PriceNotificationResource extends Resource
                     TextInput::make('change_percent')
                         ->suffix('%'),
                 ])->columns(3),
+
+                Placeholder::make('Price History')
+                    ->content(function (?Model $record) {
+                        if (! $record) {
+                            return 'No record';
+                        }
+
+                        return new HtmlString(MonitoredData::query()
+                            ->where('monitored_property_id', $record->monitored_property_id)
+                            ->where('checkin', $record->checkin)
+                            ->where('created_at', '<=', $record->created_at)
+                            ->orderBy('created_at', 'desc')
+                            ->groupBy('price')
+                            ->get()
+                            ->map(function (MonitoredData $data): string {
+                                return "{$data->created_at->translatedFormat('l, d F y')}: {$data->price}";
+                            })
+                            ->join('<br>'));
+                    }),
             ]);
     }
 
