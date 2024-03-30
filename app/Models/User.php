@@ -60,4 +60,9 @@ class User extends Authenticatable implements FilamentUser
 
         return true;
     }
+
+    public function getRoleNamesAttribute(): string
+    {
+        return $this->roles->pluck('name')->join(',');
+    }
 }
