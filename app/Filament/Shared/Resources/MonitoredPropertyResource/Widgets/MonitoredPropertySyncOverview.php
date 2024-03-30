@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\MonitoredPropertyResource\Widgets;
+namespace App\Filament\Shared\Resources\MonitoredPropertyResource\Widgets;
 
 use App\Enums\SyncStatusEnum;
 use App\Models\MonitoredSync;

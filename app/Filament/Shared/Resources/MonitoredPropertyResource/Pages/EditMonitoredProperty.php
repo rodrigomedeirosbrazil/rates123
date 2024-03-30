@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Admin\Resources\MonitoredPropertyResource\Pages;
+namespace App\Filament\Shared\Resources\MonitoredPropertyResource\Pages;
 
-use App\Filament\Admin\Resources\MonitoredPropertyResource;
-use App\Filament\Admin\Resources\MonitoredPropertyResource\Widgets\CalendarWidget;
-use App\Filament\Admin\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertyPricesOverview;
-use App\Filament\Admin\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertySyncOverview;
+use App\Filament\Shared\Resources\MonitoredPropertyResource;
+use App\Filament\Shared\Resources\MonitoredPropertyResource\Widgets\CalendarWidget;
+use App\Filament\Shared\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertyPricesOverview;
+use App\Filament\Shared\Resources\MonitoredPropertyResource\Widgets\MonitoredPropertySyncOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

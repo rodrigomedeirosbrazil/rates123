@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Shared\Resources;
 
 use App\Enums\BrasilStatesEnum;
-use App\Filament\Admin\Resources\MonitoredPropertyResource\Pages;
+use App\Filament\Shared\Resources\MonitoredPropertyResource\Pages;
 use App\Models\MonitoredProperty;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -90,21 +91,23 @@ class MonitoredPropertyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('id')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('platform.name')
+                TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('platform.name')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('url')
+                TextColumn::make('url')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -120,6 +123,7 @@ class MonitoredPropertyResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ]);
     }
 
@@ -136,6 +140,7 @@ class MonitoredPropertyResource extends Resource
             'index' => Pages\ListMonitoredProperties::route('/'),
             'create' => Pages\CreateMonitoredProperty::route('/create'),
             'edit' => Pages\EditMonitoredProperty::route('/{record}/edit'),
+            'view' => Pages\ViewMonitoredProperty::route('/{record}/view'),
         ];
     }
 }
