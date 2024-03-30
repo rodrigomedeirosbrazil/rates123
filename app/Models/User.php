@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -54,7 +54,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if ($this->panel === 'app' && $panel->getId() === 'admin') {
+        if (
+            $panel->getId() === 'admin'
+            && $this->hasRole('Admin') === false
+            && $this->hasRole('Super Admin') === false
+        ) {
             return false;
         }
 
