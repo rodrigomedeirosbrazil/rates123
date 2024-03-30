@@ -6,7 +6,6 @@ use App\Enums\PriceNotificationTypeEnum;
 use App\Models\MonitoredData;
 use App\Models\PriceNotification;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Collection;
 
 class CheckPriceManager
 {
@@ -24,7 +23,7 @@ class CheckPriceManager
         $lastPrice = MonitoredData::query()
             ->where('monitored_property_id', $propertyId)
             ->orderBy('checkin', 'desc')
-            ->first();
+            ->firstOrFail();
 
         $date = now()->addDay();
 
@@ -43,13 +42,13 @@ class CheckPriceManager
             ->get();
 
         if ($prices->count() < 2) {
-            return ;
+            return;
         }
 
         if (
             ($prices[0]->available
-            && $prices[1]->available
-            && $prices[0]->price === $prices[1]->price)
+                && $prices[1]->available
+                && $prices[0]->price === $prices[1]->price)
             || (! $prices[0]->available && ! $prices[1]->available)
         ) {
             return;
@@ -63,10 +62,9 @@ class CheckPriceManager
                 'monitored_property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceAvailable,
-                'message' => "Price available: {$prices[0]->price}" . PHP_EOL
-                    . "Date: {$prices[0]->checkin->format('l, d F Y')}"
-                    . PHP_EOL . 'Price list:' . PHP_EOL
-                    . $this->generatePriceList($prices),
+                'before' => 0,
+                'after' => $prices[0]->price,
+                'change_percent' => 0,
             ]);
 
             return;
@@ -80,10 +78,9 @@ class CheckPriceManager
                 'monitored_property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceUnavailable,
-                'message' => 'Price become unavailable' . PHP_EOL
-                    . "Date: {$prices[0]->checkin->format('l, d F Y')}"
-                    . PHP_EOL . 'Price list:' . PHP_EOL
-                    . $this->generatePriceList($prices),
+                'before' => $prices[1]->price,
+                'after' => 0,
+                'change_percent' => 0,
             ]);
 
             return;
@@ -94,14 +91,12 @@ class CheckPriceManager
                 'monitored_property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceUp,
-                'message' => "Price up: {$prices[1]->price} -> {$prices[0]->price}" . PHP_EOL
-                    . 'Increase: ' . number_format(
-                        (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
-                        2
-                    ) . '%' . PHP_EOL
-                    . "Date: {$prices[0]->checkin->format('l, d F Y')}"
-                    . PHP_EOL . 'Price list:' . PHP_EOL
-                    . $this->generatePriceList($prices),
+                'before' => $prices[1]->price,
+                'after' => $prices[0]->price,
+                'change_percent' => number_format(
+                    (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
+                    2
+                ),
             ]);
 
             return;
@@ -112,28 +107,15 @@ class CheckPriceManager
                 'monitored_property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceDown,
-                'message' => "Price down: {$prices[1]->price} -> {$prices[0]->price}" . PHP_EOL
-                    . 'Decrease: ' . number_format(
-                        (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
-                        2
-                    ) . '%' . PHP_EOL
-                    . "Date: {$prices[0]->checkin->format('l, d F Y')}"
-                    . PHP_EOL . 'Price list:' . PHP_EOL
-                    . $this->generatePriceList($prices),
+                'before' => $prices[1]->price,
+                'after' => $prices[0]->price,
+                'change_percent' => number_format(
+                    (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
+                    2
+                ),
             ]);
 
             return;
         }
-    }
-
-    public function generatePriceList(Collection $prices): string
-    {
-        $result = '';
-
-        foreach ($prices as $price) {
-            $result .= $price->created_at->format('Y-m-d') . ': ' . $price->price . PHP_EOL;
-        }
-
-        return $result;
     }
 }

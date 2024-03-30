@@ -3,11 +3,14 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PriceNotificationResource\Pages;
+use App\Models\MonitoredData;
 use App\Models\PriceNotification;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -15,6 +18,8 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 
 class PriceNotificationResource extends Resource
 {
@@ -26,14 +31,49 @@ class PriceNotificationResource extends Resource
     {
         return $form
             ->schema([
-                Placeholder::make('Property')
-                    ->content(fn ($record) => $record->monitoredProperty->name),
-                Forms\Components\TextInput::make('type'),
-                Forms\Components\DatePicker::make('checkin'),
-                Forms\Components\DatePicker::make('created_at'),
-                Forms\Components\Textarea::make('message')
-                    ->rows(10)
-                    ->columnSpanFull(),
+                Grid::make([])->schema([
+                    Placeholder::make('Property')
+                        ->content(fn ($record) => $record->monitoredProperty->name),
+                    Forms\Components\TextInput::make('type'),
+                ])->columns(2),
+
+                Grid::make([])->schema([
+                    TextInput::make('checkin')
+                        ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
+                    TextInput::make('created_at')
+                        ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
+                ])->columns(2),
+
+                Grid::make([])->schema([
+                    TextInput::make('before')
+                        ->prefix('$'),
+
+                    TextInput::make('after')
+                        ->prefix('$'),
+
+                    TextInput::make('change_percent')
+                        ->suffix('%'),
+                ])->columns(3),
+
+                Placeholder::make('Price History')
+                    ->content(function (?Model $record) {
+                        if (! $record) {
+                            return 'No record';
+                        }
+
+                        return new HtmlString(MonitoredData::query()
+                            ->where('monitored_property_id', $record->monitored_property_id)
+                            ->where('checkin', $record->checkin)
+                            ->where('created_at', '<=', $record->created_at)
+                            ->orderBy('created_at', 'desc')
+                            ->groupBy('price')
+                            ->limit(10)
+                            ->get()
+                            ->map(function (MonitoredData $data): string {
+                                return "{$data->created_at->translatedFormat('l, d F y')} - $ {$data->price}";
+                            })
+                            ->join('<br>'));
+                    }),
             ]);
     }
 
@@ -46,6 +86,10 @@ class PriceNotificationResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('change_percent'),
+                Tables\Columns\TextColumn::make('before'),
+                Tables\Columns\TextColumn::make('after'),
                 Tables\Columns\TextColumn::make('checkin')
                     ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),

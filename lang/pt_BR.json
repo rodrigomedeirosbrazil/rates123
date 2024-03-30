@@ -23,12 +23,15 @@
     "Rates123 - Price Notifications": "Rates123 - Notificações de Preço",
     "Hi": "Olá",
     "Thanks": "Obrigado",
-    "price-notification-mail-text" : "Essas são as notificações de preço de hoje:",
+    "These are today/'s price notifications" : "Essas são as notificações de preço de hoje:",
     "Property": "Propriedade",
     "Type": "Tipo",
     "Price": "Preço",
     "price-up": "Preço subiu",
     "price-down": "Preço desceu",
     "price-unavailable": "Preço indisponível",
-    "price-available": "Preço disponível"
+    "price-available": "Preço disponível",
+    "Before": "Antes",
+    "After": "Depois",
+    "Change": "Variação"
 }
