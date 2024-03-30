@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Enums\BrasilStatesEnum;
 use App\Filament\Admin\Resources\MonitoredPropertyResource\Pages;
 use App\Models\MonitoredProperty;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -25,40 +26,56 @@ class MonitoredPropertyResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required(),
+                Grid::make()->schema([
+                    TextInput::make('name')
+                        ->required(),
 
-                Select::make('monitored_platform_id')
-                    ->label('Platform')
-                    ->relationship(name: 'platform', titleAttribute: 'name')
-                    ->preload() // ->searchable(['name'])
-                    ->required(),
+                    Select::make('monitored_platform_id')
+                        ->label('Platform')
+                        ->relationship(name: 'platform', titleAttribute: 'name')
+                        ->preload() // ->searchable(['name'])
+                        ->required(),
 
-                TextInput::make('url')
-                    ->required(),
+                    TextInput::make('url')
+                        ->columnSpan(2)
+                        ->required(),
+                ])->columns(4),
 
-                Select::make('country')
-                    ->options([
-                        'Brasil' => 'Brasil',
-                    ])
-                    ->selectablePlaceholder(false)
-                    ->default('Brasil'),
+                Grid::make()->schema([
+                    Select::make('country')
+                        ->options([
+                            'Brasil' => 'Brasil',
+                        ])
+                        ->selectablePlaceholder(false)
+                        ->default('Brasil')
+                        ->columnSpan(2),
 
-                Select::make('state')
-                    ->options(BrasilStatesEnum::toArray())
-                    ->default('SP'),
+                    TextInput::make('city')
+                        ->columnSpan(3),
 
-                TextInput::make('city'),
+                    Select::make('state')
+                        ->options(BrasilStatesEnum::toArray())
+                        ->default('SP'),
 
-                TextInput::make('neighborhood'),
+                    TextInput::make('neighborhood')
+                        ->columnSpan(2),
+                ])->columns(8),
 
-                TextInput::make('address'),
+                Grid::make()->schema([
+                    TextInput::make('address')
+                        ->columnSpan(4),
 
-                TextInput::make('number'),
+                    TextInput::make('number'),
 
-                TextInput::make('complement'),
+                    TextInput::make('complement')
+                        ->columnSpan(2),
 
-                TextInput::make('postal_code'),
+                    TextInput::make('postal_code'),
+
+                ])->columns(8),
+
+
+
 
                 TextInput::make('latitude'),
 
