@@ -46,5 +46,9 @@
     "Neighborhood": "Bairro",
     "Number": "Número",
     "Complement": "Complemento",
-    "Postal Code": "CEP"
+    "Postal Code": "CEP",
+    "Price Notification": "Notificação de Preço",
+    "Created At": "Criado em",
+    "Change Percent": "Variação (%)",
+    "Price History": "Histórico de Preço"
 }
