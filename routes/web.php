@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::view('/', 'welcome');
+Route::redirect('/', '/app/login');
 
 // Route::get('/', App\Filament\Pages\Calculator::class)
 //     ->name('calculator');

@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Property\DTOs\PropertyDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MonitoredProperty extends Model
@@ -35,17 +38,22 @@ class MonitoredProperty extends Model
         'longitude' => 'decimal:6',
     ];
 
-    public function platform()
+    public function platform(): BelongsTo
     {
         return $this->belongsTo(MonitoredPlatform::class, 'monitored_platform_id', 'id');
     }
 
-    public function syncs()
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_property', 'monitored_property_id', 'user_id');
+    }
+
+    public function syncs(): HasMany
     {
         return $this->hasMany(MonitoredSync::class, 'monitored_property_id', 'id');
     }
 
-    public function priceDatas()
+    public function priceDatas(): HasMany
     {
         return $this->hasMany(MonitoredData::class, 'monitored_property_id', 'id');
     }

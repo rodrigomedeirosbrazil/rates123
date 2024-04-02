@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -21,32 +22,17 @@ class User extends Authenticatable implements FilamentUser
     use HasRoles;
     use HasPanelShield;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -68,5 +54,10 @@ class User extends Authenticatable implements FilamentUser
     public function getRoleNamesAttribute(): string
     {
         return $this->roles->pluck('name')->join(',');
+    }
+
+    public function properties(): BelongsToMany
+    {
+        return $this->belongsToMany(MonitoredProperty::class, 'user_property', 'user_id', 'monitored_property_id');
     }
 }

@@ -5,7 +5,6 @@ namespace App\Filament\Shared\Resources;
 use App\Filament\Shared\Resources\PriceNotificationResource\Pages;
 use App\Models\MonitoredData;
 use App\Models\PriceNotification;
-use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
@@ -14,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -33,32 +33,42 @@ class PriceNotificationResource extends Resource
             ->schema([
                 Grid::make([])->schema([
                     Placeholder::make('Property')
+                        ->label(__('Property'))
                         ->content(fn ($record) => $record->monitoredProperty->name),
-                    Forms\Components\TextInput::make('type'),
+
+                    TextInput::make('type')
+                        ->label(__('Type'))
+                        ->formatStateUsing(fn ($state): string => __($state)),
                 ])->columns(2),
 
                 Grid::make([])->schema([
                     TextInput::make('checkin')
+                        ->label(__('Checkin'))
                         ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
                     TextInput::make('created_at')
+                        ->label(__('Created At'))
                         ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
                 ])->columns(2),
 
                 Grid::make([])->schema([
                     TextInput::make('before')
+                        ->label(__('Before'))
                         ->prefix('$'),
 
                     TextInput::make('after')
+                        ->label(__('After'))
                         ->prefix('$'),
 
                     TextInput::make('change_percent')
+                        ->label(__('Change Percent'))
                         ->suffix('%'),
                 ])->columns(3),
 
                 Placeholder::make('Price History')
+                    ->label(__('Price History'))
                     ->content(function (?Model $record) {
                         if (! $record) {
-                            return 'No record';
+                            return __('No record');
                         }
 
                         return new HtmlString(MonitoredData::query()
@@ -81,19 +91,32 @@ class PriceNotificationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('monitoredProperty.name')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->searchable(isIndividual: true, isGlobal: false)
+                TextColumn::make('monitoredProperty.name')
+                    ->label(__('Property'))
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('change_percent'),
-                Tables\Columns\TextColumn::make('before'),
-                Tables\Columns\TextColumn::make('after'),
-                Tables\Columns\TextColumn::make('checkin')
+                TextColumn::make('type')
+                    ->label(__('Type'))
+                    ->searchable(isIndividual: true, isGlobal: false)
+                    ->formatStateUsing(fn ($state): string => __($state->value))
+                    ->sortable(),
+
+                TextColumn::make('change_percent')
+                    ->label(__('Change Percent')),
+
+                TextColumn::make('before')
+                    ->label(__('Before')),
+
+                TextColumn::make('after')
+                    ->label(__('After')),
+
+                TextColumn::make('checkin')
+                    ->label(__('Checkin'))
                     ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+
+                TextColumn::make('created_at')
+                    ->label(__('Created At'))
                     ->dateTime()
                     ->sortable(),
             ])
@@ -103,7 +126,7 @@ class PriceNotificationResource extends Resource
                 Filter::make('monitored_property_id')
                     ->form([
                         Select::make('monitored_property_id')
-                            ->label('Property')
+                            ->label(__('Property'))
                             ->searchable(['name'])
                             ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
                     ])
@@ -116,6 +139,7 @@ class PriceNotificationResource extends Resource
                     ),
 
                 Filter::make('checkin')
+                    ->label(__('Checkin'))
                     ->form([
                         DatePicker::make('checkin'),
                     ])
@@ -141,5 +165,10 @@ class PriceNotificationResource extends Resource
         return [
             'index' => Pages\ManagePriceNotifications::route('/'),
         ];
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('Price Notification');
     }
 }
