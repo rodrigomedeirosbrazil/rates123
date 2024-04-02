@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -110,10 +111,17 @@ class MonitoredPropertyResource extends Resource
             ->columns([
                 TextColumn::make('id')
                     ->searchable(),
+
                 TextColumn::make('name')
                     ->searchable(),
+
                 TextColumn::make('platform.name')
                     ->sortable(),
+
+                ToggleColumn::make('users')
+                    ->label(__('Notify'))
+                    ->disabled(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
