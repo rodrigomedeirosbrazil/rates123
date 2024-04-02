@@ -9,7 +9,6 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -29,22 +28,6 @@ class MonitoredPropertyResource extends Resource
     {
         return $form
             ->schema([
-                Toggle::make('follow')
-                    ->label(__('Follow'))
-                    ->afterStateHydrated(function ($component, $record) {
-                        $component->state(
-                            $record->users()->where('user_id', auth()->id())->exists()
-                        );
-                    })
-                    ->afterStateUpdated(function (?string $state, ?string $old, $record) {
-                        if ($state === '1') {
-                            $record->users()->attach(auth()->id());
-                        } else {
-                            $record->users()->detach(auth()->id());
-                        }
-                    }),
-
-
                 Grid::make()->schema([
                     TextInput::make('name')
                         ->label(__('Name'))
