@@ -33,5 +33,18 @@
     "price-available": "Preço disponível",
     "Before": "Antes",
     "After": "Depois",
-    "Change": "Variação"
+    "Change": "Variação",
+    "Follow": "Seguir",
+    "Unfollow": "Deixar de seguir",
+    "Platform": "Plataforma",
+    "Name": "Nome",
+    "Country": "País",
+    "City": "Cidade",
+    "Address": "Endereço",
+    "Phone": "Telefone",
+    "State": "Estado",
+    "Neighborhood": "Bairro",
+    "Number": "Número",
+    "Complement": "Complemento",
+    "Postal Code": "CEP"
 }
