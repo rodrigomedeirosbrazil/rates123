@@ -48,6 +48,11 @@ class MonitoredProperty extends Model
         return $this->belongsToMany(User::class, 'user_property', 'monitored_property_id', 'user_id');
     }
 
+    public function followByUser(User $user): bool
+    {
+        return $this->users()->where('user_id', $user->id)->exists();
+    }
+
     public function syncs(): HasMany
     {
         return $this->hasMany(MonitoredSync::class, 'monitored_property_id', 'id');

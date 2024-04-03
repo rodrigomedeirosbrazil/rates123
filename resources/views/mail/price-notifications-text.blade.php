@@ -1,8 +1,12 @@
 {{__('Hi')}} {{ $user->name }},
 
-{{__("These are today/'s price notifications")}}
+@if ($priceNotificationsTextTable === null)
+{{__('No price notifications today')}}.
+@else
+{{__("These are today/'s price notifications")}}:
 
 {{$priceNotificationsTextTable}}
+@endif
 
 {{__('Thanks')}},
-{{__('Rates123')}}
+{{__('Rates123')}}.

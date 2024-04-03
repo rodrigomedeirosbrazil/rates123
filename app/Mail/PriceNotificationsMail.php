@@ -15,7 +15,7 @@ class PriceNotificationsMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $priceNotificationsTextTable;
+    public ?string $priceNotificationsTextTable;
 
     public function __construct(
         public User $user
@@ -43,14 +43,19 @@ class PriceNotificationsMail extends Mailable
         return [];
     }
 
-    // Mudar de tabelas e linhas para cards
-    public function buildPriceNotificationsTextTable(): string
+    public function buildPriceNotificationsTextTable(): ?string
     {
+        $followedPropertyIds = $this->user->properties->pluck('id');
+
         $priceNotifications = PriceNotification::query()
             ->whereDate('created_at', now())
+            ->whereIn('monitored_property_id', $followedPropertyIds)
             ->orderBy('checkin', 'asc')
             ->get();
 
+        if ($priceNotifications->isEmpty()) {
+            return null;
+        }
 
         return $priceNotifications->map(
             fn (PriceNotification $priceNotification) => [
