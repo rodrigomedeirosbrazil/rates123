@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource
 {
@@ -72,6 +73,7 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
+                Impersonate::make(),
                 Tables\Actions\EditAction::make(),
             ]);
     }
