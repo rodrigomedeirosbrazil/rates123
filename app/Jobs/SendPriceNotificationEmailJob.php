@@ -17,14 +17,13 @@ class SendPriceNotificationEmailJob implements ShouldQueue
 
     public $tries = 1;
 
-    public function __construct()
+    public function __construct(public int $userId)
     {
     }
 
     public function handle(): void
     {
-        User::whereNotNull('email')->get()->each(function (User $user) {
-            Mail::to($user)->send(new PriceNotificationsMail($user));
-        });
+        $user = User::find($this->userId);
+        Mail::to($user)->send(new PriceNotificationsMail($user));
     }
 }
