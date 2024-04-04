@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Managers\PriceManager;
 use App\Models\PriceNotification;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -45,13 +46,7 @@ class PriceNotificationsMail extends Mailable
 
     public function buildPriceNotificationsTextTable(): ?string
     {
-        $followedPropertyIds = $this->user->properties->pluck('id');
-
-        $priceNotifications = PriceNotification::query()
-            ->whereDate('created_at', now())
-            ->whereIn('monitored_property_id', $followedPropertyIds)
-            ->orderBy('checkin', 'asc')
-            ->get();
+        $priceNotifications = (new PriceManager())->getUserPriceNotifications($this->user, now());
 
         if ($priceNotifications->isEmpty()) {
             return null;
