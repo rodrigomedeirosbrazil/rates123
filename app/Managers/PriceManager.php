@@ -31,7 +31,7 @@ class PriceManager
             ->mode('price')[0];
     }
 
-    public function getUserPriceNotifications(int | User $user, CarbonInterface $createdAt = null): Collection
+    public function getUserPriceNotificationsByCreatedAt(int | User $user, CarbonInterface $createdAt = null): Collection
     {
         if (is_int($user)) {
             $userModel = User::findOrFail($user);
@@ -40,6 +40,10 @@ class PriceManager
         }
 
         $followedPropertyIds = $userModel->properties->pluck('id');
+
+        if ($followedPropertyIds->isEmpty()) {
+            return collect();
+        }
 
         $searchDate = $createdAt ?? now();
 

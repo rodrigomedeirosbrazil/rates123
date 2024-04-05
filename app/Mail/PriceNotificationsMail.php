@@ -46,7 +46,7 @@ class PriceNotificationsMail extends Mailable
 
     public function buildPriceNotificationsTextTable(): ?string
     {
-        $priceNotifications = (new PriceManager())->getUserPriceNotifications($this->user, now());
+        $priceNotifications = (new PriceManager())->getUserPriceNotificationsByCreatedAt($this->user, today());
 
         if ($priceNotifications->isEmpty()) {
             return null;
