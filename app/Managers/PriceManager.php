@@ -2,6 +2,7 @@
 
 namespace App\Managers;
 
+use App\Enums\PriceNotificationTypeEnum;
 use App\Models\MonitoredData;
 use App\Models\MonitoredProperty;
 use App\Models\PriceNotification;
@@ -73,7 +74,7 @@ class PriceManager
         return ($price - $propertyModePrice) / $propertyModePrice * 100;
     }
 
-    public function buildPriceNotificationsList(User $user, CarbonInterface $date = null): Collection
+    public function buildPriceNotificationsTextList(User $user, CarbonInterface $date = null): ?string
     {
         $priceNotifications = $this->getUserPriceNotificationsByCreatedAt($user, $date ?? today());
 
@@ -82,36 +83,26 @@ class PriceManager
         }
 
         return $priceNotifications->map(
-            fn (PriceNotification $priceNotification) => (object) [
-                ...$priceNotification->toArray(),
-                'variation_mean_price' => $this->getVariationPercentageByModePrice(
-                    $priceNotification->monitored_property_id,
-                    $priceNotification->after
-                ),
-            ]
-        );
-    }
+            function (PriceNotification $priceNotification) {
+                $basicInfo = [
+                    __('Checkin') . ': ' . $priceNotification->checkin->translatedFormat('l, d F y') . PHP_EOL,
+                    __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
+                    __('Property') . ': ' . $priceNotification->monitoredProperty->name . PHP_EOL,
+                    __('Before') . ": \${$priceNotification->before}" . PHP_EOL,
+                    __('After') . ": \${$priceNotification->after}" . PHP_EOL,
+                ];
 
-    public function buildPriceNotificationsTextList(User $user, CarbonInterface $date = null): ?string
-    {
-        $priceNotifications = $this->buildPriceNotificationsList($user, $date ?? today());
+                $variations = $priceNotification->type === PriceNotificationTypeEnum::PriceUp
+                    || $priceNotification->type === PriceNotificationTypeEnum::PriceDown
+                    ? [
+                        __('Variation') . ': ' . number_format($priceNotification->variation, 2) . '%' . PHP_EOL,
+                        __('Avg Variation') . ': ' . number_format($priceNotification->averageVariation, 2) . '%' . PHP_EOL,
+                    ]
+                    : [];
 
-        return $priceNotifications->map(
-            fn (PriceNotification $priceNotification) => [
-                __('Checkin') . ': ' . $priceNotification->checkin->translatedFormat('l, d F y') . PHP_EOL,
-                __('Property') . ': ' . $priceNotification->monitoredProperty->name . PHP_EOL,
-                __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
-                __('Before') . ": \${$priceNotification->before}" . PHP_EOL,
-                __('After') . ": \${$priceNotification->after}" . PHP_EOL,
-                __('Change') . ": {$priceNotification->variation}%" . PHP_EOL,
-                __('Variation Mean Price') . ': '
-                    . number_format($this->getVariationPercentageByModePrice(
-                        $priceNotification->monitored_property_id,
-                        $priceNotification->after
-                    ), 2)
-                    . '%' . PHP_EOL,
-                PHP_EOL,
-            ]
-        )->flatten()->implode('');
+                return array_merge($basicInfo, $variations, [PHP_EOL]);
+            }
+        )
+            ->flatten()->implode('');
     }
 }
