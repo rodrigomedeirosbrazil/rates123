@@ -59,8 +59,12 @@ class PriceNotificationResource extends Resource
                         ->label(__('After'))
                         ->prefix('$'),
 
-                    TextInput::make('change_percent')
-                        ->label(__('Change Percent'))
+                    TextInput::make('variation')
+                        ->label(__('Variation'))
+                        ->suffix('%'),
+
+                    TextInput::make('average_variation')
+                        ->label(__('Avg Variation'))
                         ->suffix('%'),
                 ])->columns(3),
 
@@ -101,8 +105,11 @@ class PriceNotificationResource extends Resource
                     ->formatStateUsing(fn ($state): string => __($state->value))
                     ->sortable(),
 
-                TextColumn::make('change_percent')
-                    ->label(__('Change Percent')),
+                TextColumn::make('variation')
+                    ->label(__('Variation')),
+
+                TextColumn::make('average_variation')
+                    ->label(__('Avg Variation')),
 
                 TextColumn::make('before')
                     ->label(__('Before')),
