@@ -22,6 +22,7 @@ class MonitoredData extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'checkin' => 'date',
+        'available' => 'boolean',
         'extra' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

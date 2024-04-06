@@ -73,6 +73,7 @@ class MonitoredDataResource extends Resource
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
+                    ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),
             ])
             ->searchOnBlur()

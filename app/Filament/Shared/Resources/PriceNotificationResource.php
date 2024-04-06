@@ -59,10 +59,19 @@ class PriceNotificationResource extends Resource
                         ->label(__('After'))
                         ->prefix('$'),
 
-                    TextInput::make('change_percent')
-                        ->label(__('Change Percent'))
-                        ->suffix('%'),
-                ])->columns(3),
+                    Placeholder::make('averagePrice')
+                        ->label(__('Avg Price'))
+                        ->content(fn ($record) => '$' . number_format($record->average_price, 2)),
+
+                    Placeholder::make('Variation')
+                        ->label(__('Variation'))
+                        ->content(fn ($record) => number_format($record->variation, 2) . '%'),
+
+                    Placeholder::make('averageVariation')
+                        ->label(__('Avg Variation'))
+                        ->content(fn ($record) => number_format($record->averageVariation, 2) . '%'),
+
+                ])->columns(5),
 
                 Placeholder::make('Price History')
                     ->label(__('Price History'))
@@ -101,14 +110,27 @@ class PriceNotificationResource extends Resource
                     ->formatStateUsing(fn ($state): string => __($state->value))
                     ->sortable(),
 
-                TextColumn::make('change_percent')
-                    ->label(__('Change Percent')),
+                TextColumn::make('variation')
+                    ->formatStateUsing(fn ($state): float => number_format($state, 2))
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('Variation') . ' (%)'),
+
+                TextColumn::make('averageVariation')
+                    ->formatStateUsing(fn ($state): float => number_format($state, 2))
+                    ->label(__('Avg Variation') . ' (%)'),
 
                 TextColumn::make('before')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label(__('Before')),
 
                 TextColumn::make('after')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label(__('After')),
+
+                TextColumn::make('average_price')
+                    ->formatStateUsing(fn ($state): float => number_format($state, 2))
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label(__('Avg Price') . ' (%)'),
 
                 TextColumn::make('checkin')
                     ->label(__('Checkin'))

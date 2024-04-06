@@ -64,7 +64,7 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceAvailable,
                 'before' => 0,
                 'after' => $prices[0]->price,
-                'change_percent' => 0,
+                'average_price' => 0,
             ]);
 
             return;
@@ -80,7 +80,7 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceUnavailable,
                 'before' => $prices[1]->price,
                 'after' => 0,
-                'change_percent' => 0,
+                'average_price' => 0,
             ]);
 
             return;
@@ -93,8 +93,8 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceUp,
                 'before' => $prices[1]->price,
                 'after' => $prices[0]->price,
-                'change_percent' => number_format(
-                    (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
+                'average_price' => number_format(
+                    (new PriceManager())->calculatePropertyModePrice($propertyId),
                     2
                 ),
             ]);
@@ -109,8 +109,8 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceDown,
                 'before' => $prices[1]->price,
                 'after' => $prices[0]->price,
-                'change_percent' => number_format(
-                    (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
+                'average_price' => number_format(
+                    (new PriceManager())->calculatePropertyModePrice($propertyId),
                     2
                 ),
             ]);
