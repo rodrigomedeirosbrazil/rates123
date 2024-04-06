@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\PriceNotificationTypeEnum;
 use App\Managers\PriceManager;
 use App\Models\PriceNotification;
 use Illuminate\Database\Migrations\Migration;
@@ -11,11 +10,11 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('price_notifications', function (Blueprint $table) {
-            $table->decimal('average_variation', 10, 2)->after('change_percent')->nullable();
+            $table->decimal('average_price', 10, 2)->nullable();
         });
 
         Schema::table('price_notifications', function (Blueprint $table) {
-            $table->renameColumn('change_percent', 'variation');
+            $table->dropColumn('change_percent');
         });
 
         $priceManager = new PriceManager();
@@ -24,14 +23,7 @@ return new class () extends Migration {
             ->orderBy('created_at', 'asc')
             ->cursor()
             ->each(function ($price) use ($priceManager) {
-                $price->average_variation = $price->type === PriceNotificationTypeEnum::PriceUp
-                    || $price->type === PriceNotificationTypeEnum::PriceDown
-                    ? number_format($priceManager->getVariationPercentageByModePrice(
-                        $price->monitored_property_id,
-                        $price->after
-                    ), 2)
-                    : 0;
-
+                $price->average_price = $priceManager->calculatePropertyModePrice($price->monitored_property_id);
                 $price->save();
             });
     }
@@ -39,7 +31,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('price_notifications', function (Blueprint $table) {
-            $table->dropColumn('average_variation');
+            $table->dropColumn('average_price');
         });
     }
 };

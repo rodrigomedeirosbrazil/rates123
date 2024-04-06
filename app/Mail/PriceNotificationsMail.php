@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Managers\PriceManager;
-use App\Models\PriceNotification;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -21,7 +20,7 @@ class PriceNotificationsMail extends Mailable
     public function __construct(
         public User $user
     ) {
-        $this->priceNotificationsTextTable = $this->buildPriceNotificationsTextTable();
+        $this->priceNotificationsTextTable = (new PriceManager())->buildPriceNotificationsTextList($user);
     }
 
     public function envelope(): Envelope
@@ -42,26 +41,5 @@ class PriceNotificationsMail extends Mailable
     public function attachments(): array
     {
         return [];
-    }
-
-    public function buildPriceNotificationsTextTable(): ?string
-    {
-        $priceNotifications = (new PriceManager())->getUserPriceNotificationsByCreatedAt($this->user, today());
-
-        if ($priceNotifications->isEmpty()) {
-            return null;
-        }
-
-        return $priceNotifications->map(
-            fn (PriceNotification $priceNotification) => [
-                __('Checkin') . ': ' . $priceNotification->checkin->translatedFormat('l, d F y') . PHP_EOL,
-                __('Property') . ': ' . $priceNotification->monitoredProperty->name . PHP_EOL,
-                __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
-                __('Before') . ': $' . __($priceNotification->before) . PHP_EOL,
-                __('After') . ': $' . __($priceNotification->after) . PHP_EOL,
-                __('Change') . ': ' . __($priceNotification->change_percent) . '%' . PHP_EOL,
-                PHP_EOL,
-            ]
-        )->flatten()->implode('');
     }
 }
