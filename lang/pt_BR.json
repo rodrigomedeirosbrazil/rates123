@@ -1,6 +1,7 @@
 {
     "Address": "Endereço",
     "After": "Depois",
+    "Avg Variation": "Variação Média",
     "Bad weather rate (%)": "Taxa de mau tempo (%)",
     "Before": "Antes",
     "Calculate": "Calcular",
@@ -50,6 +51,8 @@
     "These are today/'s price notifications" : "Essas são as notificações de preço de hoje",
     "Type": "Tipo",
     "Unfollow": "Deixar de seguir",
+    "Variation": "Variação",
+    "Variation Mean Price": "Variação do Preço Médio",
     "Weather": "Clima",
     "Weekend rate (%)": "Taxa de fim de semana (%)",
     "Weekends": "Finais de semana"
