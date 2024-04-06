@@ -16,7 +16,8 @@ class PriceNotification extends Model
         'monitored_property_id',
         'checkin',
         'type',
-        'change_percent',
+        'variation',
+        'average_variation',
         'before',
         'after',
     ];
@@ -26,7 +27,8 @@ class PriceNotification extends Model
         'checkin' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'change_percent' => 'decimal:2',
+        'variation' => 'decimal:2',
+        'average_variation' => 'decimal:2',
         'before' => 'decimal:2',
         'after' => 'decimal:2',
     ];
