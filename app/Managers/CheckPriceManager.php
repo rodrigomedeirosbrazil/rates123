@@ -64,7 +64,8 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceAvailable,
                 'before' => 0,
                 'after' => $prices[0]->price,
-                'change_percent' => 0,
+                'variation' => 0,
+                'average_variation' => 0,
             ]);
 
             return;
@@ -80,7 +81,8 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceUnavailable,
                 'before' => $prices[1]->price,
                 'after' => 0,
-                'change_percent' => 0,
+                'variation' => 0,
+                'average_variation' => 0,
             ]);
 
             return;
@@ -93,10 +95,14 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceUp,
                 'before' => $prices[1]->price,
                 'after' => $prices[0]->price,
-                'change_percent' => number_format(
+                'variation' => number_format(
                     (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
                     2
                 ),
+                'average_variation' => number_format((new PriceManager())->getVariationPercentageByModePrice(
+                    $propertyId,
+                    $prices[0]->price
+                ), 2),
             ]);
 
             return;
@@ -109,10 +115,14 @@ class CheckPriceManager
                 'type' => PriceNotificationTypeEnum::PriceDown,
                 'before' => $prices[1]->price,
                 'after' => $prices[0]->price,
-                'change_percent' => number_format(
+                'variation' => number_format(
                     (($prices[0]->price - $prices[1]->price) / $prices[1]->price) * 100,
                     2
                 ),
+                'average_variation' => number_format((new PriceManager())->getVariationPercentageByModePrice(
+                    $propertyId,
+                    $prices[0]->price
+                ), 2),
             ]);
 
             return;
