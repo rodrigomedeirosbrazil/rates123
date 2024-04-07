@@ -105,4 +105,34 @@ class PriceManager
         )
             ->flatten()->implode('');
     }
+
+    public function createPriceSuggestion(int | User $user, CarbonInterface $checkin): float
+    {
+        if (is_int($user)) {
+            $userModel = User::findOrFail($user);
+        } else {
+            $userModel = $user;
+        }
+
+        $followedPropertyIds = $userModel->properties->pluck('id');
+
+        if ($followedPropertyIds->isEmpty()) {
+            return collect();
+        }
+
+        $prices = PriceNotification::query()
+            ->whereIn('monitored_property_id', $followedPropertyIds)
+            ->whereDate('checkin', $checkin)
+            ->whereIn('type', [PriceNotificationTypeEnum::PriceUp, PriceNotificationTypeEnum::PriceDown])
+            ->where('created_at', '>=', now()->subDays(7))
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->pluck('averageVariation');
+
+        if ($prices->isEmpty()) {
+            return 0;
+        }
+
+        return $prices->median();
+    }
 }
