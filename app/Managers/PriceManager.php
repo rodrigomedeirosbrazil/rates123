@@ -79,7 +79,7 @@ class PriceManager
         $priceNotifications = $this->getUserPriceNotificationsByCreatedAt($user, $date ?? today());
 
         if ($priceNotifications->isEmpty()) {
-            return collect();
+            return null;
         }
 
         return $priceNotifications->map(
