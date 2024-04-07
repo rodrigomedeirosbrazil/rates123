@@ -30,7 +30,11 @@ COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./php.ini /usr/local/etc/php/php.ini
 COPY ./laravel.logrotate /etc/logrotate.d/laravel
 
-#change ownership of our applications
+RUN mkdir -p /var/www/storage/logs
+RUN mkdir -p /var/www/database
+RUN touch /var/www/database/database.sqlite
+
+#change ownership of application
 RUN chown -R www-data:www-data $APP_HOME
 
 COPY ./docker-entrypoint.sh /
