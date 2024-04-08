@@ -15,12 +15,23 @@ class PriceNotificationsMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public ?string $priceSuggestionsTextTable;
     public ?string $priceNotificationsTextTable;
 
     public function __construct(
         public User $user
     ) {
-        $this->priceNotificationsTextTable = (new PriceManager())->buildPriceNotificationsTextList($user);
+        $priceManager = new PriceManager();
+        $priceNotifications = $priceManager->getUserPriceNotificationsByCreatedAt($user);
+
+        $this->priceSuggestionsTextTable = (new PriceManager())->buildPriceSuggestionsTextList(
+            $priceNotifications,
+            $user
+        );
+
+        $this->priceNotificationsTextTable = (new PriceManager())->buildPriceNotificationsTextList(
+            $priceNotifications
+        );
     }
 
     public function envelope(): Envelope

@@ -74,10 +74,8 @@ class PriceManager
         return ($price - $propertyModePrice) / $propertyModePrice * 100;
     }
 
-    public function buildPriceNotificationsTextList(User $user, CarbonInterface $date = null): ?string
+    public function buildPriceNotificationsTextList(Collection $priceNotifications): ?string
     {
-        $priceNotifications = $this->getUserPriceNotificationsByCreatedAt($user, $date ?? today());
-
         if ($priceNotifications->isEmpty()) {
             return null;
         }
@@ -104,5 +102,62 @@ class PriceManager
             }
         )
             ->flatten()->implode('');
+    }
+
+    public function buildPriceSuggestionsTextList(
+        Collection $priceNotifications,
+        User $user
+    ): ?string {
+        if ($priceNotifications->isEmpty()) {
+            return null;
+        }
+
+        return $priceNotifications
+            ->groupBy('checkin')
+            ->map(fn ($checkinGroup) => $checkinGroup->first())
+            ->map(
+                function (PriceNotification $priceNotification) use ($user) {
+                    $priceSuggestion = $this->createPriceSuggestionForDate(
+                        $user,
+                        $priceNotification->checkin
+                    );
+
+                    return $priceNotification->checkin->translatedFormat('l, d F y')
+                        . ': '
+                        . number_format($priceSuggestion, 0) . '%'
+                        . PHP_EOL;
+                }
+            )
+            ->flatten()->implode('');
+    }
+
+    public function createPriceSuggestionForDate(int | User $user, CarbonInterface $checkin): float
+    {
+        if (is_int($user)) {
+            $userModel = User::findOrFail($user);
+        } else {
+            $userModel = $user;
+        }
+
+        $followedPropertyIds = $userModel->properties->pluck('id');
+
+        if ($followedPropertyIds->isEmpty()) {
+            return collect();
+        }
+
+        $prices = PriceNotification::query()
+            ->whereIn('monitored_property_id', $followedPropertyIds)
+            ->whereDate('checkin', $checkin)
+            ->whereIn('type', [PriceNotificationTypeEnum::PriceUp, PriceNotificationTypeEnum::PriceDown])
+            ->where('created_at', '>=', now()->subDays(7))
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->pluck('averageVariation');
+
+        if ($prices->isEmpty()) {
+            return 0;
+        }
+
+        return $prices->median();
     }
 }
