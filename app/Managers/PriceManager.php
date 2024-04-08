@@ -74,10 +74,8 @@ class PriceManager
         return ($price - $propertyModePrice) / $propertyModePrice * 100;
     }
 
-    public function buildPriceNotificationsTextList(User $user, CarbonInterface $date = null): ?string
+    public function buildPriceNotificationsTextList(Collection $priceNotifications): ?string
     {
-        $priceNotifications = $this->getUserPriceNotificationsByCreatedAt($user, $date ?? today());
-
         if ($priceNotifications->isEmpty()) {
             return null;
         }
@@ -106,7 +104,34 @@ class PriceManager
             ->flatten()->implode('');
     }
 
-    public function createPriceSuggestion(int | User $user, CarbonInterface $checkin): float
+    public function buildPriceSuggestionsTextList(
+        Collection $priceNotifications,
+        User $user
+    ): ?string {
+        if ($priceNotifications->isEmpty()) {
+            return null;
+        }
+
+        return $priceNotifications
+            ->groupBy('checkin')
+            ->map(fn ($checkinGroup) => $checkinGroup->first())
+            ->map(
+                function (PriceNotification $priceNotification) use ($user) {
+                    $priceSuggestion = $this->createPriceSuggestionForDate(
+                        $user,
+                        $priceNotification->checkin
+                    );
+
+                    return $priceNotification->checkin->translatedFormat('l, d F y')
+                        . ': '
+                        . number_format($priceSuggestion, 0) . '%'
+                        . PHP_EOL;
+                }
+            )
+            ->flatten()->implode('');
+    }
+
+    public function createPriceSuggestionForDate(int | User $user, CarbonInterface $checkin): float
     {
         if (is_int($user)) {
             $userModel = User::findOrFail($user);
