@@ -2,6 +2,7 @@
 
 namespace App\Filament\Shared\Resources\CalendarResource\Widgets;
 
+use App\Models\DateEvent;
 use App\Models\MonitoredData;
 use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
@@ -37,7 +38,23 @@ class CalendarWidget extends FullCalendarWidget
             return [];
         }
 
-        return $this->getEloquentQuery()
+        $events = DateEvent::query()
+            ->where('begin', '>=', $fetchInfo['start'])
+            ->where('end', '<=', $fetchInfo['end'])
+            ->get()
+            ->map(
+                fn (DateEvent $dateEvent) => EventData::make()
+                    ->id($dateEvent->id)
+                    ->title($dateEvent->name)
+                    ->start($dateEvent->begin)
+                    ->end($dateEvent->end)
+                    ->backgroundColor('#9065C7')
+                    ->borderColor('#9065C7')
+                    ->allDay(true)
+            )
+            ->values();
+
+        $prices = $this->getEloquentQuery()
             ->when(
                 $this->getFilter('monitored_property_id'),
                 fn ($query) => $query->where('monitored_property_id', $this->getFilter('monitored_property_id'))
@@ -55,8 +72,9 @@ class CalendarWidget extends FullCalendarWidget
                     ->end($monitoredData->checkin)
                     ->allDay(true)
             )
-            ->values()
-            ->toArray();
+            ->values();
+
+        return $events->merge($prices)->toArray();
     }
 
     protected function getFilter(string $key, mixed $default = null): mixed
