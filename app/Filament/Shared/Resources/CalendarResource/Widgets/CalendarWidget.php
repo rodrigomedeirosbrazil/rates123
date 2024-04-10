@@ -3,11 +3,16 @@
 namespace App\Filament\Shared\Resources\CalendarResource\Widgets;
 
 use App\Models\MonitoredData;
+use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 use Livewire\Attributes\On;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Illuminate\Support\Number;
+use Filament\Infolists\Components\Grid as InfolistGrid;
+use Filament\Infolists\Components\Section as InfolistSection;
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
 
 class CalendarWidget extends FullCalendarWidget
 {
@@ -39,8 +44,9 @@ class CalendarWidget extends FullCalendarWidget
             )
             ->where('checkin', '>=', $fetchInfo['start'])
             ->where('checkin', '<=', $fetchInfo['end'])
-            ->groupBy('checkin')
             ->get()
+            ->groupBy('checkin')
+            ->map(fn ($group) => $group->sortByDesc('created_at')->groupBy('price')->slice(0, 4)->map(fn ($group) => $group->first()))->flatten(1)
             ->map(
                 fn (MonitoredData $monitoredData) => EventData::make()
                     ->id($monitoredData->id)
@@ -49,6 +55,7 @@ class CalendarWidget extends FullCalendarWidget
                     ->end($monitoredData->checkin)
                     ->allDay(true)
             )
+            ->values()
             ->toArray();
     }
 
@@ -60,5 +67,66 @@ class CalendarWidget extends FullCalendarWidget
     protected function headerActions(): array
     {
         return [];
+    }
+
+    protected function viewAction(): Action
+    {
+        return parent::viewAction()
+            ->modalHeading(__('Details'))
+            ->infolist([
+                InfolistGrid::make([])->schema([
+                    InfolistSection::make([
+                        InfolistGrid::make([])->schema([
+                            TextEntry::make('id')
+                                ->label(__('ID')),
+
+                            TextEntry::make('price')
+                                ->label(__('Price'))
+                                ->formatStateUsing(fn ($state): string => Number::currency($state)),
+
+                            TextEntry::make('checkin')
+                                ->label(__('Checkin'))
+                                ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
+
+                            TextEntry::make('created_at')
+                                ->label(__('Created At'))
+                                ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state)),
+
+                            TextEntry::make('available')
+                                ->label(__('Available'))
+                                ->formatStateUsing(fn (string $state): string => $state ? __('Yes') : __('No')),
+
+                        ])
+                            ->columns(5),
+                    ])
+                        ->collapsible(),
+
+                    InfolistSection::make([
+                        InfolistGrid::make([])->schema([
+                            TextEntry::make('id')
+                                ->label('')
+                                ->formatStateUsing(
+                                    fn ($record): HtmlString => new HtmlString(
+                                        MonitoredData::where('checkin', $record->checkin)
+                                            ->where('monitored_property_id', $record->monitored_property_id)
+                                            ->groupBy('price')
+                                            ->orderBy('created_at', 'desc')
+                                            ->limit(10)
+                                            ->get()
+                                            ->map(
+                                                fn ($monitoredData) => format_date_with_weekday($monitoredData->created_at)
+                                                . ': '
+                                                . Number::currency($monitoredData->price),
+                                            )
+                                            ->join('<br>')
+                                    )
+                                ),
+                        ])
+                            ->columns(1),
+                    ])
+                        ->description(__('Price History')),
+                    // ->collapsed(),
+                ]),
+            ]);
     }
 }

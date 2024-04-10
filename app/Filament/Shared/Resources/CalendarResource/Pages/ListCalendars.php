@@ -35,7 +35,7 @@ class ListCalendars extends Page
     {
         return $form->schema([
             Fieldset::make()
-                ->label('Filters')
+                ->label(__('Filters'))
                 ->schema([
                     Grid::make()
                         ->schema([
@@ -48,6 +48,7 @@ class ListCalendars extends Page
                         ->columns(3),
                     Actions::make([
                         Actions\Action::make('apply_filters')
+                            ->label(__('Apply'))
                             ->button()
                             ->action(fn () => ! empty($form->validate()) && $this->refreshRecords()),
                     ]),
@@ -85,5 +86,10 @@ class ListCalendars extends Page
         return [
             CalendarWidget::class,
         ];
+    }
+
+    public function getTitle(): string
+    {
+        return __('Calendar');
     }
 }
