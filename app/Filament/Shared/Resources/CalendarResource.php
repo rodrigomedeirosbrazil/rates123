@@ -14,8 +14,6 @@ class CalendarResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-m-calendar-days';
 
-    protected static ?string $navigationGroup = 'Models';
-
     public static function canCreate(): bool
     {
         return false;
@@ -38,5 +36,10 @@ class CalendarResource extends Resource
         return [
             CalendarWidget::class,
         ];
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('Calendar');
     }
 }
