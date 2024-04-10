@@ -125,8 +125,12 @@ class CalendarWidget extends FullCalendarWidget
                             ->columns(1),
                     ])
                         ->description(__('Price History')),
-                    // ->collapsed(),
                 ]),
             ]);
+    }
+
+    protected function modalActions(): array
+    {
+        return [];
     }
 }
