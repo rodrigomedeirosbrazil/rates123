@@ -11,6 +11,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('app:monitore')->dailyAt('12:00');
         $schedule->command('app:send-prices')->dailyAt('15:00');
+        $schedule->command('property:capture-occupancy')->everyFourHours();
     }
 
     protected function commands(): void
