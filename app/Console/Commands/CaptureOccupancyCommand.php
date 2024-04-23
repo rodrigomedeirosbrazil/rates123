@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\MonitoredProperty;
 use App\Models\Occupancy;
 use App\Scraper\DTOs\OccupancyDTO;
 use App\Scraper\HitsScraper;
@@ -9,18 +10,35 @@ use Illuminate\Console\Command;
 
 class CaptureOccupancyCommand extends Command
 {
-    protected $signature = 'property:capture-occupancy';
+    protected $signature = 'property:capture-occupancy
+                            {propertyId : The property ID}';
+
     protected $description = 'Scrap and store occupancy data from a property';
 
     public function handle()
     {
-        $propertyId = 2;
+        $propertyId = $this->argument('propertyId');
+        $property = MonitoredProperty::find($propertyId);
+
+        if (! $property) {
+            $this->error("Couldn't find a property with ID {$propertyId}");
+
+            return 1;
+        }
+
+        if (! $property->hits_property_name) {
+            $this->error("Property name not available for property with ID {$propertyId}");
+
+            return 1;
+        }
+
         $hitsScraper = new HitsScraper();
 
         $startTimestamp = now();
 
         try {
             $occupancies = $hitsScraper->getOccupancies(
+                $property->hits_property_name,
                 now(),
                 now()->addMonths(6)->endOfMonth()
             );

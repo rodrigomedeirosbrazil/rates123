@@ -43,9 +43,9 @@ class OccupancyResource extends Resource
     {
         return $table
             ->columns([
-                // TextColumn::make('monitoredProperty.name')
-                //     ->label(__('Property'))
-                //     ->sortable(),
+                TextColumn::make('monitoredProperty.name')
+                    ->label(__('Property'))
+                    ->sortable(),
 
                 TextColumn::make('checkin')
                     ->label(__('Checkin'))
@@ -82,21 +82,20 @@ class OccupancyResource extends Resource
             ])
             ->searchOnBlur()
             ->filters([
-
-                // Filter::make('monitored_property_id')
-                //     ->form([
-                //         Select::make('monitored_property_id')
-                //             ->label(__('Property'))
-                //             ->searchable(['name'])
-                //             ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
-                //     ])
-                //     ->query(
-                //         fn (Builder $query, array $data): Builder => $query
-                //             ->when(
-                //                 $data['monitored_property_id'],
-                //                 fn (Builder $query, $value): Builder => $query->where('monitored_property_id', $value),
-                //             )
-                //     ),
+                Filter::make('monitored_property_id')
+                    ->form([
+                        Select::make('monitored_property_id')
+                            ->label(__('Property'))
+                            ->searchable(['name'])
+                            ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
+                    ])
+                    ->query(
+                        fn (Builder $query, array $data): Builder => $query
+                            ->when(
+                                $data['monitored_property_id'],
+                                fn (Builder $query, $value): Builder => $query->where('monitored_property_id', $value),
+                            )
+                    ),
 
                 Filter::make('checkin')
                     ->label(__('Checkin'))

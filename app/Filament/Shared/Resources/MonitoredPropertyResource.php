@@ -91,6 +91,9 @@ class MonitoredPropertyResource extends Resource
                 TextInput::make('longitude')
                     ->label(__('Longitude')),
 
+                TextInput::make('hits_property_name')
+                    ->label(__('Hits Property Name')),
+
                 Textarea::make('extra')
                     ->columnSpanFull(),
             ]);

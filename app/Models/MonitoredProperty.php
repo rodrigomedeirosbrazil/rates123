@@ -30,6 +30,7 @@ class MonitoredProperty extends Model
         'postal_code',
         'latitude',
         'longitude',
+        'hits_property_name',
     ];
 
     protected $casts = [
