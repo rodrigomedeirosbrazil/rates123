@@ -15,12 +15,13 @@ class HitsScraper
     public string $endpoint = '/hits/occupancy';
     public int $timeout = 500;
 
-    public function getOccupancies(CarbonInterface $from, CarbonInterface $to): Collection
+    public function getOccupancies(string $propertyName, CarbonInterface $from, CarbonInterface $to): Collection
     {
         $response = Http::timeout($this->timeout)
             ->get(
                 config('app.scrap.url') . $this->endpoint,
                 [
+                    'propertyName' => $propertyName,
                     'fromDate' => $from->toDateString(),
                     'toDate' => $to->toDateString(),
                 ]
