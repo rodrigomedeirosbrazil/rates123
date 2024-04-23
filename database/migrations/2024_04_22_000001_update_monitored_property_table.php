@@ -8,7 +8,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('monitored_properties', function (Blueprint $table) {
-            $table->dropColumn('hits_property_name')->nullable();
+            $table->string('hits_property_name')->nullable();
         });
     }
 
