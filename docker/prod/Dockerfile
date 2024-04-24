@@ -1,15 +1,5 @@
 FROM php:8.3.3-fpm
 
-ARG WWWGROUP
-
-ENV APP_HOME /var/www/
-
-WORKDIR $APP_HOME
-
-ENV TZ=UTC
-
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
 RUN apt-get update \
     && curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh \
     && bash nodesource_setup.sh \
@@ -17,7 +7,7 @@ RUN apt-get update \
     gettext libzip-dev libxml2-dev libpng-dev \
     nginx nano cron git unzip supervisor \
     certbot python3-certbot-nginx \
-    nodejs logrotate \
+    nodejs \
     && rm -r /var/lib/apt/lists/*
 
 RUN pecl install --force redis \
@@ -28,25 +18,24 @@ RUN docker-php-ext-install \
     zip calendar dom gd \
     intl pcntl bcmath
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+ENV APP_HOME /var/www/
 
-RUN groupadd --force -g $WWWGROUP laravel
-RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 laravel
+WORKDIR $APP_HOME
 
-COPY ./supervisord.conf /etc/supervisord.conf
-COPY ./nginx.conf /etc/nginx/nginx.conf
-COPY ./www.conf /usr/local/etc/php-fpm.d/www.conf
-COPY ./php.ini /usr/local/etc/php/php.ini
-COPY ./laravel.logrotate /etc/logrotate.d/laravel
+COPY . $APP_HOME
 
-RUN mkdir -p /var/www/storage/logs
-RUN mkdir -p /var/www/database
-RUN touch /var/www/database/database.sqlite
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer && composer install --no-dev
+
+COPY ./docker/prod/supervisord.conf /etc/supervisord.conf
+COPY ./docker/prod/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/prod/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY ./docker/prod/php.ini /usr/local/etc/php/php.ini
+COPY ./docker/prod/sites/* /etc/nginx/sites-available/
 
 #change ownership of application
 RUN chown -R www-data:www-data $APP_HOME
 
-COPY ./docker-entrypoint.sh /
+COPY ./docker/prod/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
 CMD ["/docker-entrypoint.sh"]

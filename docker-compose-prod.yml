@@ -1,8 +1,8 @@
 services:
     rates123:
         build:
-            context: ./docker/prod
-            dockerfile: Dockerfile
+            context: ./
+            dockerfile: ./docker/prod/Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
         extra_hosts:
@@ -13,9 +13,9 @@ services:
         environment:
             WWWUSER: '${WWWUSER}'
         volumes:
-            - '.:/var/www'
-            - './docker/prod/sites:/etc/nginx/sites-available'
+            - './database/database.sqlite:/var/www/database/database.sqlite'
             - './docker/prod/letsencrypt:/etc/letsencrypt'
+            - './storage:/var/www/storage'
         networks:
             - medeirostec-network
         depends_on:
