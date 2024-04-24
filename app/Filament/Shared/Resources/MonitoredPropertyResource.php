@@ -4,8 +4,10 @@ namespace App\Filament\Shared\Resources;
 
 use App\Enums\BrasilStatesEnum;
 use App\Filament\Shared\Resources\MonitoredPropertyResource\Pages;
+use App\Managers\PriceManager;
 use App\Models\MonitoredProperty;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -93,6 +95,13 @@ class MonitoredPropertyResource extends Resource
 
                 TextInput::make('hits_property_name')
                     ->label(__('Hits Property Name')),
+
+                Placeholder::make('modePrice')
+                    ->label(__('Avg Price'))
+                    ->content(fn ($record) => '$' . number_format(
+                        app(PriceManager::class)->calculatePropertyModePrice($record->id),
+                        2
+                    )),
 
                 Textarea::make('extra')
                     ->columnSpanFull(),
