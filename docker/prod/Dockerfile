@@ -1,5 +1,15 @@
 FROM php:8.3.3-fpm
 
+ARG WWWGROUP
+
+ENV APP_HOME /var/www/
+
+WORKDIR $APP_HOME
+
+ENV TZ=UTC
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN apt-get update \
     && curl -sL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh \
     && bash nodesource_setup.sh \
@@ -18,11 +28,10 @@ RUN docker-php-ext-install \
     zip calendar dom gd \
     intl pcntl bcmath
 
-ENV APP_HOME /var/www/
-
-WORKDIR $APP_HOME
-
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
+RUN groupadd --force -g $WWWGROUP laravel
+RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 laravel
 
 COPY ./supervisord.conf /etc/supervisord.conf
 COPY ./nginx.conf /etc/nginx/nginx.conf
