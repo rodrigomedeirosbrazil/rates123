@@ -39,7 +39,7 @@ class PriceNotification extends Model
 
     public function rates()
     {
-        return $this->hasMany(Rates::class, 'property_id', 'property_id');
+        return $this->hasMany(Rate::class, 'property_id', 'property_id');
     }
 
     protected function variation(): Attribute
