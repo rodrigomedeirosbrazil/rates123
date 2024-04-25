@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Shared\Resources\MonitoredPropertyResource\Widgets;
+namespace App\Filament\Shared\Resources\PropertyResource\Widgets;
 
 use App\Models\DateEvent;
 use App\Models\MonitoredData;
 use Illuminate\Database\Eloquent\Model;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
-class MonitoredPropertyPricesOverview extends ApexChartWidget
+class PropertyPricesOverview extends ApexChartWidget
 {
     protected int | string | array $columnSpan = 'full';
 

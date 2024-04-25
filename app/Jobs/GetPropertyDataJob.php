@@ -4,23 +4,23 @@ namespace App\Jobs;
 
 use App\Enums\SyncStatusEnum;
 use App\Managers\ScrapManager;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use App\Models\Property;
-use App\Models\MonitoredSync;
+use App\Models\Sync;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class GetMonitoredPropertyDataJob implements ShouldQueue
+class GetPropertyDataJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 1;
 
     public function __construct(
-        public int $monitoredPropertyId,
+        public int $propertyId,
         public string $propertyName,
         public string $platformSlug,
     ) {
@@ -28,14 +28,14 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
     public function handle(ScrapManager $scrapManager): void
     {
-        $sync = MonitoredSync::query()
-            ->whereMonitoredPropertyId($this->monitoredPropertyId)
+        $sync = Sync::query()
+            ->wherePropertyId($this->propertyId)
             ->whereDate('started_at', today()->addDay())
             ->first();
 
         if (! $sync) {
-            $sync = MonitoredSync::create([
-                'property_id' => $this->monitoredPropertyId,
+            $sync = Sync::create([
+                'property_id' => $this->propertyId,
                 'status' => SyncStatusEnum::InProgress,
                 'prices_count' => 0,
                 'started_at' => now()->addDay(),
@@ -48,7 +48,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         }
 
         $propertyDTO = Property::with('platform')
-            ->findOrFail($this->monitoredPropertyId)
+            ->findOrFail($this->propertyId)
             ->toPropertyDTO();
 
 
@@ -78,8 +78,8 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         }
 
         $prices->each(function ($price) {
-            MonitoredData::create([
-                'property_id' => $this->monitoredPropertyId,
+            Rate::create([
+                'property_id' => $this->propertyId,
                 'price' => $price->price,
                 'checkin' => $price->checkin,
                 'available' => $price->available,
@@ -96,8 +96,8 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             $sync->save();
 
             dispatch(
-                new GetMonitoredPropertyDataJob(
-                    monitoredPropertyId: $this->monitoredPropertyId,
+                new GetPropertyDataJob(
+                    propertyId: $this->propertyId,
                     propertyName: $this->propertyName,
                     platformSlug: $this->platformSlug,
                 )
@@ -117,7 +117,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         dispatch(
             new CheckPropertyPricesJob(
-                monitoredPropertyId: $this->monitoredPropertyId,
+                propertyId: $this->propertyId,
                 propertyName: $this->propertyName,
                 platformSlug: $this->platformSlug,
             )
@@ -129,7 +129,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
         return [
             'platform: ' . $this->platformSlug,
             'property: ' . $this->propertyName,
-            'propertyId: ' . $this->monitoredPropertyId,
+            'propertyId: ' . $this->propertyId,
         ];
     }
 }

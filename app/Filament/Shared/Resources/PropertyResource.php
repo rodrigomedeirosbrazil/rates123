@@ -3,7 +3,7 @@
 namespace App\Filament\Shared\Resources;
 
 use App\Enums\BrasilStatesEnum;
-use App\Filament\Shared\Resources\MonitoredPropertyResource\Pages;
+use App\Filament\Shared\Resources\PropertyResource\Pages;
 use App\Managers\PriceManager;
 use App\Models\Property;
 use Filament\Forms\Components\Grid;
@@ -20,7 +20,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class MonitoredPropertyResource extends Resource
+class PropertyResource extends Resource
 {
     protected static ?string $model = Property::class;
 
@@ -173,10 +173,10 @@ class MonitoredPropertyResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMonitoredProperties::route('/'),
-            'create' => Pages\CreateMonitoredProperty::route('/create'),
-            'edit' => Pages\EditMonitoredProperty::route('/{record}/edit'),
-            'view' => Pages\ViewMonitoredProperty::route('/{record}/view'),
+            'index' => Pages\ListProperties::route('/'),
+            'create' => Pages\CreateProperty::route('/create'),
+            'edit' => Pages\EditProperty::route('/{record}/edit'),
+            'view' => Pages\ViewProperty::route('/{record}/view'),
         ];
     }
 

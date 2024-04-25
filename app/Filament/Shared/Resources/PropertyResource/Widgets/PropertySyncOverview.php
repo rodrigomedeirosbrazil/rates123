@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Shared\Resources\MonitoredPropertyResource\Widgets;
+namespace App\Filament\Shared\Resources\PropertyResource\Widgets;
 
 use App\Enums\SyncStatusEnum;
 use App\Models\MonitoredSync;
@@ -8,7 +8,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Model;
 
-class MonitoredPropertySyncOverview extends BaseWidget
+class PropertySyncOverview extends BaseWidget
 {
     public ?Model $record = null;
 

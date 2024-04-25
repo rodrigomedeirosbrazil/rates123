@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\GetMonitoredPropertyDataJob;
+use App\Jobs\GetPropertyDataJob;
 use App\Models\Property;
 use Illuminate\Console\Command;
 
@@ -31,7 +31,7 @@ class MonitoreCommand extends Command
             ->each(
                 function (Property $property, int $index) {
                     dispatch(
-                        new GetMonitoredPropertyDataJob(
+                        new GetPropertyDataJob(
                             monitoredPropertyId: $property->id,
                             propertyName: $property->name,
                             platformSlug: $property->platform->slug,

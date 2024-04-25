@@ -12,7 +12,7 @@ class CheckPriceManager
     public function checkPropertyPrices(int $propertyId): void
     {
         $hasNotificationToday = PriceNotification::query()
-            ->whereMonitoredPropertyId($propertyId)
+            ->wherePropertyId($propertyId)
             ->whereDate('created_at', now())
             ->exists();
 

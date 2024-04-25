@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Shared\Resources\MonitoredPropertyResource\Pages;
+namespace App\Filament\Shared\Resources\PropertyResource\Pages;
 
-use App\Filament\Shared\Resources\MonitoredPropertyResource;
+use App\Filament\Shared\Resources\PropertyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditMonitoredProperty extends EditRecord
+class EditProperty extends EditRecord
 {
-    protected static string $resource = MonitoredPropertyResource::class;
+    protected static string $resource = PropertyResource::class;
 
     protected function getHeaderActions(): array
     {
