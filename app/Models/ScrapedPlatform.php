@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MonitoredPlatform extends Model
+class ScrapedPlatform extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -20,6 +20,6 @@ class MonitoredPlatform extends Model
 
     public function properties()
     {
-        return $this->hasMany(MonitoredProperty::class);
+        return $this->hasMany(Property::class);
     }
 }

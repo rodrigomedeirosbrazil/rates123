@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MonitoredData extends Model
+class Rates extends Model
 {
     use HasFactory;
 
-    protected $table = 'monitored_datas';
+    protected $table = 'rates';
 
     protected $fillable = [
-        'monitored_property_id',
+        'property_id',
         'price',
         'checkin',
         'available',
@@ -28,8 +28,8 @@ class MonitoredData extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function monitoredProperty()
+    public function property()
     {
-        return $this->belongsTo(MonitoredProperty::class);
+        return $this->belongsTo(Property::class);
     }
 }

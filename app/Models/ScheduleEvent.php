@@ -6,11 +6,11 @@ use App\Enums\DateEventTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DateEvent extends Model
+class ScheduleEvent extends Model
 {
     use HasFactory;
 
-    protected $table = 'date_events';
+    protected $table = 'schedule_events';
 
     protected $fillable = [
         'name',

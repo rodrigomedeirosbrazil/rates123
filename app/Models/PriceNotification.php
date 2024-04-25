@@ -14,7 +14,7 @@ class PriceNotification extends Model
     protected $table = 'price_notifications';
 
     protected $fillable = [
-        'monitored_property_id',
+        'property_id',
         'checkin',
         'type',
         'average_price',
@@ -32,14 +32,14 @@ class PriceNotification extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function monitoredProperty()
+    public function property()
     {
-        return $this->belongsTo(MonitoredProperty::class, 'monitored_property_id', 'id');
+        return $this->belongsTo(Property::class, 'property_id', 'id');
     }
 
-    public function monitoredDatas()
+    public function rates()
     {
-        return $this->hasMany(MonitoredData::class, 'monitored_property_id', 'monitored_property_id');
+        return $this->hasMany(Rates::class, 'property_id', 'property_id');
     }
 
     protected function variation(): Attribute

@@ -6,16 +6,16 @@ use App\Enums\SyncStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MonitoredSync extends Model
+class Sync extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
 
-    protected $table = 'monitored_syncs';
+    protected $table = 'syncs';
 
     protected $fillable = [
-        'monitored_property_id',
+        'property_id',
         'status',
         'prices_count',
         'started_at',
@@ -30,15 +30,15 @@ class MonitoredSync extends Model
         'finished_at' => 'datetime',
     ];
 
-    public function monitoredProperty()
+    public function property()
     {
-        return $this->belongsTo(MonitoredProperty::class);
+        return $this->belongsTo(Property::class);
     }
 
-    public static function propertyIsSyncedToday(int $monitoredPropertyId): bool
+    public static function propertyIsSyncedToday(int $propertyId): bool
     {
         return self::query()
-            ->whereMonitoredPropertyId($monitoredPropertyId)
+            ->wherePropertyId($propertyId)
             ->whereDate('started_at', now())
             ->where('status', SyncStatusEnum::Successful)
             ->exists();

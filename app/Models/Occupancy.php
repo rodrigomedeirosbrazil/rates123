@@ -13,7 +13,7 @@ class Occupancy extends Model
     protected $table = 'occupancies';
 
     protected $fillable = [
-        'monitored_property_id',
+        'property_id',
         'checkin',
         'total_rooms',
         'occupied_rooms',
@@ -25,9 +25,9 @@ class Occupancy extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function monitoredProperty()
+    public function property()
     {
-        return $this->belongsTo(MonitoredProperty::class, 'monitored_property_id', 'id');
+        return $this->belongsTo(Property::class, 'monitored_property_id', 'id');
     }
 
     protected function occupancyPercent(): Attribute
