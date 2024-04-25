@@ -15,7 +15,7 @@ class MonitoredPropertySyncOverview extends BaseWidget
     protected function getStats(): array
     {
         $lastSync = MonitoredSync::query()
-            ->where('monitored_property_id', $this->record->id)
+            ->where('property_id', $this->record->id)
             ->orderBy('started_at', 'desc')
             ->first();
 

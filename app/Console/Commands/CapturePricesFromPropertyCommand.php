@@ -6,7 +6,7 @@ use App\Enums\SyncStatusEnum;
 use App\Jobs\CheckPropertyPricesJob;
 use App\Managers\ScrapManager;
 use App\Models\MonitoredData;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use App\Models\MonitoredSync;
 use Illuminate\Console\Command;
 
@@ -34,7 +34,7 @@ class CapturePricesFromPropertyCommand extends Command
     public function handle()
     {
         $propertyId = $this->argument('propertyId');
-        $property = MonitoredProperty::find($propertyId);
+        $property = Property::find($propertyId);
 
         if (! $property) {
             $this->error("Couldn't find a property with ID {$propertyId}");
@@ -56,7 +56,7 @@ class CapturePricesFromPropertyCommand extends Command
         $startTimestamp = now();
 
         $sync = MonitoredSync::create([
-            'monitored_property_id' => $propertyId,
+            'property_id' => $propertyId,
             'status' => SyncStatusEnum::InProgress,
             'prices_count' => 0,
             'started_at' => now(),
@@ -80,7 +80,7 @@ class CapturePricesFromPropertyCommand extends Command
 
         $prices->each(
             fn ($price) => MonitoredData::create([
-                'monitored_property_id' => $propertyId,
+                'property_id' => $propertyId,
                 'price' => $price->price,
                 'checkin' => $price->checkin,
                 'available' => $price->available,

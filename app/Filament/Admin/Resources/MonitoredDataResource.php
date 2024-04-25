@@ -79,9 +79,9 @@ class MonitoredDataResource extends Resource
             ->searchOnBlur()
             ->filters([
 
-                Filter::make('monitored_property_id')
+                Filter::make('property_id')
                     ->form([
-                        Select::make('monitored_property_id')
+                        Select::make('property_id')
                             ->label('Property')
                             ->searchable(['name'])
                             ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
@@ -89,8 +89,8 @@ class MonitoredDataResource extends Resource
                     ->query(
                         fn (Builder $query, array $data): Builder => $query
                             ->when(
-                                $data['monitored_property_id'],
-                                fn (Builder $query, $value): Builder => $query->where('monitored_property_id', $value),
+                                $data['property_id'],
+                                fn (Builder $query, $value): Builder => $query->where('property_id', $value),
                             )
                     ),
 

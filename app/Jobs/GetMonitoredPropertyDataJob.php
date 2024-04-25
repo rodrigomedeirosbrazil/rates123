@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Enums\SyncStatusEnum;
 use App\Managers\ScrapManager;
 use App\Models\MonitoredData;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use App\Models\MonitoredSync;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,7 +35,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         if (! $sync) {
             $sync = MonitoredSync::create([
-                'monitored_property_id' => $this->monitoredPropertyId,
+                'property_id' => $this->monitoredPropertyId,
                 'status' => SyncStatusEnum::InProgress,
                 'prices_count' => 0,
                 'started_at' => now()->addDay(),
@@ -47,7 +47,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
             return;
         }
 
-        $propertyDTO = MonitoredProperty::with('platform')
+        $propertyDTO = Property::with('platform')
             ->findOrFail($this->monitoredPropertyId)
             ->toPropertyDTO();
 
@@ -79,7 +79,7 @@ class GetMonitoredPropertyDataJob implements ShouldQueue
 
         $prices->each(function ($price) {
             MonitoredData::create([
-                'monitored_property_id' => $this->monitoredPropertyId,
+                'property_id' => $this->monitoredPropertyId,
                 'price' => $price->price,
                 'checkin' => $price->checkin,
                 'available' => $price->available,

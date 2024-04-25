@@ -56,8 +56,8 @@ class CalendarWidget extends FullCalendarWidget
 
         $prices = $this->getEloquentQuery()
             ->when(
-                $this->getFilter('monitored_property_id'),
-                fn ($query) => $query->where('monitored_property_id', $this->getFilter('monitored_property_id'))
+                $this->getFilter('property_id'),
+                fn ($query) => $query->where('property_id', $this->getFilter('property_id'))
             )
             ->where('checkin', '>=', $fetchInfo['start'])
             ->where('checkin', '<=', $fetchInfo['end'])
@@ -126,7 +126,7 @@ class CalendarWidget extends FullCalendarWidget
                                 ->formatStateUsing(
                                     fn ($record): HtmlString => new HtmlString(
                                         MonitoredData::where('checkin', $record->checkin)
-                                            ->where('monitored_property_id', $record->monitored_property_id)
+                                            ->where('property_id', $record->property_id)
                                             ->groupBy('price')
                                             ->orderBy('created_at', 'desc')
                                             ->limit(10)

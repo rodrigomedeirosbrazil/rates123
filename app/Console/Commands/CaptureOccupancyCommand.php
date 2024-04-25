@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use App\Models\Occupancy;
 use App\Scraper\DTOs\OccupancyDTO;
 use App\Scraper\HitsScraper;
@@ -18,7 +18,7 @@ class CaptureOccupancyCommand extends Command
     public function handle()
     {
         $propertyId = $this->argument('propertyId');
-        $property = MonitoredProperty::find($propertyId);
+        $property = Property::find($propertyId);
 
         if (! $property) {
             $this->error("Couldn't find a property with ID {$propertyId}");
@@ -51,14 +51,14 @@ class CaptureOccupancyCommand extends Command
         $occupancies->each(
             function (OccupancyDTO $occupancy) use ($propertyId) {
                 $occupancyModel = Occupancy::query()
-                    ->where('monitored_property_id', $propertyId)
+                    ->where('property_id', $propertyId)
                     ->whereDate('checkin', $occupancy->checkin)
                     ->whereDate('created_at', now()->startOfDay())
                     ->first();
 
                 if (! $occupancyModel) {
                     return Occupancy::create([
-                        'monitored_property_id' => $propertyId,
+                        'property_id' => $propertyId,
                         'checkin' => $occupancy->checkin,
                         'total_rooms' => $occupancy->totalRooms,
                         'occupied_rooms' => $occupancy->occupiedRooms,

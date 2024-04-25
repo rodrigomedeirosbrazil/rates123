@@ -21,7 +21,7 @@ class CheckPriceManager
         }
 
         $lastPrice = MonitoredData::query()
-            ->where('monitored_property_id', $propertyId)
+            ->where('property_id', $propertyId)
             ->orderBy('checkin', 'desc')
             ->firstOrFail();
 
@@ -36,7 +36,7 @@ class CheckPriceManager
     public function checkPriceDate(int $propertyId, CarbonInterface $date): void
     {
         $prices = MonitoredData::query()
-            ->where('monitored_property_id', $propertyId)
+            ->where('property_id', $propertyId)
             ->whereDate('checkin', $date)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -59,7 +59,7 @@ class CheckPriceManager
             && ! $prices[1]->available
         ) {
             PriceNotification::create([
-                'monitored_property_id' => $propertyId,
+                'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceAvailable,
                 'before' => 0,
@@ -75,7 +75,7 @@ class CheckPriceManager
             && $prices[1]->available
         ) {
             PriceNotification::create([
-                'monitored_property_id' => $propertyId,
+                'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceUnavailable,
                 'before' => $prices[1]->price,
@@ -88,7 +88,7 @@ class CheckPriceManager
 
         if ($prices[0]->price > $prices[1]->price) {
             PriceNotification::create([
-                'monitored_property_id' => $propertyId,
+                'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceUp,
                 'before' => $prices[1]->price,
@@ -104,7 +104,7 @@ class CheckPriceManager
 
         if ($prices[0]->price < $prices[1]->price) {
             PriceNotification::create([
-                'monitored_property_id' => $propertyId,
+                'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceDown,
                 'before' => $prices[1]->price,

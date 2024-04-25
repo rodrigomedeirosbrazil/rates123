@@ -22,7 +22,7 @@ class MonitoredPropertyPricesOverview extends ApexChartWidget
     protected function getOptions(): array
     {
         $prices = MonitoredData::query()
-            ->where('monitored_property_id', $this->record->id)
+            ->where('property_id', $this->record->id)
             ->groupBy('checkin')
             ->whereDate('checkin', '>', now())
             ->get();

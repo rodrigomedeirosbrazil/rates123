@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\GetOccupancyJob;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use Illuminate\Console\Command;
 
 class GetOccupancyCommand extends Command
@@ -27,11 +27,11 @@ class GetOccupancyCommand extends Command
      */
     public function handle()
     {
-        MonitoredProperty::query()
+        Property::query()
             ->whereNotNull('hits_property_name')
             ->cursor()
             ->each(
-                function (MonitoredProperty $property) {
+                function (Property $property) {
                     $this->info("Dispatching job to get occupancy for {$property->name}");
                     dispatch(
                         new GetOccupancyJob(

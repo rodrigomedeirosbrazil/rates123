@@ -5,7 +5,7 @@ namespace App\Filament\Shared\Resources;
 use App\Enums\BrasilStatesEnum;
 use App\Filament\Shared\Resources\MonitoredPropertyResource\Pages;
 use App\Managers\PriceManager;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MonitoredPropertyResource extends Resource
 {
-    protected static ?string $model = MonitoredProperty::class;
+    protected static ?string $model = Property::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

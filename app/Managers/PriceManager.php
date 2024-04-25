@@ -4,7 +4,7 @@ namespace App\Managers;
 
 use App\Enums\PriceNotificationTypeEnum;
 use App\Models\MonitoredData;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use App\Models\PriceNotification;
 use App\Models\User;
 use Carbon\CarbonInterface;
@@ -20,7 +20,7 @@ class PriceManager
             return (float) cache()->get($cacheKey);
         }
 
-        $property = MonitoredProperty::findOrFail($propertyId);
+        $property = Property::findOrFail($propertyId);
 
         $mode = $property->priceDatas
             ->filter(fn ($price) => $price->available === true)
@@ -35,7 +35,7 @@ class PriceManager
     public function calculateCheckinPropertyModePrice(int $propertyId, CarbonInterface $checkin): float
     {
         $mode = MonitoredData::query()
-            ->where('monitored_property_id', $propertyId)
+            ->where('property_id', $propertyId)
             ->where('checkin', $checkin)
             ->where('available', true)
             ->get()
@@ -62,7 +62,7 @@ class PriceManager
 
         return PriceNotification::query()
             ->whereDate('created_at', $searchDate)
-            ->whereIn('monitored_property_id', $followedPropertyIds)
+            ->whereIn('property_id', $followedPropertyIds)
             ->orderBy('checkin', 'asc')
             ->get();
     }
@@ -146,7 +146,7 @@ class PriceManager
         }
 
         $prices = PriceNotification::query()
-            ->whereIn('monitored_property_id', $followedPropertyIds)
+            ->whereIn('property_id', $followedPropertyIds)
             ->whereDate('checkin', $checkin)
             ->whereIn('type', [PriceNotificationTypeEnum::PriceUp, PriceNotificationTypeEnum::PriceDown])
             ->where('created_at', '>=', now()->subDays(7))

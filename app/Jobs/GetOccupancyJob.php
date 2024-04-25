@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use App\Models\Occupancy;
 use App\Scraper\DTOs\OccupancyDTO;
 use App\Scraper\HitsScraper;
@@ -27,7 +27,7 @@ class GetOccupancyJob implements ShouldQueue
 
     public function handle(HitsScraper $hitsScraper): void
     {
-        $property = MonitoredProperty::findOrFail($this->monitoredPropertyId);
+        $property = Property::findOrFail($this->monitoredPropertyId);
 
         if (! $property->hits_property_name) {
             return;
@@ -42,14 +42,14 @@ class GetOccupancyJob implements ShouldQueue
         $occupancies->each(
             function (OccupancyDTO $occupancy) {
                 $occupancyModel = Occupancy::query()
-                    ->where('monitored_property_id', $this->monitoredPropertyId)
+                    ->where('property_id', $this->monitoredPropertyId)
                     ->whereDate('checkin', $occupancy->checkin)
                     ->whereDate('created_at', now()->startOfDay())
                     ->first();
 
                 if (! $occupancyModel) {
                     return Occupancy::create([
-                        'monitored_property_id' => $this->monitoredPropertyId,
+                        'property_id' => $this->monitoredPropertyId,
                         'checkin' => $occupancy->checkin,
                         'total_rooms' => $occupancy->totalRooms,
                         'occupied_rooms' => $occupancy->occupiedRooms,

@@ -81,7 +81,7 @@ class PriceNotificationResource extends Resource
                         }
 
                         return new HtmlString(MonitoredData::query()
-                            ->where('monitored_property_id', $record->monitored_property_id)
+                            ->where('property_id', $record->property_id)
                             ->where('checkin', $record->checkin)
                             ->where('created_at', '<=', $record->created_at)
                             ->orderBy('created_at', 'desc')
@@ -145,9 +145,9 @@ class PriceNotificationResource extends Resource
             ->searchOnBlur()
             ->filters([
 
-                Filter::make('monitored_property_id')
+                Filter::make('property_id')
                     ->form([
-                        Select::make('monitored_property_id')
+                        Select::make('property_id')
                             ->label(__('Property'))
                             ->searchable(['name'])
                             ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
@@ -155,8 +155,8 @@ class PriceNotificationResource extends Resource
                     ->query(
                         fn (Builder $query, array $data): Builder => $query
                             ->when(
-                                $data['monitored_property_id'],
-                                fn (Builder $query, $value): Builder => $query->where('monitored_property_id', $value),
+                                $data['property_id'],
+                                fn (Builder $query, $value): Builder => $query->where('property_id', $value),
                             )
                     ),
 
