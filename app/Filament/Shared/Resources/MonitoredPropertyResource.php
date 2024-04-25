@@ -35,7 +35,7 @@ class MonitoredPropertyResource extends Resource
                         ->label(__('Name'))
                         ->required(),
 
-                    Select::make('monitored_platform_id')
+                    Select::make('scraped_platform_id')
                         ->label(__('Platform'))
                         ->relationship(name: 'platform', titleAttribute: 'name')
                         ->preload() // ->searchable(['name'])
