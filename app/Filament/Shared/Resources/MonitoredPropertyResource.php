@@ -98,10 +98,14 @@ class MonitoredPropertyResource extends Resource
 
                 Placeholder::make('modePrice')
                     ->label(__('Avg Price'))
-                    ->content(fn ($record) => '$' . number_format(
-                        app(PriceManager::class)->calculatePropertyModePrice($record->id),
-                        2
-                    )),
+                    ->content(
+                        fn ($record) => $record?->id !== null
+                        ? '$' . number_format(
+                            app(PriceManager::class)->calculatePropertyModePrice($record->id),
+                            2
+                        )
+                    : ''
+                    ),
 
                 Textarea::make('extra')
                     ->columnSpanFull(),
