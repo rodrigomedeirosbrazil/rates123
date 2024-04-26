@@ -2,7 +2,7 @@
 
 namespace App\Filament\Shared\Resources\CalendarResource\Widgets;
 
-use App\Models\DateEvent;
+use App\Models\ScheduleEvent;
 use App\Models\MonitoredData;
 use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
@@ -38,12 +38,12 @@ class CalendarWidget extends FullCalendarWidget
             return [];
         }
 
-        $events = DateEvent::query()
+        $events = ScheduleEvent::query()
             ->where('begin', '>=', $fetchInfo['start'])
             ->where('end', '<=', $fetchInfo['end'])
             ->get()
             ->map(
-                fn (DateEvent $dateEvent) => EventData::make()
+                fn (ScheduleEvent $dateEvent) => EventData::make()
                     ->id($dateEvent->id)
                     ->title($dateEvent->name)
                     ->start($dateEvent->begin)

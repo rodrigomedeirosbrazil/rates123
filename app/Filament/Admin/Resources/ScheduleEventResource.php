@@ -2,18 +2,18 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Enums\DateEventTypeEnum;
-use App\Filament\Admin\Resources\DateEventResource\Pages;
-use App\Models\DateEvent;
+use App\Enums\ScheduleEventTypeEnum;
+use App\Filament\Admin\Resources\ScheduleEventResource\Pages;
+use App\Models\ScheduleEvent;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class DateEventResource extends Resource
+class ScheduleEventResource extends Resource
 {
-    protected static ?string $model = DateEvent::class;
+    protected static ?string $model = ScheduleEvent::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -28,7 +28,7 @@ class DateEventResource extends Resource
                 Forms\Components\DatePicker::make('end')
                     ->required(),
                 Forms\Components\Select::make('type')
-                    ->options(DateEventTypeEnum::toArray())
+                    ->options(ScheduleEventTypeEnum::toArray())
                     ->required(),
                 Forms\Components\Select::make('country')
                     ->options([
@@ -79,7 +79,7 @@ class DateEventResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageDateEvents::route('/'),
+            'index' => Pages\ManageScheduleEvents::route('/'),
         ];
     }
 }

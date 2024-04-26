@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\DateEvent;
+use App\Models\ScheduleEvent;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class DateEventPolicy
+class ScheduleEventPolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class DateEventPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DateEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $dateEvent
      * @return bool
      */
-    public function view(User $user, DateEvent $dateEvent): bool
+    public function view(User $user, ScheduleEvent $dateEvent): bool
     {
         return $user->can('view_date::event');
     }
@@ -48,10 +48,10 @@ class DateEventPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DateEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $dateEvent
      * @return bool
      */
-    public function update(User $user, DateEvent $dateEvent): bool
+    public function update(User $user, ScheduleEvent $dateEvent): bool
     {
         return $user->can('update_date::event');
     }
@@ -60,10 +60,10 @@ class DateEventPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DateEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $dateEvent
      * @return bool
      */
-    public function delete(User $user, DateEvent $dateEvent): bool
+    public function delete(User $user, ScheduleEvent $dateEvent): bool
     {
         return $user->can('delete_date::event');
     }
@@ -83,10 +83,10 @@ class DateEventPolicy
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DateEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $dateEvent
      * @return bool
      */
-    public function forceDelete(User $user, DateEvent $dateEvent): bool
+    public function forceDelete(User $user, ScheduleEvent $dateEvent): bool
     {
         return $user->can('force_delete_date::event');
     }
@@ -106,10 +106,10 @@ class DateEventPolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DateEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $dateEvent
      * @return bool
      */
-    public function restore(User $user, DateEvent $dateEvent): bool
+    public function restore(User $user, ScheduleEvent $dateEvent): bool
     {
         return $user->can('restore_date::event');
     }
@@ -129,10 +129,10 @@ class DateEventPolicy
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\DateEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $dateEvent
      * @return bool
      */
-    public function replicate(User $user, DateEvent $dateEvent): bool
+    public function replicate(User $user, ScheduleEvent $dateEvent): bool
     {
         return $user->can('replicate_date::event');
     }

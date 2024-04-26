@@ -2,7 +2,7 @@
 
 namespace App\Filament\Shared\Resources\PropertyResource\Widgets;
 
-use App\Models\DateEvent;
+use App\Models\ScheduleEvent;
 use App\Models\MonitoredData;
 use Illuminate\Database\Eloquent\Model;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
@@ -28,7 +28,7 @@ class PropertyPricesOverview extends ApexChartWidget
             ->get();
 
 
-        $events = DateEvent::query()
+        $events = ScheduleEvent::query()
             ->whereDate('begin', '>', now())
             ->get();
 

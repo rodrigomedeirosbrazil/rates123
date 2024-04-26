@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\DateEventTypeEnum;
+use App\Enums\ScheduleEventTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,7 +23,7 @@ class ScheduleEvent extends Model
     ];
 
     protected $casts = [
-        'type' => DateEventTypeEnum::class,
+        'type' => ScheduleEventTypeEnum::class,
         'begin' => 'date',
         'end' => 'date',
         'created_at' => 'datetime',
