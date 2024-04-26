@@ -32,7 +32,7 @@ class MonitoreCommand extends Command
                 function (Property $property, int $index) {
                     dispatch(
                         new GetPropertyDataJob(
-                            monitoredPropertyId: $property->id,
+                            propertyId: $property->id,
                             propertyName: $property->name,
                             platformSlug: $property->platform->slug,
                         )

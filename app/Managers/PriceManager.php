@@ -85,7 +85,7 @@ class PriceManager
                 $basicInfo = [
                     __('Checkin') . ': ' . $priceNotification->checkin->translatedFormat('l, d F y') . PHP_EOL,
                     __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
-                    __('Property') . ': ' . $priceNotification->monitoredProperty->name . PHP_EOL,
+                    __('Property') . ': ' . $priceNotification->property->name . PHP_EOL,
                     __('Before') . ": \${$priceNotification->before}" . PHP_EOL,
                     __('After') . ": \${$priceNotification->after}" . PHP_EOL,
                 ];

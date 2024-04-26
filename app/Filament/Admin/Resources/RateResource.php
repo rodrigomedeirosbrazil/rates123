@@ -31,10 +31,10 @@ class RateResource extends Resource
             ->schema([
 
                 Grid::make([])->schema([
-                    Placeholder::make('monitoredProperty.name')
+                    Placeholder::make('property.name')
                         ->label('Property')
                         ->content(
-                            fn ($record) => $record->monitoredProperty->name
+                            fn ($record) => $record->property->name
                         ),
                     Forms\Components\TextInput::make('price')
                         ->numeric()
@@ -62,7 +62,7 @@ class RateResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('monitoredProperty.name')
+                Tables\Columns\TextColumn::make('property.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
                     ->sortable(),
@@ -84,7 +84,7 @@ class RateResource extends Resource
                         Select::make('property_id')
                             ->label('Property')
                             ->searchable(['name'])
-                            ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
+                            ->relationship(name: 'property', titleAttribute: 'name'),
                     ])
                     ->query(
                         fn (Builder $query, array $data): Builder => $query

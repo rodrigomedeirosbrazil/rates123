@@ -34,7 +34,7 @@ class PriceNotificationResource extends Resource
                 Grid::make([])->schema([
                     Placeholder::make('Property')
                         ->label(__('Property'))
-                        ->content(fn ($record) => $record->monitoredProperty->name),
+                        ->content(fn ($record) => $record->property->name),
 
                     TextInput::make('type')
                         ->label(__('Type'))
@@ -100,7 +100,7 @@ class PriceNotificationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('monitoredProperty.name')
+                TextColumn::make('property.name')
                     ->label(__('Property'))
                     ->sortable(),
 
@@ -150,7 +150,7 @@ class PriceNotificationResource extends Resource
                         Select::make('property_id')
                             ->label(__('Property'))
                             ->searchable(['name'])
-                            ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
+                            ->relationship(name: 'property', titleAttribute: 'name'),
                     ])
                     ->query(
                         fn (Builder $query, array $data): Builder => $query

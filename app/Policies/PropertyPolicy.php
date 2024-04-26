@@ -25,10 +25,10 @@ class PropertyPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Property  $monitoredProperty
+     * @param  \App\Models\Property  $property
      * @return bool
      */
-    public function view(User $user, Property $monitoredProperty): bool
+    public function view(User $user, Property $property): bool
     {
         return $user->can('view_monitored::property');
     }
@@ -48,10 +48,10 @@ class PropertyPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Property  $monitoredProperty
+     * @param  \App\Models\Property  $property
      * @return bool
      */
-    public function update(User $user, Property $monitoredProperty): bool
+    public function update(User $user, Property $property): bool
     {
         return $user->can('update_monitored::property');
     }
@@ -60,10 +60,10 @@ class PropertyPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Property  $monitoredProperty
+     * @param  \App\Models\Property  $property
      * @return bool
      */
-    public function delete(User $user, Property $monitoredProperty): bool
+    public function delete(User $user, Property $property): bool
     {
         return $user->can('delete_monitored::property');
     }
@@ -83,10 +83,10 @@ class PropertyPolicy
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Property  $monitoredProperty
+     * @param  \App\Models\Property  $property
      * @return bool
      */
-    public function forceDelete(User $user, Property $monitoredProperty): bool
+    public function forceDelete(User $user, Property $property): bool
     {
         return $user->can('force_delete_monitored::property');
     }
@@ -106,10 +106,10 @@ class PropertyPolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Property  $monitoredProperty
+     * @param  \App\Models\Property  $property
      * @return bool
      */
-    public function restore(User $user, Property $monitoredProperty): bool
+    public function restore(User $user, Property $property): bool
     {
         return $user->can('restore_monitored::property');
     }
@@ -129,10 +129,10 @@ class PropertyPolicy
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Property  $monitoredProperty
+     * @param  \App\Models\Property  $property
      * @return bool
      */
-    public function replicate(User $user, Property $monitoredProperty): bool
+    public function replicate(User $user, Property $property): bool
     {
         return $user->can('replicate_monitored::property');
     }

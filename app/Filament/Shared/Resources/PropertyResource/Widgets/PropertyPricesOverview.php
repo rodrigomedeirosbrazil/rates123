@@ -13,7 +13,7 @@ class PropertyPricesOverview extends ApexChartWidget
 
     protected static ?int $contentHeight = 500; //px
 
-    protected static ?string $chartId = 'monitoredPropertySyncOverview';
+    protected static ?string $chartId = 'propertySyncOverview';
 
     protected static ?string $pollingInterval = null;
 

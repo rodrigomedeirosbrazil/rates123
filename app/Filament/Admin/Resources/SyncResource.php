@@ -30,7 +30,7 @@ class SyncResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('monitoredProperty.name')
+                Tables\Columns\TextColumn::make('property.name')
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
 

@@ -35,7 +35,7 @@ class GetOccupancyCommand extends Command
                     $this->info("Dispatching job to get occupancy for {$property->name}");
                     dispatch(
                         new GetOccupancyJob(
-                            monitoredPropertyId: $property->id,
+                            propertyId: $property->id,
                             propertyName: $property->name,
                             platformSlug: $property->platform->slug,
                         )
