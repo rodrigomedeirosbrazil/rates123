@@ -102,7 +102,7 @@ class CapturePricesFromPropertyCommand extends Command
         $this->info('Dispatching CheckPropertyPricesJob...');
         dispatch(
             new CheckPropertyPricesJob(
-                monitoredPropertyId: $propertyId,
+                propertyId: $propertyId,
                 propertyName: $propertyDTO->name,
                 platformSlug: $propertyDTO->platformSlug,
             )
