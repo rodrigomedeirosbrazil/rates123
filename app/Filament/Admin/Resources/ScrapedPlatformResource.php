@@ -2,17 +2,17 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\MonitoredPlatformResource\Pages;
-use App\Models\MonitoredPlatform;
+use App\Filament\Admin\Resources\ScrapedPlatformResource\Pages;
+use App\Models\ScrapedPlatform;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class MonitoredPlatformResource extends Resource
+class ScrapedPlatformResource extends Resource
 {
-    protected static ?string $model = MonitoredPlatform::class;
+    protected static ?string $model = ScrapedPlatform::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -57,7 +57,7 @@ class MonitoredPlatformResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageMonitoredPlatforms::route('/'),
+            'index' => Pages\ManageScrapedPlatforms::route('/'),
         ];
     }
 }
