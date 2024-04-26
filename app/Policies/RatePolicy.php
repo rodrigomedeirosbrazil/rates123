@@ -25,10 +25,10 @@ class RatePolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rate  $monitoredData
+     * @param  \App\Models\Rate  $rate
      * @return bool
      */
-    public function view(User $user, Rate $monitoredData): bool
+    public function view(User $user, Rate $rate): bool
     {
         return $user->can('view_monitored::data');
     }
@@ -48,10 +48,10 @@ class RatePolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rate  $monitoredData
+     * @param  \App\Models\Rate  $rate
      * @return bool
      */
-    public function update(User $user, Rate $monitoredData): bool
+    public function update(User $user, Rate $rate): bool
     {
         return $user->can('update_monitored::data');
     }
@@ -60,10 +60,10 @@ class RatePolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rate  $monitoredData
+     * @param  \App\Models\Rate  $rate
      * @return bool
      */
-    public function delete(User $user, Rate $monitoredData): bool
+    public function delete(User $user, Rate $rate): bool
     {
         return $user->can('delete_monitored::data');
     }
@@ -83,10 +83,10 @@ class RatePolicy
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rate  $monitoredData
+     * @param  \App\Models\Rate  $rate
      * @return bool
      */
-    public function forceDelete(User $user, Rate $monitoredData): bool
+    public function forceDelete(User $user, Rate $rate): bool
     {
         return $user->can('force_delete_monitored::data');
     }
@@ -106,10 +106,10 @@ class RatePolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rate  $monitoredData
+     * @param  \App\Models\Rate  $rate
      * @return bool
      */
-    public function restore(User $user, Rate $monitoredData): bool
+    public function restore(User $user, Rate $rate): bool
     {
         return $user->can('restore_monitored::data');
     }
@@ -129,10 +129,10 @@ class RatePolicy
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Rate  $monitoredData
+     * @param  \App\Models\Rate  $rate
      * @return bool
      */
-    public function replicate(User $user, Rate $monitoredData): bool
+    public function replicate(User $user, Rate $rate): bool
     {
         return $user->can('replicate_monitored::data');
     }

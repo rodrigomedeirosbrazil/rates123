@@ -65,11 +65,11 @@ class CalendarWidget extends FullCalendarWidget
             ->groupBy('checkin')
             ->map(fn ($group) => $group->sortByDesc('created_at')->groupBy('price')->slice(0, 4)->map(fn ($group) => $group->first()))->flatten(1)
             ->map(
-                fn (Rate $monitoredData) => EventData::make()
-                    ->id($monitoredData->id)
-                    ->title(Number::currency($monitoredData->price))
-                    ->start($monitoredData->checkin)
-                    ->end($monitoredData->checkin)
+                fn (Rate $rate) => EventData::make()
+                    ->id($rate->id)
+                    ->title(Number::currency($rate->price))
+                    ->start($rate->checkin)
+                    ->end($rate->checkin)
                     ->allDay(true)
             )
             ->values();
@@ -132,9 +132,9 @@ class CalendarWidget extends FullCalendarWidget
                                             ->limit(10)
                                             ->get()
                                             ->map(
-                                                fn ($monitoredData) => format_date_with_weekday($monitoredData->created_at)
+                                                fn ($rate) => format_date_with_weekday($rate->created_at)
                                                 . ': '
-                                                . Number::currency($monitoredData->price),
+                                                . Number::currency($rate->price),
                                             )
                                             ->join('<br>')
                                     )
