@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\MonitoredDataResource\Pages;
-use App\Models\MonitoredData;
+use App\Filament\Admin\Resources\RateResource\Pages;
+use App\Models\Rate;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
@@ -19,9 +19,9 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class MonitoredDataResource extends Resource
+class RateResource extends Resource
 {
-    protected static ?string $model = MonitoredData::class;
+    protected static ?string $model = Rate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -171,7 +171,7 @@ class MonitoredDataResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageMonitoredDatas::route('/'),
+            'index' => Pages\ManageRates::route('/'),
         ];
     }
 }

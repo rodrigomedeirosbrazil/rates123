@@ -3,7 +3,7 @@
 namespace App\Managers;
 
 use App\Enums\PriceNotificationTypeEnum;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use App\Models\Property;
 use App\Models\PriceNotification;
 use App\Models\User;
@@ -34,7 +34,7 @@ class PriceManager
 
     public function calculateCheckinPropertyModePrice(int $propertyId, CarbonInterface $checkin): float
     {
-        $mode = MonitoredData::query()
+        $mode = Rate::query()
             ->where('property_id', $propertyId)
             ->where('checkin', $checkin)
             ->where('available', true)

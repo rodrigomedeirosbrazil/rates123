@@ -3,7 +3,7 @@
 namespace App\Managers;
 
 use App\Enums\PriceNotificationTypeEnum;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use App\Models\PriceNotification;
 use Carbon\CarbonInterface;
 
@@ -20,7 +20,7 @@ class CheckPriceManager
             return;
         }
 
-        $lastPrice = MonitoredData::query()
+        $lastPrice = Rate::query()
             ->where('property_id', $propertyId)
             ->orderBy('checkin', 'desc')
             ->firstOrFail();
@@ -35,7 +35,7 @@ class CheckPriceManager
 
     public function checkPriceDate(int $propertyId, CarbonInterface $date): void
     {
-        $prices = MonitoredData::query()
+        $prices = Rate::query()
             ->where('property_id', $propertyId)
             ->whereDate('checkin', $date)
             ->orderBy('created_at', 'desc')

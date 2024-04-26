@@ -4,13 +4,13 @@ namespace App\Filament\Shared\Resources;
 
 use App\Filament\Shared\Resources\CalendarResource\Pages;
 use App\Filament\Shared\Resources\CalendarResource\Widgets\CalendarWidget;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 
 class CalendarResource extends Resource
 {
-    protected static ?string $model = MonitoredData::class;
+    protected static ?string $model = Rate::class;
 
     protected static ?string $navigationIcon = 'heroicon-m-calendar-days';
 

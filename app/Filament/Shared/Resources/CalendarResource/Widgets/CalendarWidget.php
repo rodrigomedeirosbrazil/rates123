@@ -3,7 +3,7 @@
 namespace App\Filament\Shared\Resources\CalendarResource\Widgets;
 
 use App\Models\ScheduleEvent;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -21,7 +21,7 @@ class CalendarWidget extends FullCalendarWidget
 
     public ?Model $property = null;
 
-    public Model|string|null $model = MonitoredData::class;
+    public Model|string|null $model = Rate::class;
 
     public array $filters = [];
 
@@ -65,7 +65,7 @@ class CalendarWidget extends FullCalendarWidget
             ->groupBy('checkin')
             ->map(fn ($group) => $group->sortByDesc('created_at')->groupBy('price')->slice(0, 4)->map(fn ($group) => $group->first()))->flatten(1)
             ->map(
-                fn (MonitoredData $monitoredData) => EventData::make()
+                fn (Rate $monitoredData) => EventData::make()
                     ->id($monitoredData->id)
                     ->title(Number::currency($monitoredData->price))
                     ->start($monitoredData->checkin)
@@ -125,7 +125,7 @@ class CalendarWidget extends FullCalendarWidget
                                 ->label('')
                                 ->formatStateUsing(
                                     fn ($record): HtmlString => new HtmlString(
-                                        MonitoredData::where('checkin', $record->checkin)
+                                        Rate::where('checkin', $record->checkin)
                                             ->where('property_id', $record->property_id)
                                             ->groupBy('price')
                                             ->orderBy('created_at', 'desc')

@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Enums\SyncStatusEnum;
 use App\Jobs\CheckPropertyPricesJob;
 use App\Managers\ScrapManager;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use App\Models\Property;
 use App\Models\MonitoredSync;
 use Illuminate\Console\Command;
@@ -79,7 +79,7 @@ class CapturePricesFromPropertyCommand extends Command
         }
 
         $prices->each(
-            fn ($price) => MonitoredData::create([
+            fn ($price) => Rate::create([
                 'property_id' => $propertyId,
                 'price' => $price->price,
                 'checkin' => $price->checkin,

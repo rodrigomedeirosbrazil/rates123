@@ -3,7 +3,7 @@
 namespace App\Filament\Shared\Resources;
 
 use App\Filament\Shared\Resources\PriceNotificationResource\Pages;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use App\Models\PriceNotification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
@@ -80,7 +80,7 @@ class PriceNotificationResource extends Resource
                             return __('No record');
                         }
 
-                        return new HtmlString(MonitoredData::query()
+                        return new HtmlString(Rate::query()
                             ->where('property_id', $record->property_id)
                             ->where('checkin', $record->checkin)
                             ->where('created_at', '<=', $record->created_at)
@@ -88,7 +88,7 @@ class PriceNotificationResource extends Resource
                             ->groupBy('price')
                             ->limit(10)
                             ->get()
-                            ->map(function (MonitoredData $data): string {
+                            ->map(function (Rate $data): string {
                                 return "{$data->created_at->translatedFormat('l, d F y')} - $ {$data->price}";
                             })
                             ->join('<br>'));

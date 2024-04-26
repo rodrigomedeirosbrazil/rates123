@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Admin\Resources\MonitoredDataResource\Pages;
+namespace App\Filament\Admin\Resources\RateResource\Pages;
 
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Admin\Resources\MonitoredDataResource;
+use App\Filament\Admin\Resources\RateResource;
 
-class ManageMonitoredDatas extends ManageRecords
+class ManageRates extends ManageRecords
 {
-    protected static string $resource = MonitoredDataResource::class;
+    protected static string $resource = RateResource::class;
 
     protected function getHeaderActions(): array
     {

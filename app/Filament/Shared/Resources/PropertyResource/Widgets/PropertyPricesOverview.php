@@ -3,7 +3,7 @@
 namespace App\Filament\Shared\Resources\PropertyResource\Widgets;
 
 use App\Models\ScheduleEvent;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use Illuminate\Database\Eloquent\Model;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
@@ -21,7 +21,7 @@ class PropertyPricesOverview extends ApexChartWidget
 
     protected function getOptions(): array
     {
-        $prices = MonitoredData::query()
+        $prices = Rate::query()
             ->where('property_id', $this->record->id)
             ->groupBy('checkin')
             ->whereDate('checkin', '>', now())
