@@ -22,7 +22,7 @@ class PriceManager
 
         $property = Property::findOrFail($propertyId);
 
-        $mode = $property->priceDatas
+        $mode = $property->rates
             ->filter(fn ($price) => $price->available === true)
             ->where(fn ($price) => $price->checkin > now()->subYear())
             ->mode('price')[0];
