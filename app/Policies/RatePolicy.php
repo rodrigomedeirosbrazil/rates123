@@ -18,7 +18,7 @@ class RatePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_monitored::data');
+        return $user->can('view_any::data');
     }
 
     /**
@@ -30,7 +30,7 @@ class RatePolicy
      */
     public function view(User $user, Rate $rate): bool
     {
-        return $user->can('view_monitored::data');
+        return $user->can('view::data');
     }
 
     /**
@@ -41,7 +41,7 @@ class RatePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_monitored::data');
+        return $user->can('create::data');
     }
 
     /**
@@ -53,7 +53,7 @@ class RatePolicy
      */
     public function update(User $user, Rate $rate): bool
     {
-        return $user->can('update_monitored::data');
+        return $user->can('update::data');
     }
 
     /**
@@ -65,7 +65,7 @@ class RatePolicy
      */
     public function delete(User $user, Rate $rate): bool
     {
-        return $user->can('delete_monitored::data');
+        return $user->can('delete::data');
     }
 
     /**
@@ -76,7 +76,7 @@ class RatePolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_monitored::data');
+        return $user->can('delete_any::data');
     }
 
     /**
@@ -88,7 +88,7 @@ class RatePolicy
      */
     public function forceDelete(User $user, Rate $rate): bool
     {
-        return $user->can('force_delete_monitored::data');
+        return $user->can('force_delete::data');
     }
 
     /**
@@ -99,7 +99,7 @@ class RatePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_monitored::data');
+        return $user->can('force_delete_any::data');
     }
 
     /**
@@ -111,7 +111,7 @@ class RatePolicy
      */
     public function restore(User $user, Rate $rate): bool
     {
-        return $user->can('restore_monitored::data');
+        return $user->can('restore::data');
     }
 
     /**
@@ -122,7 +122,7 @@ class RatePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_monitored::data');
+        return $user->can('restore_any::data');
     }
 
     /**
@@ -134,7 +134,7 @@ class RatePolicy
      */
     public function replicate(User $user, Rate $rate): bool
     {
-        return $user->can('replicate_monitored::data');
+        return $user->can('replicate::data');
     }
 
     /**
@@ -145,7 +145,7 @@ class RatePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_monitored::data');
+        return $user->can('reorder::data');
     }
 
 }

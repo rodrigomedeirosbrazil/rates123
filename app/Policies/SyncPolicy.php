@@ -18,7 +18,7 @@ class SyncPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_monitored::sync');
+        return $user->can('view_any::sync');
     }
 
     /**
@@ -30,7 +30,7 @@ class SyncPolicy
      */
     public function view(User $user, Sync $sync): bool
     {
-        return $user->can('view_monitored::sync');
+        return $user->can('view::sync');
     }
 
     /**
@@ -41,7 +41,7 @@ class SyncPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_monitored::sync');
+        return $user->can('create::sync');
     }
 
     /**
@@ -53,7 +53,7 @@ class SyncPolicy
      */
     public function update(User $user, Sync $sync): bool
     {
-        return $user->can('update_monitored::sync');
+        return $user->can('update::sync');
     }
 
     /**
@@ -65,7 +65,7 @@ class SyncPolicy
      */
     public function delete(User $user, Sync $sync): bool
     {
-        return $user->can('delete_monitored::sync');
+        return $user->can('delete::sync');
     }
 
     /**
@@ -76,7 +76,7 @@ class SyncPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_monitored::sync');
+        return $user->can('delete_any::sync');
     }
 
     /**
@@ -88,7 +88,7 @@ class SyncPolicy
      */
     public function forceDelete(User $user, Sync $sync): bool
     {
-        return $user->can('force_delete_monitored::sync');
+        return $user->can('force_delete::sync');
     }
 
     /**
@@ -99,7 +99,7 @@ class SyncPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_monitored::sync');
+        return $user->can('force_delete_any::sync');
     }
 
     /**
@@ -111,7 +111,7 @@ class SyncPolicy
      */
     public function restore(User $user, Sync $sync): bool
     {
-        return $user->can('restore_monitored::sync');
+        return $user->can('restore::sync');
     }
 
     /**
@@ -122,7 +122,7 @@ class SyncPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_monitored::sync');
+        return $user->can('restore_any::sync');
     }
 
     /**
@@ -134,7 +134,7 @@ class SyncPolicy
      */
     public function replicate(User $user, Sync $sync): bool
     {
-        return $user->can('replicate_monitored::sync');
+        return $user->can('replicate::sync');
     }
 
     /**
@@ -145,7 +145,7 @@ class SyncPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_monitored::sync');
+        return $user->can('reorder::sync');
     }
 
 }

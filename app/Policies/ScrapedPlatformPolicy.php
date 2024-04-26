@@ -18,7 +18,7 @@ class ScrapedPlatformPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_monitored::platform');
+        return $user->can('view_any::platform');
     }
 
     /**
@@ -30,7 +30,7 @@ class ScrapedPlatformPolicy
      */
     public function view(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
-        return $user->can('view_monitored::platform');
+        return $user->can('view::platform');
     }
 
     /**
@@ -41,7 +41,7 @@ class ScrapedPlatformPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_monitored::platform');
+        return $user->can('create::platform');
     }
 
     /**
@@ -53,7 +53,7 @@ class ScrapedPlatformPolicy
      */
     public function update(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
-        return $user->can('update_monitored::platform');
+        return $user->can('update::platform');
     }
 
     /**
@@ -65,7 +65,7 @@ class ScrapedPlatformPolicy
      */
     public function delete(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
-        return $user->can('delete_monitored::platform');
+        return $user->can('delete::platform');
     }
 
     /**
@@ -76,7 +76,7 @@ class ScrapedPlatformPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_monitored::platform');
+        return $user->can('delete_any::platform');
     }
 
     /**
@@ -88,7 +88,7 @@ class ScrapedPlatformPolicy
      */
     public function forceDelete(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
-        return $user->can('force_delete_monitored::platform');
+        return $user->can('force_delete::platform');
     }
 
     /**
@@ -99,7 +99,7 @@ class ScrapedPlatformPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_monitored::platform');
+        return $user->can('force_delete_any::platform');
     }
 
     /**
@@ -111,7 +111,7 @@ class ScrapedPlatformPolicy
      */
     public function restore(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
-        return $user->can('restore_monitored::platform');
+        return $user->can('restore::platform');
     }
 
     /**
@@ -122,7 +122,7 @@ class ScrapedPlatformPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_monitored::platform');
+        return $user->can('restore_any::platform');
     }
 
     /**
@@ -134,7 +134,7 @@ class ScrapedPlatformPolicy
      */
     public function replicate(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
-        return $user->can('replicate_monitored::platform');
+        return $user->can('replicate::platform');
     }
 
     /**
@@ -145,7 +145,7 @@ class ScrapedPlatformPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_monitored::platform');
+        return $user->can('reorder::platform');
     }
 
 }
