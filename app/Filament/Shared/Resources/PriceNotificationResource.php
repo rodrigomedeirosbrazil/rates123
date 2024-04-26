@@ -3,7 +3,7 @@
 namespace App\Filament\Shared\Resources;
 
 use App\Filament\Shared\Resources\PriceNotificationResource\Pages;
-use App\Models\MonitoredData;
+use App\Models\Rate;
 use App\Models\PriceNotification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
@@ -34,7 +34,7 @@ class PriceNotificationResource extends Resource
                 Grid::make([])->schema([
                     Placeholder::make('Property')
                         ->label(__('Property'))
-                        ->content(fn ($record) => $record->monitoredProperty->name),
+                        ->content(fn ($record) => $record->property->name),
 
                     TextInput::make('type')
                         ->label(__('Type'))
@@ -80,15 +80,15 @@ class PriceNotificationResource extends Resource
                             return __('No record');
                         }
 
-                        return new HtmlString(MonitoredData::query()
-                            ->where('monitored_property_id', $record->monitored_property_id)
+                        return new HtmlString(Rate::query()
+                            ->where('property_id', $record->property_id)
                             ->where('checkin', $record->checkin)
                             ->where('created_at', '<=', $record->created_at)
                             ->orderBy('created_at', 'desc')
                             ->groupBy('price')
                             ->limit(10)
                             ->get()
-                            ->map(function (MonitoredData $data): string {
+                            ->map(function (Rate $data): string {
                                 return "{$data->created_at->translatedFormat('l, d F y')} - $ {$data->price}";
                             })
                             ->join('<br>'));
@@ -100,7 +100,7 @@ class PriceNotificationResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('monitoredProperty.name')
+                TextColumn::make('property.name')
                     ->label(__('Property'))
                     ->sortable(),
 
@@ -145,18 +145,18 @@ class PriceNotificationResource extends Resource
             ->searchOnBlur()
             ->filters([
 
-                Filter::make('monitored_property_id')
+                Filter::make('property_id')
                     ->form([
-                        Select::make('monitored_property_id')
+                        Select::make('property_id')
                             ->label(__('Property'))
                             ->searchable(['name'])
-                            ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
+                            ->relationship(name: 'property', titleAttribute: 'name'),
                     ])
                     ->query(
                         fn (Builder $query, array $data): Builder => $query
                             ->when(
-                                $data['monitored_property_id'],
-                                fn (Builder $query, $value): Builder => $query->where('monitored_property_id', $value),
+                                $data['property_id'],
+                                fn (Builder $query, $value): Builder => $query->where('property_id', $value),
                             )
                     ),
 

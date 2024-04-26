@@ -25,7 +25,7 @@ class OccupancyResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('monitored_property_id')
+                Forms\Components\TextInput::make('property_id')
                     ->required()
                     ->numeric(),
                 Forms\Components\DatePicker::make('checkin')
@@ -43,7 +43,7 @@ class OccupancyResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('monitoredProperty.name')
+                TextColumn::make('property.name')
                     ->label(__('Property'))
                     ->sortable(),
 
@@ -82,18 +82,18 @@ class OccupancyResource extends Resource
             ])
             ->searchOnBlur()
             ->filters([
-                Filter::make('monitored_property_id')
+                Filter::make('property_id')
                     ->form([
-                        Select::make('monitored_property_id')
+                        Select::make('property_id')
                             ->label(__('Property'))
                             ->searchable(['name'])
-                            ->relationship(name: 'monitoredProperty', titleAttribute: 'name'),
+                            ->relationship(name: 'property', titleAttribute: 'name'),
                     ])
                     ->query(
                         fn (Builder $query, array $data): Builder => $query
                             ->when(
-                                $data['monitored_property_id'],
-                                fn (Builder $query, $value): Builder => $query->where('monitored_property_id', $value),
+                                $data['property_id'],
+                                fn (Builder $query, $value): Builder => $query->where('property_id', $value),
                             )
                     ),
 

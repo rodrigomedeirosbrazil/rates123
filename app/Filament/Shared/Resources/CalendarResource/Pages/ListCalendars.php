@@ -4,7 +4,7 @@ namespace App\Filament\Shared\Resources\CalendarResource\Pages;
 
 use App\Filament\Shared\Resources\CalendarResource;
 use App\Filament\Shared\Resources\CalendarResource\Widgets\CalendarWidget;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -39,9 +39,9 @@ class ListCalendars extends Page
                 ->schema([
                     Grid::make()
                         ->schema([
-                            Select::make('monitored_property_id')
+                            Select::make('property_id')
                                 ->label(__('Property'))
-                                ->options(fn () => MonitoredProperty::all()->pluck('name', 'id'))
+                                ->options(fn () => Property::all()->pluck('name', 'id'))
                                 ->searchable(),
 
                         ])
@@ -78,7 +78,7 @@ class ListCalendars extends Page
 
     public function isFiltered(): bool
     {
-        return ! empty($this->getFilter('monitored_property_id'));
+        return ! empty($this->getFilter('property_id'));
     }
 
     protected function getFooterWidgets(): array

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Shared\Resources\CalendarResource\Widgets;
 
-use App\Models\DateEvent;
-use App\Models\MonitoredData;
+use App\Models\ScheduleEvent;
+use App\Models\Rate;
 use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -21,7 +21,7 @@ class CalendarWidget extends FullCalendarWidget
 
     public ?Model $property = null;
 
-    public Model|string|null $model = MonitoredData::class;
+    public Model|string|null $model = Rate::class;
 
     public array $filters = [];
 
@@ -38,12 +38,12 @@ class CalendarWidget extends FullCalendarWidget
             return [];
         }
 
-        $events = DateEvent::query()
+        $events = ScheduleEvent::query()
             ->where('begin', '>=', $fetchInfo['start'])
             ->where('end', '<=', $fetchInfo['end'])
             ->get()
             ->map(
-                fn (DateEvent $dateEvent) => EventData::make()
+                fn (ScheduleEvent $dateEvent) => EventData::make()
                     ->id($dateEvent->id)
                     ->title($dateEvent->name)
                     ->start($dateEvent->begin)
@@ -56,8 +56,8 @@ class CalendarWidget extends FullCalendarWidget
 
         $prices = $this->getEloquentQuery()
             ->when(
-                $this->getFilter('monitored_property_id'),
-                fn ($query) => $query->where('monitored_property_id', $this->getFilter('monitored_property_id'))
+                $this->getFilter('property_id'),
+                fn ($query) => $query->where('property_id', $this->getFilter('property_id'))
             )
             ->where('checkin', '>=', $fetchInfo['start'])
             ->where('checkin', '<=', $fetchInfo['end'])
@@ -65,11 +65,11 @@ class CalendarWidget extends FullCalendarWidget
             ->groupBy('checkin')
             ->map(fn ($group) => $group->sortByDesc('created_at')->groupBy('price')->slice(0, 4)->map(fn ($group) => $group->first()))->flatten(1)
             ->map(
-                fn (MonitoredData $monitoredData) => EventData::make()
-                    ->id($monitoredData->id)
-                    ->title(Number::currency($monitoredData->price))
-                    ->start($monitoredData->checkin)
-                    ->end($monitoredData->checkin)
+                fn (Rate $rate) => EventData::make()
+                    ->id($rate->id)
+                    ->title(Number::currency($rate->price))
+                    ->start($rate->checkin)
+                    ->end($rate->checkin)
                     ->allDay(true)
             )
             ->values();
@@ -125,16 +125,16 @@ class CalendarWidget extends FullCalendarWidget
                                 ->label('')
                                 ->formatStateUsing(
                                     fn ($record): HtmlString => new HtmlString(
-                                        MonitoredData::where('checkin', $record->checkin)
-                                            ->where('monitored_property_id', $record->monitored_property_id)
+                                        Rate::where('checkin', $record->checkin)
+                                            ->where('property_id', $record->property_id)
                                             ->groupBy('price')
                                             ->orderBy('created_at', 'desc')
                                             ->limit(10)
                                             ->get()
                                             ->map(
-                                                fn ($monitoredData) => format_date_with_weekday($monitoredData->created_at)
+                                                fn ($rate) => format_date_with_weekday($rate->created_at)
                                                 . ': '
-                                                . Number::currency($monitoredData->price),
+                                                . Number::currency($rate->price),
                                             )
                                             ->join('<br>')
                                     )

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\CheckPropertyPricesJob;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use Illuminate\Console\Command;
 
 class CheckPricesCommand extends Command
@@ -27,9 +27,9 @@ class CheckPricesCommand extends Command
      */
     public function handle()
     {
-        MonitoredProperty::all()
+        Property::all()
             ->each(
-                function (MonitoredProperty $property) {
+                function (Property $property) {
                     dispatch(
                         new CheckPropertyPricesJob($property->id)
                     );

@@ -56,8 +56,8 @@ class User extends Authenticatable implements FilamentUser
         return $this->roles->pluck('name')->join(',');
     }
 
-    public function properties(): BelongsToMany
+    public function followProperties(): BelongsToMany
     {
-        return $this->belongsToMany(MonitoredProperty::class, 'user_property', 'user_id', 'monitored_property_id');
+        return $this->belongsToMany(Property::class, 'user_followed_property', 'user_id', 'property_id');
     }
 }

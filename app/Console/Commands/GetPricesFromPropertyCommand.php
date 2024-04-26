@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Managers\ScrapManager;
-use App\Models\MonitoredProperty;
+use App\Models\Property;
 use Illuminate\Console\Command;
 
 class GetPricesFromPropertyCommand extends Command
@@ -28,7 +28,7 @@ class GetPricesFromPropertyCommand extends Command
     public function handle()
     {
         $propertyId = $this->argument('propertyId');
-        $property = MonitoredProperty::find($propertyId);
+        $property = Property::find($propertyId);
 
         if (! $property) {
             $this->error("Couldn't find a property with ID {$propertyId}");
