@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\MonitoredSync;
+use App\Models\Sync;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class MonitoredSyncPolicy
+class SyncPolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class MonitoredSyncPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\MonitoredSync  $monitoredSync
+     * @param  \App\Models\Sync  $monitoredSync
      * @return bool
      */
-    public function view(User $user, MonitoredSync $monitoredSync): bool
+    public function view(User $user, Sync $monitoredSync): bool
     {
         return $user->can('view_monitored::sync');
     }
@@ -48,10 +48,10 @@ class MonitoredSyncPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\MonitoredSync  $monitoredSync
+     * @param  \App\Models\Sync  $monitoredSync
      * @return bool
      */
-    public function update(User $user, MonitoredSync $monitoredSync): bool
+    public function update(User $user, Sync $monitoredSync): bool
     {
         return $user->can('update_monitored::sync');
     }
@@ -60,10 +60,10 @@ class MonitoredSyncPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\MonitoredSync  $monitoredSync
+     * @param  \App\Models\Sync  $monitoredSync
      * @return bool
      */
-    public function delete(User $user, MonitoredSync $monitoredSync): bool
+    public function delete(User $user, Sync $monitoredSync): bool
     {
         return $user->can('delete_monitored::sync');
     }
@@ -83,10 +83,10 @@ class MonitoredSyncPolicy
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\MonitoredSync  $monitoredSync
+     * @param  \App\Models\Sync  $monitoredSync
      * @return bool
      */
-    public function forceDelete(User $user, MonitoredSync $monitoredSync): bool
+    public function forceDelete(User $user, Sync $monitoredSync): bool
     {
         return $user->can('force_delete_monitored::sync');
     }
@@ -106,10 +106,10 @@ class MonitoredSyncPolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\MonitoredSync  $monitoredSync
+     * @param  \App\Models\Sync  $monitoredSync
      * @return bool
      */
-    public function restore(User $user, MonitoredSync $monitoredSync): bool
+    public function restore(User $user, Sync $monitoredSync): bool
     {
         return $user->can('restore_monitored::sync');
     }
@@ -129,10 +129,10 @@ class MonitoredSyncPolicy
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\MonitoredSync  $monitoredSync
+     * @param  \App\Models\Sync  $monitoredSync
      * @return bool
      */
-    public function replicate(User $user, MonitoredSync $monitoredSync): bool
+    public function replicate(User $user, Sync $monitoredSync): bool
     {
         return $user->can('replicate_monitored::sync');
     }

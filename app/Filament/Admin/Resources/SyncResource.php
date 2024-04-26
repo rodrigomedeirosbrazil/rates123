@@ -3,8 +3,8 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Enums\SyncStatusEnum;
-use App\Filament\Admin\Resources\MonitoredSyncResource\Pages;
-use App\Models\MonitoredSync;
+use App\Filament\Admin\Resources\SyncResource\Pages;
+use App\Models\Sync;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,9 +14,9 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class MonitoredSyncResource extends Resource
+class SyncResource extends Resource
 {
-    protected static ?string $model = MonitoredSync::class;
+    protected static ?string $model = Sync::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -77,7 +77,7 @@ class MonitoredSyncResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageMonitoredSyncs::route('/'),
+            'index' => Pages\ManageSyncs::route('/'),
         ];
     }
 }

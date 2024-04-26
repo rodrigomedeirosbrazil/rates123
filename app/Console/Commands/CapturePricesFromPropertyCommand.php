@@ -7,7 +7,7 @@ use App\Jobs\CheckPropertyPricesJob;
 use App\Managers\ScrapManager;
 use App\Models\Rate;
 use App\Models\Property;
-use App\Models\MonitoredSync;
+use App\Models\Sync;
 use Illuminate\Console\Command;
 
 use function Laravel\Prompts\confirm;
@@ -43,7 +43,7 @@ class CapturePricesFromPropertyCommand extends Command
         }
 
         if (
-            MonitoredSync::propertyIsSyncedToday($propertyId)
+            Sync::propertyIsSyncedToday($propertyId)
             && ! confirm('This property has already been synced sucessful today. Do you want to continue?', false)
         ) {
             return 0;
@@ -55,7 +55,7 @@ class CapturePricesFromPropertyCommand extends Command
 
         $startTimestamp = now();
 
-        $sync = MonitoredSync::create([
+        $sync = Sync::create([
             'property_id' => $propertyId,
             'status' => SyncStatusEnum::InProgress,
             'prices_count' => 0,

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Admin\Resources\MonitoredSyncResource\Pages;
+namespace App\Filament\Admin\Resources\SyncResource\Pages;
 
-use App\Filament\Admin\Resources\MonitoredSyncResource;
+use App\Filament\Admin\Resources\SyncResource;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Builder;
 
-class ManageMonitoredSyncs extends ManageRecords
+class ManageSyncs extends ManageRecords
 {
-    protected static string $resource = MonitoredSyncResource::class;
+    protected static string $resource = SyncResource::class;
 
     protected function getHeaderActions(): array
     {
