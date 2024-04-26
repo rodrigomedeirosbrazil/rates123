@@ -46,7 +46,7 @@ class Property extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_property', 'property_id', 'user_id');
+        return $this->belongsToMany(User::class, 'user_followed_properties', 'property_id', 'user_id');
     }
 
     public function followByUser(User $user): bool
@@ -61,7 +61,7 @@ class Property extends Model
 
     public function rates(): HasMany
     {
-        return $this->hasMany(Rates::class, 'property_id', 'id');
+        return $this->hasMany(Rate::class, 'property_id', 'id');
     }
 
     public function toPropertyDTO(): PropertyDTO
