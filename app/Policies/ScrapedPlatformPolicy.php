@@ -25,10 +25,10 @@ class ScrapedPlatformPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScrapedPlatform  $monitoredPlatform
+     * @param  \App\Models\ScrapedPlatform  $scrapedPlatform
      * @return bool
      */
-    public function view(User $user, ScrapedPlatform $monitoredPlatform): bool
+    public function view(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
         return $user->can('view_monitored::platform');
     }
@@ -48,10 +48,10 @@ class ScrapedPlatformPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScrapedPlatform  $monitoredPlatform
+     * @param  \App\Models\ScrapedPlatform  $scrapedPlatform
      * @return bool
      */
-    public function update(User $user, ScrapedPlatform $monitoredPlatform): bool
+    public function update(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
         return $user->can('update_monitored::platform');
     }
@@ -60,10 +60,10 @@ class ScrapedPlatformPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScrapedPlatform  $monitoredPlatform
+     * @param  \App\Models\ScrapedPlatform  $scrapedPlatform
      * @return bool
      */
-    public function delete(User $user, ScrapedPlatform $monitoredPlatform): bool
+    public function delete(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
         return $user->can('delete_monitored::platform');
     }
@@ -83,10 +83,10 @@ class ScrapedPlatformPolicy
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScrapedPlatform  $monitoredPlatform
+     * @param  \App\Models\ScrapedPlatform  $scrapedPlatform
      * @return bool
      */
-    public function forceDelete(User $user, ScrapedPlatform $monitoredPlatform): bool
+    public function forceDelete(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
         return $user->can('force_delete_monitored::platform');
     }
@@ -106,10 +106,10 @@ class ScrapedPlatformPolicy
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScrapedPlatform  $monitoredPlatform
+     * @param  \App\Models\ScrapedPlatform  $scrapedPlatform
      * @return bool
      */
-    public function restore(User $user, ScrapedPlatform $monitoredPlatform): bool
+    public function restore(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
         return $user->can('restore_monitored::platform');
     }
@@ -129,10 +129,10 @@ class ScrapedPlatformPolicy
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScrapedPlatform  $monitoredPlatform
+     * @param  \App\Models\ScrapedPlatform  $scrapedPlatform
      * @return bool
      */
-    public function replicate(User $user, ScrapedPlatform $monitoredPlatform): bool
+    public function replicate(User $user, ScrapedPlatform $scrapedPlatform): bool
     {
         return $user->can('replicate_monitored::platform');
     }
