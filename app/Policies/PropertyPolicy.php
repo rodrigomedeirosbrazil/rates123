@@ -18,7 +18,7 @@ class PropertyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any::property');
+        return $user->can('view_any_property');
     }
 
     /**
@@ -30,7 +30,7 @@ class PropertyPolicy
      */
     public function view(User $user, Property $property): bool
     {
-        return $user->can('view::property');
+        return $user->can('view_property');
     }
 
     /**
@@ -41,7 +41,7 @@ class PropertyPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create::property');
+        return $user->can('create_property');
     }
 
     /**
@@ -53,7 +53,7 @@ class PropertyPolicy
      */
     public function update(User $user, Property $property): bool
     {
-        return $user->can('update::property');
+        return $user->can('update_property');
     }
 
     /**
@@ -65,7 +65,7 @@ class PropertyPolicy
      */
     public function delete(User $user, Property $property): bool
     {
-        return $user->can('delete::property');
+        return $user->can('delete_property');
     }
 
     /**
@@ -76,7 +76,7 @@ class PropertyPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any::property');
+        return $user->can('delete_any_property');
     }
 
     /**
@@ -88,7 +88,7 @@ class PropertyPolicy
      */
     public function forceDelete(User $user, Property $property): bool
     {
-        return $user->can('force_delete::property');
+        return $user->can('force_delete_property');
     }
 
     /**
@@ -99,7 +99,7 @@ class PropertyPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any::property');
+        return $user->can('force_delete_any_property');
     }
 
     /**
@@ -111,7 +111,7 @@ class PropertyPolicy
      */
     public function restore(User $user, Property $property): bool
     {
-        return $user->can('restore::property');
+        return $user->can('restore_property');
     }
 
     /**
@@ -122,7 +122,7 @@ class PropertyPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any::property');
+        return $user->can('restore_any_property');
     }
 
     /**
@@ -134,7 +134,7 @@ class PropertyPolicy
      */
     public function replicate(User $user, Property $property): bool
     {
-        return $user->can('replicate::property');
+        return $user->can('replicate_property');
     }
 
     /**
@@ -145,6 +145,7 @@ class PropertyPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder::property');
+        return $user->can('reorder_property');
     }
+
 }

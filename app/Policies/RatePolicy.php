@@ -18,7 +18,7 @@ class RatePolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any::data');
+        return $user->can('view_any_rate');
     }
 
     /**
@@ -30,7 +30,7 @@ class RatePolicy
      */
     public function view(User $user, Rate $rate): bool
     {
-        return $user->can('view::data');
+        return $user->can('view_rate');
     }
 
     /**
@@ -41,7 +41,7 @@ class RatePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create::data');
+        return $user->can('create_rate');
     }
 
     /**
@@ -53,7 +53,7 @@ class RatePolicy
      */
     public function update(User $user, Rate $rate): bool
     {
-        return $user->can('update::data');
+        return $user->can('update_rate');
     }
 
     /**
@@ -65,7 +65,7 @@ class RatePolicy
      */
     public function delete(User $user, Rate $rate): bool
     {
-        return $user->can('delete::data');
+        return $user->can('delete_rate');
     }
 
     /**
@@ -76,7 +76,7 @@ class RatePolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any::data');
+        return $user->can('delete_any_rate');
     }
 
     /**
@@ -88,7 +88,7 @@ class RatePolicy
      */
     public function forceDelete(User $user, Rate $rate): bool
     {
-        return $user->can('force_delete::data');
+        return $user->can('force_delete_rate');
     }
 
     /**
@@ -99,7 +99,7 @@ class RatePolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any::data');
+        return $user->can('force_delete_any_rate');
     }
 
     /**
@@ -111,7 +111,7 @@ class RatePolicy
      */
     public function restore(User $user, Rate $rate): bool
     {
-        return $user->can('restore::data');
+        return $user->can('restore_rate');
     }
 
     /**
@@ -122,7 +122,7 @@ class RatePolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any::data');
+        return $user->can('restore_any_rate');
     }
 
     /**
@@ -134,7 +134,7 @@ class RatePolicy
      */
     public function replicate(User $user, Rate $rate): bool
     {
-        return $user->can('replicate::data');
+        return $user->can('replicate_rate');
     }
 
     /**
@@ -145,7 +145,7 @@ class RatePolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder::data');
+        return $user->can('reorder_rate');
     }
 
 }

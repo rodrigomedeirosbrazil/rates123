@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Sync;
+use App\Models\Occupancy;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class SyncPolicy
+class OccupancyPolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class SyncPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_sync');
+        return $user->can('view_any_occupancy');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Sync  $sync
+     * @param  \App\Models\Occupancy  $occupancy
      * @return bool
      */
-    public function view(User $user, Sync $sync): bool
+    public function view(User $user, Occupancy $occupancy): bool
     {
-        return $user->can('view_sync');
+        return $user->can('view_occupancy');
     }
 
     /**
@@ -41,31 +41,31 @@ class SyncPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_sync');
+        return $user->can('create_occupancy');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Sync  $sync
+     * @param  \App\Models\Occupancy  $occupancy
      * @return bool
      */
-    public function update(User $user, Sync $sync): bool
+    public function update(User $user, Occupancy $occupancy): bool
     {
-        return $user->can('update_sync');
+        return $user->can('update_occupancy');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Sync  $sync
+     * @param  \App\Models\Occupancy  $occupancy
      * @return bool
      */
-    public function delete(User $user, Sync $sync): bool
+    public function delete(User $user, Occupancy $occupancy): bool
     {
-        return $user->can('delete_sync');
+        return $user->can('delete_occupancy');
     }
 
     /**
@@ -76,19 +76,19 @@ class SyncPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_sync');
+        return $user->can('delete_any_occupancy');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Sync  $sync
+     * @param  \App\Models\Occupancy  $occupancy
      * @return bool
      */
-    public function forceDelete(User $user, Sync $sync): bool
+    public function forceDelete(User $user, Occupancy $occupancy): bool
     {
-        return $user->can('force_delete_sync');
+        return $user->can('force_delete_occupancy');
     }
 
     /**
@@ -99,19 +99,19 @@ class SyncPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_sync');
+        return $user->can('force_delete_any_occupancy');
     }
 
     /**
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Sync  $sync
+     * @param  \App\Models\Occupancy  $occupancy
      * @return bool
      */
-    public function restore(User $user, Sync $sync): bool
+    public function restore(User $user, Occupancy $occupancy): bool
     {
-        return $user->can('restore_sync');
+        return $user->can('restore_occupancy');
     }
 
     /**
@@ -122,19 +122,19 @@ class SyncPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_sync');
+        return $user->can('restore_any_occupancy');
     }
 
     /**
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Sync  $sync
+     * @param  \App\Models\Occupancy  $occupancy
      * @return bool
      */
-    public function replicate(User $user, Sync $sync): bool
+    public function replicate(User $user, Occupancy $occupancy): bool
     {
-        return $user->can('replicate_sync');
+        return $user->can('replicate_occupancy');
     }
 
     /**
@@ -145,7 +145,7 @@ class SyncPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_sync');
+        return $user->can('reorder_occupancy');
     }
 
 }

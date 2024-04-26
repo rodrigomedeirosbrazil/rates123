@@ -18,19 +18,19 @@ class ScheduleEventPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_date::event');
+        return $user->can('view_any_schedule::event');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $scheduleEvent
      * @return bool
      */
-    public function view(User $user, ScheduleEvent $dateEvent): bool
+    public function view(User $user, ScheduleEvent $scheduleEvent): bool
     {
-        return $user->can('view_date::event');
+        return $user->can('view_schedule::event');
     }
 
     /**
@@ -41,31 +41,31 @@ class ScheduleEventPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_date::event');
+        return $user->can('create_schedule::event');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $scheduleEvent
      * @return bool
      */
-    public function update(User $user, ScheduleEvent $dateEvent): bool
+    public function update(User $user, ScheduleEvent $scheduleEvent): bool
     {
-        return $user->can('update_date::event');
+        return $user->can('update_schedule::event');
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $scheduleEvent
      * @return bool
      */
-    public function delete(User $user, ScheduleEvent $dateEvent): bool
+    public function delete(User $user, ScheduleEvent $scheduleEvent): bool
     {
-        return $user->can('delete_date::event');
+        return $user->can('delete_schedule::event');
     }
 
     /**
@@ -76,19 +76,19 @@ class ScheduleEventPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_date::event');
+        return $user->can('delete_any_schedule::event');
     }
 
     /**
      * Determine whether the user can permanently delete.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $scheduleEvent
      * @return bool
      */
-    public function forceDelete(User $user, ScheduleEvent $dateEvent): bool
+    public function forceDelete(User $user, ScheduleEvent $scheduleEvent): bool
     {
-        return $user->can('force_delete_date::event');
+        return $user->can('force_delete_schedule::event');
     }
 
     /**
@@ -99,19 +99,19 @@ class ScheduleEventPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_date::event');
+        return $user->can('force_delete_any_schedule::event');
     }
 
     /**
      * Determine whether the user can restore.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $scheduleEvent
      * @return bool
      */
-    public function restore(User $user, ScheduleEvent $dateEvent): bool
+    public function restore(User $user, ScheduleEvent $scheduleEvent): bool
     {
-        return $user->can('restore_date::event');
+        return $user->can('restore_schedule::event');
     }
 
     /**
@@ -122,19 +122,19 @@ class ScheduleEventPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_date::event');
+        return $user->can('restore_any_schedule::event');
     }
 
     /**
      * Determine whether the user can replicate.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleEvent  $dateEvent
+     * @param  \App\Models\ScheduleEvent  $scheduleEvent
      * @return bool
      */
-    public function replicate(User $user, ScheduleEvent $dateEvent): bool
+    public function replicate(User $user, ScheduleEvent $scheduleEvent): bool
     {
-        return $user->can('replicate_date::event');
+        return $user->can('replicate_schedule::event');
     }
 
     /**
@@ -145,7 +145,7 @@ class ScheduleEventPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_date::event');
+        return $user->can('reorder_schedule::event');
     }
 
 }
