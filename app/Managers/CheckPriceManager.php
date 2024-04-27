@@ -39,6 +39,7 @@ class CheckPriceManager
             ->where('property_id', $propertyId)
             ->whereDate('checkin', $date)
             ->orderBy('created_at', 'desc')
+            ->limit(2)
             ->get();
 
         if ($prices->count() < 2) {
