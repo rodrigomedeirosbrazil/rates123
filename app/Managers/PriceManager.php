@@ -52,7 +52,7 @@ class PriceManager
             $userModel = $user;
         }
 
-        $followedPropertyIds = $userModel->properties->pluck('id');
+        $followedPropertyIds = $userModel->followProperties->pluck('id');
 
         if ($followedPropertyIds->isEmpty()) {
             return collect();
@@ -139,7 +139,7 @@ class PriceManager
             $userModel = $user;
         }
 
-        $followedPropertyIds = $userModel->properties->pluck('id');
+        $followedPropertyIds = $userModel->followProperties->pluck('id');
 
         if ($followedPropertyIds->isEmpty()) {
             return collect();
