@@ -3,11 +3,70 @@
 namespace App\Managers;
 
 use App\DTOs\OccupancyDiffDTO;
+use App\DTOs\OccupancyNotificationDTO;
 use App\Models\Occupancy;
+use App\Models\Property;
+use App\Models\User;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Collection;
 
 class OccupancyManager
 {
+    public function buildOccupancyNotifications(User $user): Collection
+    {
+        $properties = $user->properties;
+
+        return $properties->map(function (Property $property) {
+            $occupancyNotifications = $this->processOccupancyChange($property->id);
+
+            if ($occupancyNotifications->isEmpty()) {
+                return null;
+            }
+
+            return $occupancyNotifications
+                ->map(
+                    fn (OccupancyNotificationDTO $occupancyNotifications) => $occupancyNotifications->checkin->translatedFormat('l, d F y')
+                        . ': '
+                        . number_format($occupancyNotifications->occupancyDiffDTO->oldOccupancy, 0) . '%'
+                        . ' -> '
+                        . number_format($occupancyNotifications->occupancyDiffDTO->newOccupancy, 0) . '%'
+                        . PHP_EOL
+                )
+                ->prepend("$property->name: " . PHP_EOL)
+                ->implode('');
+        })
+            ->filter()
+            ->flatten();
+    }
+
+    public function processOccupancyChange(
+        int $propertyId,
+        CarbonInterface $fromDate = null,
+        CarbonInterface $toDate = null
+    ): Collection {
+        $fromDate = $fromDate ?? now();
+        $toDate = $toDate ?? now()->addMonths(6);
+
+        $dates = [];
+
+        while ($fromDate->lessThanOrEqualTo($toDate)) {
+            $dates[] = $fromDate->copy();
+            $fromDate->addDay();
+        }
+
+        return collect($dates)
+            ->map(function (CarbonInterface $date) use ($propertyId) {
+                $occupancy = $this->checkOccupancyDate($propertyId, $date);
+
+                return $occupancy ? new OccupancyNotificationDTO(
+                    checkin: $date,
+                    occupancyDiffDTO: $occupancy
+                )
+                : null;
+            })
+            ->filter();
+    }
+
     public function checkOccupancyDate(int $propertyId, CarbonInterface $date): ?OccupancyDiffDTO
     {
         $occupancies = Occupancy::query()
