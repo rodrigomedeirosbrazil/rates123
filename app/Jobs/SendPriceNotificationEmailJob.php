@@ -23,7 +23,7 @@ class SendPriceNotificationEmailJob implements ShouldQueue
 
     public function handle(): void
     {
-        $user = User::find($this->userId);
+        $user = User::findOrFail($this->userId);
         Mail::to($user)->send(new PriceNotificationsMail($user));
     }
 }
