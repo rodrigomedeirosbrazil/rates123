@@ -2,9 +2,12 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Enums\RoleEnum;
 use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -35,10 +38,30 @@ class UserResource extends Resource
                 DateTimePicker::make('email_verified_at'),
 
                 Select::make('roles')
+                    ->label('System roles')
                     ->relationship('roles', 'name')
                     ->multiple()
                     ->preload()
                     ->searchable(),
+
+                Grid::make([])->schema([
+                    Repeater::make('userProperties')
+                        ->label('Properties')
+                        ->relationship()
+                        ->schema([
+                            Select::make('property_id')
+                                ->label('Property')
+                                ->relationship('property', 'name')
+                                ->searchable()
+                                ->required(),
+
+                            Select::make('role')
+                                ->options(RoleEnum::toArray())
+                                ->required(),
+                        ])
+                        ->columns(2),
+                ])
+                    ->columnSpanFull(),
             ]);
     }
 
