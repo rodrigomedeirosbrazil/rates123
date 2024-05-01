@@ -26,8 +26,8 @@ class CaptureOccupancyCommand extends Command
             return 1;
         }
 
-        if (! $property->hits_property_name) {
-            $this->error("Property name not available for property with ID {$propertyId}");
+        if (! $property->hits_property_id) {
+            $this->error("Property ID not available for property with ID {$propertyId}");
 
             return 1;
         }
@@ -38,7 +38,7 @@ class CaptureOccupancyCommand extends Command
 
         try {
             $occupancies = $hitsScraper->getOccupancies(
-                $property->hits_property_name,
+                $property->hits_property_id,
                 now(),
                 now()->addMonths(6)->endOfMonth()
             );

@@ -93,8 +93,8 @@ class PropertyResource extends Resource
                 TextInput::make('longitude')
                     ->label(__('Longitude')),
 
-                TextInput::make('hits_property_name')
-                    ->label(__('Hits Property Name')),
+                TextInput::make('hits_property_id')
+                    ->label(__('Hits Property ID')),
 
                 Placeholder::make('modePrice')
                     ->label(__('Avg Price'))

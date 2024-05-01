@@ -29,7 +29,7 @@ class Property extends Model
         'postal_code',
         'latitude',
         'longitude',
-        'hits_property_name',
+        'hits_property_id',
     ];
 
     protected $casts = [

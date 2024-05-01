@@ -28,7 +28,7 @@ class GetOccupancyCommand extends Command
     public function handle()
     {
         Property::query()
-            ->whereNotNull('hits_property_name')
+            ->whereNotNull('hits_property_id')
             ->cursor()
             ->each(
                 function (Property $property) {
