@@ -45,12 +45,12 @@ class Property extends Model
 
     public function followByUser(User $user): bool
     {
-        return $this->users()->where('user_id', $user->id)->exists();
+        return $this->usersFollowing()->where('user_id', $user->id)->exists();
     }
 
-    public function users(): HasMany
+    public function usersFollowing(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(UserFollowedProperty::class);
     }
 
     public function syncs(): HasMany
