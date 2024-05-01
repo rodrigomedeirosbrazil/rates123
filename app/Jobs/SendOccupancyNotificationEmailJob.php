@@ -26,6 +26,15 @@ class SendOccupancyNotificationEmailJob implements ShouldQueue
     {
         $user = User::find($this->userId);
 
-        Mail::to($user)->send(new OccupancyNotificationsMail($user));
+        $occupancyNotifications = $occupancyManager->buildOccupancyNotifications($user);
+
+        if (! $occupancyNotifications) {
+            return;
+        }
+
+        Mail::to($user)->send(new OccupancyNotificationsMail(
+            $user,
+            $occupancyNotifications->implode('')
+        ));
     }
 }

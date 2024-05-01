@@ -9,16 +9,14 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Address;
-use Illuminate\Support\Collection;
 
 class OccupancyNotificationsMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-
     public function __construct(
         public User $user,
-        public Collection $occupancyNotifications
+        public string $occupancyNotifications
     ) {
     }
 
@@ -33,7 +31,7 @@ class OccupancyNotificationsMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            text: 'mail.price-notifications-text',
+            text: 'mail.occupancy-notifications-text',
         );
     }
 

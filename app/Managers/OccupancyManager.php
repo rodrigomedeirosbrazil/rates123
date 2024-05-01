@@ -5,19 +5,17 @@ namespace App\Managers;
 use App\DTOs\OccupancyDiffDTO;
 use App\DTOs\OccupancyNotificationDTO;
 use App\Models\Occupancy;
-use App\Models\Property;
 use App\Models\User;
+use App\Models\UserProperty;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 
 class OccupancyManager
 {
-    public function buildOccupancyNotifications(User $user): Collection
+    public function buildOccupancyNotifications(User $user): ?Collection
     {
-        $properties = $user->properties;
-
-        return $properties->map(function (Property $property) {
-            $occupancyNotifications = $this->processOccupancyChange($property->id);
+        return $user->userProperties->map(function (UserProperty $userProperty) {
+            $occupancyNotifications = $this->processOccupancyChange(propertyId: $userProperty->property->id);
 
             if ($occupancyNotifications->isEmpty()) {
                 return null;
@@ -32,7 +30,8 @@ class OccupancyManager
                         . number_format($occupancyNotifications->occupancyDiffDTO->newOccupancy, 0) . '%'
                         . PHP_EOL
                 )
-                ->prepend("$property->name: " . PHP_EOL)
+                ->push(PHP_EOL)
+                ->prepend("{$userProperty->property->name}: " . PHP_EOL)
                 ->implode('');
         })
             ->filter()
@@ -80,13 +79,17 @@ class OccupancyManager
             return null;
         }
 
+        $oldOccupancy = (int) $occupancies[1]->occupancyPercent;
+        $newOccupancy = (int) $occupancies[0]->occupancyPercent;
+
+
         return $this->shouldNotifyOccupancyChange(
-            oldOccupancy: $occupancies[1]->occupancyPercent(),
-            newOccupancy: $occupancies[0]->occupancyPercent(),
+            oldOccupancy: $oldOccupancy,
+            newOccupancy: $newOccupancy,
         ) ? new OccupancyDiffDTO(
             checkin: $date,
-            oldOccupancy: $occupancies[1]->occupancyPercent(),
-            newOccupancy: $occupancies[0]->occupancyPercent(),
+            oldOccupancy: $oldOccupancy,
+            newOccupancy: $newOccupancy,
         ) : null;
     }
 

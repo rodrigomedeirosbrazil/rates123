@@ -23,14 +23,14 @@ class SendOccupancyNotificationsCommand extends Command
     public function handle()
     {
         User::whereNotNull('email')
-            ->with('properties')
+            ->with('userProperties')
             ->get()
             ->each(function (User $user) {
-                if ($user->properties->isEmpty()) {
+                if ($user->userProperties->isEmpty()) {
                     return;
                 }
 
-                $this->info("Sending occupancy notification to {$user->name} ({$user->email}).");
+                $this->info("Processing occupancy notification to {$user->name} ({$user->email}).");
                 dispatch(new SendOccupancyNotificationEmailJob($user->id));
             });
     }

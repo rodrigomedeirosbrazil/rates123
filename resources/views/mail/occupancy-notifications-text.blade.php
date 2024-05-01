@@ -1,7 +1,6 @@
 {{__('Hi')}} {{ $user->name }},
 
-{{$occupancyNotificationsTextTable}}
-@endif
+{{$occupancyNotifications}}
 
 {{__('Thanks')}},
 {{__('Rates123')}}.
