@@ -1,6 +1,6 @@
 {{__('Hi')}} {{ $user->name }},
 
-{{$occupancyNotifications}}
+{!! $occupancyNotifications !!}
 
 {{__('Thanks')}},
 {{__('Rates123')}}.
