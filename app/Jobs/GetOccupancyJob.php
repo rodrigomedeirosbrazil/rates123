@@ -29,12 +29,12 @@ class GetOccupancyJob implements ShouldQueue
     {
         $property = Property::findOrFail($this->propertyId);
 
-        if (! $property->hits_property_name) {
+        if (! $property->hits_property_id) {
             return;
         }
 
         $occupancies = $hitsScraper->getOccupancies(
-            $property->hits_property_name,
+            $property->hits_property_id,
             now(),
             now()->addMonths(6)->endOfMonth()
         );

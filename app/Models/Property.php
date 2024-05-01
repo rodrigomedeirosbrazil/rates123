@@ -6,7 +6,6 @@ use App\Property\DTOs\PropertyDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,7 +29,7 @@ class Property extends Model
         'postal_code',
         'latitude',
         'longitude',
-        'hits_property_name',
+        'hits_property_id',
     ];
 
     protected $casts = [
@@ -44,14 +43,14 @@ class Property extends Model
         return $this->belongsTo(ScrapedPlatform::class, 'scraped_platform_id', 'id');
     }
 
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'user_followed_properties', 'property_id', 'user_id');
-    }
-
     public function followByUser(User $user): bool
     {
-        return $this->users()->where('user_id', $user->id)->exists();
+        return $this->usersFollowing()->where('user_id', $user->id)->exists();
+    }
+
+    public function usersFollowing(): HasMany
+    {
+        return $this->hasMany(UserFollowedProperty::class);
     }
 
     public function syncs(): HasMany

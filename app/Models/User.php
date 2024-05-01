@@ -13,6 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -59,5 +60,10 @@ class User extends Authenticatable implements FilamentUser
     public function followProperties(): BelongsToMany
     {
         return $this->belongsToMany(Property::class, 'user_followed_properties', 'user_id', 'property_id');
+    }
+
+    public function userProperties(): HasMany
+    {
+        return $this->hasMany(UserProperty::class);
     }
 }

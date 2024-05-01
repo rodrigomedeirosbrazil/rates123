@@ -93,8 +93,8 @@ class PropertyResource extends Resource
                 TextInput::make('longitude')
                     ->label(__('Longitude')),
 
-                TextInput::make('hits_property_name')
-                    ->label(__('Hits Property Name')),
+                TextInput::make('hits_property_id')
+                    ->label(__('Hits Property ID')),
 
                 Placeholder::make('modePrice')
                     ->label(__('Avg Price'))
@@ -156,18 +156,18 @@ class PropertyResource extends Resource
             ])
             ->actions([
                 Action::make('follow')
-                    ->icon(fn ($record) => $record->users()->where('user_id', auth()->id())->exists() ? 'heroicon-o-x-circle' : 'heroicon-o-user-plus')
-                    ->label(fn ($record) => $record->users()->where('user_id', auth()->id())->exists() ? __('Unfollow') : __('Follow'))
-                    ->color(fn ($record) => $record->users()->where('user_id', auth()->id())->exists() ? 'danger' : 'success')
+                    ->icon(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? 'heroicon-o-x-circle' : 'heroicon-o-user-plus')
+                    ->label(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? __('Unfollow') : __('Follow'))
+                    ->color(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? 'danger' : 'success')
                     ->action(function ($record) {
-                        $exists = $record->users()->where('user_id', auth()->id())->exists();
+                        $exists = $record->usersFollowing()->where('user_id', auth()->id())->exists();
                         if ($exists) {
-                            $record->users()->detach(auth()->id());
+                            $record->usersFollowing()->detach(auth()->id());
 
                             return;
                         }
 
-                        $record->users()->attach(auth()->id());
+                        $record->usersFollowing()->attach(auth()->id());
                     }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
