@@ -46,25 +46,28 @@ class CheckPriceManager
             return;
         }
 
+        $newPrice = $prices[0];
+        $oldPrice = $prices[1];
+
         if (
-            ($prices[0]->available
-                && $prices[1]->available
-                && $prices[0]->price === $prices[1]->price)
-            || (! $prices[0]->available && ! $prices[1]->available)
+            ($newPrice->available
+                && $oldPrice->available
+                && $newPrice->price === $oldPrice->price)
+            || (! $newPrice->available && ! $oldPrice->available)
         ) {
             return;
         }
 
         if (
-            $prices[0]->available
-            && ! $prices[1]->available
+            $newPrice->available
+            && ! $oldPrice->available
         ) {
             PriceNotification::create([
                 'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceAvailable,
                 'before' => 0,
-                'after' => $prices[0]->price,
+                'after' => $newPrice->price,
                 'average_price' => 0,
             ]);
 
@@ -72,14 +75,14 @@ class CheckPriceManager
         }
 
         if (
-            ! $prices[0]->available
-            && $prices[1]->available
+            ! $newPrice->available
+            && $oldPrice->available
         ) {
             PriceNotification::create([
                 'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceUnavailable,
-                'before' => $prices[1]->price,
+                'before' => $oldPrice->price,
                 'after' => 0,
                 'average_price' => 0,
             ]);
@@ -87,13 +90,13 @@ class CheckPriceManager
             return;
         }
 
-        if ($prices[0]->price > $prices[1]->price) {
+        if ($newPrice->price > $oldPrice->price) {
             PriceNotification::create([
                 'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceUp,
-                'before' => $prices[1]->price,
-                'after' => $prices[0]->price,
+                'before' => $oldPrice->price,
+                'after' => $newPrice->price,
                 'average_price' => number_format(
                     (new PriceManager())->calculatePropertyModePrice($propertyId),
                     2
@@ -103,13 +106,13 @@ class CheckPriceManager
             return;
         }
 
-        if ($prices[0]->price < $prices[1]->price) {
+        if ($newPrice->price < $oldPrice->price) {
             PriceNotification::create([
                 'property_id' => $propertyId,
                 'checkin' => $date,
                 'type' => PriceNotificationTypeEnum::PriceDown,
-                'before' => $prices[1]->price,
-                'after' => $prices[0]->price,
+                'before' => $oldPrice->price,
+                'after' => $newPrice->price,
                 'average_price' => number_format(
                     (new PriceManager())->calculatePropertyModePrice($propertyId),
                     2
