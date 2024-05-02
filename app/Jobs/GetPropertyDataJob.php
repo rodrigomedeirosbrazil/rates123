@@ -78,6 +78,18 @@ class GetPropertyDataJob implements ShouldQueue
         }
 
         $prices->each(function ($price) {
+            $rate = Rate::query()
+                ->where('property_id', $this->propertyId)
+                ->whereDate('checkin', $price->checkin)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($rate && $rate->price == $price->price) {
+                $rate->touch();
+
+                return;
+            }
+
             Rate::create([
                 'property_id' => $this->propertyId,
                 'price' => $price->price,
