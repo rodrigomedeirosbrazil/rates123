@@ -6,6 +6,7 @@ use App\Enums\BrasilStatesEnum;
 use App\Filament\Shared\Resources\PropertyResource\Pages;
 use App\Managers\PriceManager;
 use App\Models\Property;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -19,6 +20,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class PropertyResource extends Resource
 {
@@ -31,20 +33,39 @@ class PropertyResource extends Resource
         return $form
             ->schema([
                 Grid::make()->schema([
+                    Placeholder::make('modePrice')
+                        ->label(__('Avg Price'))
+                        ->columnSpan(1)
+                        ->content(
+                            fn ($record) => $record?->id !== null
+                            ? '$' . number_format(
+                                app(PriceManager::class)->calculatePropertyModePrice($record->id),
+                                2
+                            )
+                        : ''
+                        ),
+
                     TextInput::make('name')
+                        ->columnSpan(2)
                         ->label(__('Name'))
                         ->required(),
 
                     Select::make('scraped_platform_id')
+                        ->columnSpan(1)
                         ->label(__('Platform'))
                         ->relationship(name: 'platform', titleAttribute: 'name')
                         ->preload() // ->searchable(['name'])
                         ->required(),
 
                     TextInput::make('url')
-                        ->columnSpan(2)
+                        ->columnSpan(4)
+                        ->suffixAction(
+                            FormAction::make('openOnPlatform')
+                                ->icon('heroicon-m-calendar-days')
+                                ->url(fn (?Model $record) => $record->url, shouldOpenInNewTab: true)
+                        )
                         ->required(),
-                ])->columns(4),
+                ])->columns(8),
 
                 Grid::make()->schema([
                     Select::make('country')
@@ -95,17 +116,6 @@ class PropertyResource extends Resource
 
                 TextInput::make('hits_property_id')
                     ->label(__('Hits Property ID')),
-
-                Placeholder::make('modePrice')
-                    ->label(__('Avg Price'))
-                    ->content(
-                        fn ($record) => $record?->id !== null
-                        ? '$' . number_format(
-                            app(PriceManager::class)->calculatePropertyModePrice($record->id),
-                            2
-                        )
-                    : ''
-                    ),
 
                 Textarea::make('extra')
                     ->columnSpanFull(),
