@@ -6,6 +6,7 @@ use App\Enums\PriceNotificationTypeEnum;
 use App\Models\Rate;
 use App\Models\PriceNotification;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Collection;
 
 class CheckPriceManager
 {
@@ -121,5 +122,30 @@ class CheckPriceManager
 
             return;
         }
+    }
+
+    public function processPrices(int $propertyId, Collection $prices): void
+    {
+        $prices->each(function ($price) use ($propertyId) {
+            $rate = Rate::query()
+                ->where('property_id', $propertyId)
+                ->whereDate('checkin', $price->checkin)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($rate && $rate->price == $price->price) {
+                $rate->touch();
+
+                return;
+            }
+
+            Rate::create([
+                'property_id' => $propertyId,
+                'price' => $price->price,
+                'checkin' => $price->checkin,
+                'available' => $price->available,
+                'extra' => $price->extra ?? '[]',
+            ]);
+        });
     }
 }
