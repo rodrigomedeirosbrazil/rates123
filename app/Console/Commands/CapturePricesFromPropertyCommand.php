@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 
 use App\Enums\SyncStatusEnum;
 use App\Jobs\CheckPropertyPricesJob;
+use App\Managers\CheckPriceManager;
 use App\Managers\ScrapManager;
-use App\Models\Rate;
 use App\Models\Property;
 use App\Models\Sync;
 use Illuminate\Console\Command;
@@ -78,15 +78,7 @@ class CapturePricesFromPropertyCommand extends Command
             return 1;
         }
 
-        $prices->each(
-            fn ($price) => Rate::create([
-                'property_id' => $propertyId,
-                'price' => $price->price,
-                'checkin' => $price->checkin,
-                'available' => $price->available,
-                'extra' => $price->extra ?? '[]',
-            ])
-        );
+        (new CheckPriceManager())->processPrices($propertyId, $prices);
 
         $sync->status = $prices->count() > 0 ? SyncStatusEnum::Successful : SyncStatusEnum::Failed;
         $sync->finished_at = now();

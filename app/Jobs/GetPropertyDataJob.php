@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Enums\SyncStatusEnum;
+use App\Managers\CheckPriceManager;
 use App\Managers\ScrapManager;
-use App\Models\Rate;
 use App\Models\Property;
 use App\Models\Sync;
 use Illuminate\Bus\Queueable;
@@ -77,15 +77,7 @@ class GetPropertyDataJob implements ShouldQueue
             return;
         }
 
-        $prices->each(function ($price) {
-            Rate::create([
-                'property_id' => $this->propertyId,
-                'price' => $price->price,
-                'checkin' => $price->checkin,
-                'available' => $price->available,
-                'extra' => $price->extra ?? '[]',
-            ]);
-        });
+        (new CheckPriceManager())->processPrices($this->propertyId, $prices);
 
         if (
             ($prices->count() + $lastSyncDays) < $days
