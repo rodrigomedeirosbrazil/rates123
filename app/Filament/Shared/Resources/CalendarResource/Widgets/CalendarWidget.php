@@ -45,7 +45,7 @@ class CalendarWidget extends FullCalendarWidget
             ->map(
                 fn (ScheduleEvent $dateEvent) => EventData::make()
                     ->id($dateEvent->id)
-                    ->title($dateEvent->name)
+                    ->title("* {$dateEvent->name}")
                     ->start($dateEvent->begin)
                     ->end($dateEvent->end)
                     ->backgroundColor('#9065C7')
@@ -63,7 +63,14 @@ class CalendarWidget extends FullCalendarWidget
             ->where('checkin', '<=', $fetchInfo['end'])
             ->get()
             ->groupBy('checkin')
-            ->map(fn ($group) => $group->sortByDesc('created_at')->groupBy('price')->slice(0, 4)->map(fn ($group) => $group->first()))->flatten(1)
+            ->map(
+                fn ($group) => $group
+                    ->pipe(
+                        fn ($rates) => group_by_nearby($rates, 'price', 'created_at')
+                    )
+                    ->first()
+            )
+            ->flatten(1)
             ->map(
                 fn (Rate $rate) => EventData::make()
                     ->id($rate->id)
@@ -127,10 +134,11 @@ class CalendarWidget extends FullCalendarWidget
                                     fn ($record): HtmlString => new HtmlString(
                                         Rate::where('checkin', $record->checkin)
                                             ->where('property_id', $record->property_id)
-                                            ->groupBy('price')
-                                            ->orderBy('created_at', 'desc')
-                                            ->limit(10)
                                             ->get()
+                                            ->pipe(
+                                                fn ($rates) => group_by_nearby($rates, 'price', 'created_at')
+                                            )
+                                            ->slice(0, 9)
                                             ->map(
                                                 fn ($rate) => format_date_with_weekday($rate->created_at)
                                                 . ': '

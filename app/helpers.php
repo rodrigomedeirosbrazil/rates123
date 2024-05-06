@@ -1,8 +1,9 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
-if (!function_exists('only_numbers')) {
+if (! function_exists('only_numbers')) {
     function only_numbers(?string $data): ?string
     {
         if (is_null($data)) {
@@ -13,7 +14,7 @@ if (!function_exists('only_numbers')) {
     }
 }
 
-if (!function_exists('format_date_with_weekday')) {
+if (! function_exists('format_date_with_weekday')) {
     function format_date_with_weekday(?string $data): ?string
     {
         if (is_null($data)) {
@@ -24,7 +25,7 @@ if (!function_exists('format_date_with_weekday')) {
     }
 }
 
-if (!function_exists('human_readable_size_to_int')) {
+if (! function_exists('human_readable_size_to_int')) {
     function human_readable_size_to_int(string $value): int
     {
         $number = (float) preg_replace('/[^0-9\.]/', '', $value);
@@ -46,5 +47,32 @@ if (!function_exists('human_readable_size_to_int')) {
         }
 
         return (int) $number;
+    }
+}
+
+if (! function_exists('group_by_nearby')) {
+    function group_by_nearby(Collection $collection, string $key, string $orderBy)
+    {
+        $lastValue = null;
+
+        return $collection
+            ->sortBy($orderBy)
+            ->map(function ($item) use (&$lastValue, $key) {
+                if ($lastValue === null) {
+                    $lastValue = data_get($item, $key);
+
+                    return $item;
+                }
+
+                if ($lastValue === data_get($item, $key)) {
+                    return null;
+                }
+
+                $lastValue = data_get($item, $key);
+
+                return $item;
+            })
+            ->filter()
+            ->sortByDesc($orderBy);
     }
 }
