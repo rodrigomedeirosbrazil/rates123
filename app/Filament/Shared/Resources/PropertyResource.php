@@ -62,7 +62,7 @@ class PropertyResource extends Resource
                         ->suffixAction(
                             FormAction::make('openOnPlatform')
                                 ->icon('heroicon-m-calendar-days')
-                                ->url(fn (?Model $record) => $record->url, shouldOpenInNewTab: true)
+                                ->url(fn (?Model $record) => $record?->url, shouldOpenInNewTab: true)
                         )
                         ->required(),
                 ])->columns(8),
