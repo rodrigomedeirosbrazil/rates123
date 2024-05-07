@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Shared\Resources\CalendarResource\Pages;
+namespace App\Filament\Shared\Resources\RateGraphResource\Pages;
 
-use App\Filament\Shared\Resources\CalendarResource;
-use App\Filament\Shared\Resources\CalendarResource\Widgets\CalendarWidget;
+use App\Filament\Shared\Resources\RateGraphResource;
+use App\Filament\Shared\Resources\RateGraphResource\Widgets\RatesOverview;
 use App\Models\Property;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Fieldset;
@@ -14,15 +14,15 @@ use Filament\Forms\Form;
 use Filament\Resources\Pages\Page;
 use Livewire\Features\SupportEvents\Event;
 
-class ListCalendars extends Page
+class ListRates extends Page
 {
     public ?array $filters = [];
 
     public ?int $totalBookings = null;
 
-    protected static string $resource = CalendarResource::class;
+    protected static string $resource = RateGraphResource::class;
 
-    protected static string $view = 'filament.calendar-resource.calendar';
+    protected static string $view = 'filament.rate-graph-resource.rate';
 
     protected Actions\Action $applyFilterButton;
 
@@ -84,12 +84,12 @@ class ListCalendars extends Page
     protected function getFooterWidgets(): array
     {
         return [
-            CalendarWidget::class,
+            RatesOverview::class,
         ];
     }
 
     public function getTitle(): string
     {
-        return __('Calendar');
+        return __('Rate Graph');
     }
 }

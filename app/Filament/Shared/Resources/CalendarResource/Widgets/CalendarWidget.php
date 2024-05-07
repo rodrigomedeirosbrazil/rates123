@@ -25,7 +25,7 @@ class CalendarWidget extends FullCalendarWidget
 
     public array $filters = [];
 
-    #[On('bookings-filter-changed')]
+    #[On('property-filter-changed')]
     public function filtersUpdated($filters): void
     {
         $this->filters = $filters;
