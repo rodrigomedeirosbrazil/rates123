@@ -73,7 +73,7 @@ class RatesOverview extends ApexChartWidget
         $series = [];
 
         foreach ($properties as $property) {
-            $rates = $this->getRatesFromProperty(
+            $points = $this->getRatesPointsFromProperty(
                 property: $property,
                 from: Carbon::parse($this->getFilter('from_date'))->startOfDay(),
                 to: Carbon::parse($this->getFilter('to_date'))->endOfDay()
@@ -81,12 +81,7 @@ class RatesOverview extends ApexChartWidget
 
             array_push($series, [
                 'name' => $property->name,
-                'data' => $rates->map(
-                    fn ($rate) => [
-                        'x' => $rate->checkin->translatedFormat('D, d M y'),
-                        'y' => $rate->price,
-                    ]
-                )->toArray(),
+                'data' => $points,
             ]);
         }
 
@@ -122,15 +117,11 @@ class RatesOverview extends ApexChartWidget
         return data_get($this->filters, $key, $default);
     }
 
-    public function getRatesFromProperty(Property $property, CarbonInterface $from, CarbonInterface $to)
+    public function getRatesPointsFromProperty(Property $property, CarbonInterface $from, CarbonInterface $to)
     {
         $cacheKey = "{$property->id}_{$from->toDateString()}_{$to->toDateString()}";
 
-        if (cache()->has($cacheKey)) {
-            return cache()->get($cacheKey);
-        }
-
-        $rates = Rate::query()
+        $ratesWithHoles = Rate::query()
             ->select('id', 'property_id', 'checkin', 'created_at', 'price')
             ->where('property_id', $property->id)
             ->whereDate('checkin', '>=', $from)
@@ -147,10 +138,37 @@ class RatesOverview extends ApexChartWidget
             )
             ->flatten(1)
             ->sortBy('checkin')
-            ->values();
+            ->values()
+            ->mapWithKeys(
+                fn (Rate $rate) => [
+                    $rate->checkin->toDateString() => [
+                        'x' => $rate->checkin->translatedFormat('D, d M y'),
+                        'y' => $rate->price,
+                    ],
+                ]
+            );
 
-        cache()->put($cacheKey, $rates, now()->addMinutes(60));
+        $days = collect([]);
+        $date = $from->copy();
+        $lastRate = $ratesWithHoles->first();
 
-        return $rates;
+        while ($date->lte($to)) {
+            if ($ratesWithHoles->has($date->toDateString())) {
+                $lastRate = $ratesWithHoles->get($date->toDateString());
+            }
+
+            $days[$date->toDateString()] = [
+                'x' => $date->translatedFormat('D, d M y'),
+                'y' => $lastRate['y'] ?? null,
+            ];
+
+            $date->addDay();
+        }
+
+        $points = $days->values()->toArray();
+
+        cache()->put($cacheKey, $points, now()->addMinutes(60));
+
+        return $points;
     }
 }
