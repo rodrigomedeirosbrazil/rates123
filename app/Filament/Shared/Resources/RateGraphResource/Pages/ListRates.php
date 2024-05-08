@@ -42,6 +42,7 @@ class ListRates extends Page
                             Select::make('property_id')
                                 ->label(__('Property'))
                                 ->options(fn () => Property::all()->pluck('name', 'id'))
+                                ->multiple()
                                 ->searchable(),
 
                         ])
