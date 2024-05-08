@@ -4,6 +4,7 @@ namespace App\Filament\Shared\Resources\RateGraphResource\Widgets;
 
 use App\Models\Property;
 use App\Models\Rate;
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
@@ -23,7 +24,7 @@ class RatesOverview extends ApexChartWidget
 
     public array $filters = [];
 
-    #[On('property-filter-changed')]
+    #[On('filters-changed')]
     public function filtersUpdated($filters): void
     {
         $this->filters = $filters;
@@ -74,8 +75,8 @@ class RatesOverview extends ApexChartWidget
         foreach ($properties as $property) {
             $rates = $this->getRatesFromProperty(
                 property: $property,
-                from: today()->startOfMonth()->startOfDay(),
-                to: today()->endOfMonth()->endOfDay()
+                from: Carbon::parse($this->getFilter('from_date'))->startOfDay(),
+                to: Carbon::parse($this->getFilter('to_date'))->endOfDay()
             );
 
             array_push($series, [
@@ -132,8 +133,8 @@ class RatesOverview extends ApexChartWidget
         $rates = Rate::query()
             ->select('id', 'property_id', 'checkin', 'created_at', 'price')
             ->where('property_id', $property->id)
-            ->whereDate('checkin', '>', $from)
-            ->whereDate('checkin', '<', $to)
+            ->whereDate('checkin', '>=', $from)
+            ->whereDate('checkin', '<=', $to)
             ->where('available', true)
             ->get()
             ->groupBy('checkin')

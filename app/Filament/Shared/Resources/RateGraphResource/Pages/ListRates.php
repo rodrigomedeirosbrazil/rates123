@@ -6,6 +6,7 @@ use App\Filament\Shared\Resources\RateGraphResource;
 use App\Filament\Shared\Resources\RateGraphResource\Widgets\RatesOverview;
 use App\Models\Property;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -43,7 +44,18 @@ class ListRates extends Page
                                 ->label(__('Property'))
                                 ->options(fn () => Property::all()->pluck('name', 'id'))
                                 ->multiple()
-                                ->searchable(),
+                                ->searchable()
+                                ->required(),
+
+                            DatePicker::make('from_date')
+                                ->label(__('From Date'))
+                                ->default(today()->startOfMonth()->format('Y-m-d'))
+                                ->required(),
+
+                            DatePicker::make('to_date')
+                                ->label(__('From Date'))
+                                ->default(today()->endOfMonth()->format('Y-m-d'))
+                                ->required(),
 
                         ])
                         ->columns(3),
@@ -66,7 +78,7 @@ class ListRates extends Page
 
     public function refreshRecords(): Event
     {
-        return $this->dispatch('property-filter-changed', [
+        return $this->dispatch('filters-changed', [
             ...$this->filters,
             'is_filtered' => $this->isFiltered(),
         ]);
