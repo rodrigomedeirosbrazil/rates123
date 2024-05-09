@@ -134,7 +134,7 @@ class CheckPriceManager
                 ->first();
 
             if ($rate && $rate->price == $price->price) {
-                $rate->touch();
+                $rate->extra = $price->extra ?? '[]';
 
                 return;
             }
