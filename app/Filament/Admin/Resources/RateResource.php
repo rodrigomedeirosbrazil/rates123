@@ -39,9 +39,11 @@ class RateResource extends Resource
                     Forms\Components\TextInput::make('price')
                         ->numeric()
                         ->prefix('$'),
+                    Forms\Components\TextInput::make('min_stay')
+                        ->numeric(),
                     Forms\Components\Toggle::make('available')
                         ->inline(false),
-                ])->columns(3),
+                ])->columns(4),
 
 
                 Grid::make([])->schema([
@@ -65,6 +67,8 @@ class RateResource extends Resource
                 Tables\Columns\TextColumn::make('property.name')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('min_stay')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('checkin')
                     ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))

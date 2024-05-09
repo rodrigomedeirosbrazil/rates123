@@ -134,6 +134,7 @@ class CheckPriceManager
                 ->first();
 
             if ($rate && $rate->price == $price->price) {
+                $rate->min_stay = $price->minStay;
                 $rate->extra = $price->extra ?? '[]';
 
                 return;
@@ -144,6 +145,7 @@ class CheckPriceManager
                 'price' => $price->price,
                 'checkin' => $price->checkin,
                 'available' => $price->available,
+                'min_stay' => $price->minStay,
                 'extra' => $price->extra ?? '[]',
             ]);
         });

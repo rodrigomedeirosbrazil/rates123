@@ -13,6 +13,7 @@ it('should update updated_at field on a rate', function () {
             checkin: now()->addDay(),
             price: $price,
             available: true,
+            minStay: 1,
             extra: [],
         ),
     ]);
@@ -49,6 +50,7 @@ it('should create a new rate', function () {
             checkin: now()->addDay(),
             price: $price,
             available: true,
+            minStay: 1,
             extra: [],
         ),
     ]);
