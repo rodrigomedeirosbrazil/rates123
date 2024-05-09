@@ -100,9 +100,9 @@ class CapturePricesFromPropertyCommand extends Command
             )
         );
 
-        $this->table(['Check In', 'Price', 'Available', 'Extra'], $prices->map(fn ($price) => [
+        $this->table(['Check In', 'Price', 'Available', 'MinStay', 'Extra'], $prices->map(fn ($price) => [
             $price->checkin->toDateString(),
-            $price->price, $price->available,
+            $price->price, $price->available, $price->minStay,
             json_encode($price->extra),
         ])->toArray());
 

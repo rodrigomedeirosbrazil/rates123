@@ -62,9 +62,8 @@ class BookingScraper extends Scraper implements ScraperContract
                 data_get($responsePrice, 'avgPriceFormatted') ?? '0'
             ),
             available: data_get($responsePrice, 'available', false),
-            extra: [
-                'minLengthOfStay' => data_get($responsePrice, 'minLengthOfStay'),
-            ],
+            minStay: data_get($responsePrice, 'minLengthOfStay') ?? 1,
+            extra: [],
         );
     }
 

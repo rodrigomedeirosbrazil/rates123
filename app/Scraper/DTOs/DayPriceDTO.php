@@ -10,6 +10,7 @@ class DayPriceDTO
         public CarbonInterface $checkin,
         public float $price,
         public bool $available,
+        public int $minStay,
         public array $extra
     ) {
     }

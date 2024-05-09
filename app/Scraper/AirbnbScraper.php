@@ -53,11 +53,15 @@ class AirbnbScraper extends Scraper implements ScraperContract
 
     public function parsePrice(array $responsePrice): DayPriceDTO
     {
+        $extra = data_get($responsePrice, 'extra') ?? [];
+        $minStay = data_get($extra, 'minStay') ?? 1;
+
         return new DayPriceDTO(
             checkin: Carbon::parse(data_get($responsePrice, 'checkin')),
             price: data_get($responsePrice, 'price') ?? 0,
             available: data_get($responsePrice, 'available', false),
-            extra: data_get($responsePrice, 'extra', []),
+            minStay: $minStay,
+            extra: [],
         );
     }
 
