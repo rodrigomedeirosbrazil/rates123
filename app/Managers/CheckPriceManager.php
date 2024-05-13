@@ -136,6 +136,7 @@ class CheckPriceManager
             if ($rate && $rate->price == $price->price) {
                 $rate->min_stay = $price->minStay;
                 $rate->extra = $price->extra ?? '[]';
+                $rate->updated_at = now();
                 $rate->save();
 
                 return;
