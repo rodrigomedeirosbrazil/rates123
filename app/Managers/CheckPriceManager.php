@@ -152,4 +152,29 @@ class CheckPriceManager
             ]);
         });
     }
+
+    public function getGroupUnavailableConsecutiveDates(int $propertyId): Collection
+    {
+        $rates = Rate::query()
+            ->unavailableAndUpdatedToday($propertyId)
+            ->get();
+
+        $grouped = collect([]);
+        $group = collect([]);
+
+        $rates->each(function ($rate) use (&$grouped, &$group) {
+            if ($group->isNotEmpty() && $group->last()->checkin->diffInDays($rate->checkin) > 1) {
+                $grouped[] = $group;
+                $group = collect([]);
+            }
+
+            $group[] = $rate;
+        });
+
+        if ($group) {
+            $grouped[] = $group;
+        }
+
+        return $grouped;
+    }
 }
