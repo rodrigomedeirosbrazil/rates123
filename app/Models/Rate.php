@@ -33,4 +33,14 @@ class Rate extends Model
     {
         return $this->belongsTo(Property::class);
     }
+
+    public function scopeUnavailableAndUpdatedToday($query, int $propertyId)
+    {
+        return $query
+            ->where('property_id', $propertyId)
+            ->where('available', false)
+            ->whereDate('checkin', '>', today())
+            ->whereDate('updated_at', today())
+            ->orderBy('checkin');
+    }
 }
