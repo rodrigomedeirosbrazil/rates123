@@ -91,4 +91,52 @@ class BookingScraper extends Scraper implements ScraperContract
 
         return false;
     }
+
+    public function getPriceDetail(string $url, CarbonInterface $from, CarbonInterface $to): Collection
+    {
+        $response = Http::timeout($this->timeout)
+            ->get(
+                config('app.scrap.url') . '/booking/unavailable-prices',
+                [
+                    'url' => $url,
+                    'checkin' => $from->toDateString(),
+                    'checkout' => $to->toDateString(),
+                ]
+            );
+
+        if (! $response->ok()) {
+            Log::error(
+                'Failed to get detail price',
+                [
+                    'url' => $url,
+                    'from' => $from->toDateString(),
+                    'to' => $to->toDateString(),
+                    'response' => $response->json(),
+                    'platform' => 'booking',
+                ]
+            );
+
+            return collect();
+        }
+
+        $responsePrice = $response->json();
+        $returnedCheckin = Carbon::parse(data_get($responsePrice, 'checkin'));
+        $returnedCheckout = Carbon::parse(data_get($responsePrice, 'checkout'));
+        $returnedNumberOfDays = $returnedCheckin->diffInDays($returnedCheckout);
+
+        $pricePerDay = intval(data_get($responsePrice, 'price') / $returnedNumberOfDays);
+
+        $numberOfDays = $from->diffInDays($to);
+
+        return collect(range(0, $numberOfDays))
+            ->map(
+                fn ($dayIndex) => new DayPriceDTO(
+                    checkin: $from->copy()->addDays($dayIndex),
+                    price: $pricePerDay,
+                    available: true,
+                    minStay: $returnedNumberOfDays,
+                    extra: [],
+                )
+            );
+    }
 }

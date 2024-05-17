@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
 
 class GetPropertyDataJob implements ShouldQueue
 {
@@ -41,10 +42,6 @@ class GetPropertyDataJob implements ShouldQueue
                 'started_at' => now()->addDay(),
                 'finished_at' => null,
             ]);
-        }
-
-        if ($sync->status === SyncStatusEnum::Successful) {
-            return;
         }
 
         $propertyDTO = Property::with('platform')
@@ -104,6 +101,22 @@ class GetPropertyDataJob implements ShouldQueue
         $sync->save();
 
         if (! $sync->status === SyncStatusEnum::Successful) {
+            return;
+        }
+
+        if ($propertyDTO->platformSlug === 'booking') {
+            Bus::chain([
+                new GetPropertyUnavailableDatesJob(
+                    propertyId: $this->propertyId,
+                    propertyName: $this->propertyName,
+                ),
+                new CheckPropertyPricesJob(
+                    propertyId: $this->propertyId,
+                    propertyName: $this->propertyName,
+                    platformSlug: $this->platformSlug,
+                ),
+            ])->dispatch();
+
             return;
         }
 
