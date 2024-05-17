@@ -28,6 +28,7 @@ class MonitoreCommand extends Command
     public function handle()
     {
         Property::all()
+            ->orderBy('scraped_platform_id', 'asc')
             ->each(
                 function (Property $property, int $index) {
                     dispatch(
