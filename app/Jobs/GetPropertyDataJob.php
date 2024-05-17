@@ -31,7 +31,7 @@ class GetPropertyDataJob implements ShouldQueue
     {
         $sync = Sync::query()
             ->wherePropertyId($this->propertyId)
-            ->whereDate('started_at', today()->addDay())
+            ->whereDate('started_at', today())
             ->first();
 
         if (! $sync) {
@@ -39,7 +39,7 @@ class GetPropertyDataJob implements ShouldQueue
                 'property_id' => $this->propertyId,
                 'status' => SyncStatusEnum::InProgress,
                 'prices_count' => 0,
-                'started_at' => now()->addDay(),
+                'started_at' => now(),
                 'finished_at' => null,
             ]);
         }
