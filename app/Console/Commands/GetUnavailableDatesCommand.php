@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\GetPropertyUnavailableDateJob;
+use App\Jobs\GetPropertyUnavailableDatesJob;
 use App\Managers\CheckPriceManager;
 use App\Models\Property;
 use Illuminate\Console\Command;
@@ -46,7 +46,7 @@ class GetUnavailableDatesCommand extends Command
 
                 $this->info("Dispatching job to get dates: {$ratesGroup->first()->checkin->format('Y-m-d')} - {$ratesGroup->last()->checkin->format('Y-m-d')}");
 
-                GetPropertyUnavailableDateJob::dispatch(
+                GetPropertyUnavailableDatesJob::dispatch(
                     propertyId: $ratesGroup->first()->property_id,
                     propertyName: $ratesGroup->first()->property->name,
                     checkin: $ratesGroup->first()->checkin,
