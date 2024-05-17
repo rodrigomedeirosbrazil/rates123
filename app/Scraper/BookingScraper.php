@@ -96,7 +96,7 @@ class BookingScraper extends Scraper implements ScraperContract
     {
         $response = Http::timeout($this->timeout)
             ->get(
-                config('app.scrap.url') . $this->endpoint,
+                config('app.scrap.url') . '/booking/unavailable-prices',
                 [
                     'url' => $url,
                     'checkin' => $from->toDateString(),
@@ -120,18 +120,21 @@ class BookingScraper extends Scraper implements ScraperContract
         }
 
         $responsePrice = $response->json();
+        $returnedCheckin = Carbon::parse(data_get($responsePrice, 'checkin'));
+        $returnedCheckout = Carbon::parse(data_get($responsePrice, 'checkout'));
+        $returnedNumberOfDays = $returnedCheckin->diffInDays($returnedCheckout);
+
+        $pricePerDay = data_get($responsePrice, 'price') / $returnedNumberOfDays;
 
         $numberOfDays = $from->diffInDays($to);
 
-        $pricePerDay = data_get($responsePrice, 'price') / $numberOfDays;
-
-        return collect(range(0, $numberOfDays - 1))
+        return collect(range(0, $numberOfDays))
             ->map(
                 fn ($dayIndex) => new DayPriceDTO(
                     checkin: $from->copy()->addDays($dayIndex),
                     price: $pricePerDay,
                     available: true,
-                    minStay: 1,
+                    minStay: $returnedNumberOfDays,
                     extra: [],
                 )
             );
