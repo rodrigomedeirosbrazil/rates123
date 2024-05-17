@@ -124,7 +124,7 @@ class BookingScraper extends Scraper implements ScraperContract
         $returnedCheckout = Carbon::parse(data_get($responsePrice, 'checkout'));
         $returnedNumberOfDays = $returnedCheckin->diffInDays($returnedCheckout);
 
-        $pricePerDay = data_get($responsePrice, 'price') / $returnedNumberOfDays;
+        $pricePerDay = intval(data_get($responsePrice, 'price') / $returnedNumberOfDays);
 
         $numberOfDays = $from->diffInDays($to);
 
