@@ -204,3 +204,104 @@ it('should group consecutive unavailable dates', function () {
 
     expect($rates[3])->toHaveCount(1);
 });
+
+it('should delete unavailable rate and update last rate', function () {
+    $price = rand(1, 100);
+
+    $prices = collect([
+        new DayPriceDTO(
+            checkin: now()->addDay(),
+            price: $price,
+            available: true,
+            minStay: 2,
+            extra: [],
+        ),
+    ]);
+
+    $property = Property::factory()->create();
+
+    $rateUnavailable = Rate::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => now()->addDay(),
+            'price' => 0,
+            'available' => false,
+            'min_stay' => 0,
+            'created_at' => today(),
+            'updated_at' => today(),
+        ]);
+
+    $lastAvailableRate = Rate::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => now()->addDay(),
+            'price' => $price,
+            'available' => true,
+            'min_stay' => 1,
+            'created_at' => now()->subDay(),
+            'updated_at' => now()->subDay(),
+        ]);
+
+    (new CheckPriceManager())->processPrices($property->id, $prices);
+
+    expect(Rate::find($rateUnavailable->id))->toBeNull();
+
+    $lastAvailableRate->refresh();
+
+    expect($lastAvailableRate->updated_at->isToday())->toBeTrue();
+    expect($lastAvailableRate->min_stay)->toBe($prices->first()->minStay);
+
+    $rates = Rate::all()->count();
+
+    expect($rates)->toBe(1);
+});
+
+
+it('should delete unavailable rate and create rate', function () {
+    $price = rand(1, 100);
+
+    $prices = collect([
+        new DayPriceDTO(
+            checkin: now()->addDay(),
+            price: $price,
+            available: true,
+            minStay: 2,
+            extra: [],
+        ),
+    ]);
+
+    $property = Property::factory()->create();
+
+    $rateUnavailable = Rate::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => now()->addDay(),
+            'price' => 0,
+            'available' => false,
+            'min_stay' => 0,
+            'created_at' => today(),
+            'updated_at' => today(),
+        ]);
+
+    $lastAvailableRate = Rate::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => now()->addDay(),
+            'price' => $price + 10,
+            'available' => true,
+            'min_stay' => 1,
+            'created_at' => now()->subDay(),
+            'updated_at' => now()->subDay(),
+        ]);
+
+    (new CheckPriceManager())->processPrices($property->id, $prices);
+
+    expect(Rate::find($rateUnavailable->id))->toBeNull();
+
+    $lastAvailableRate->refresh();
+
+    expect($lastAvailableRate->updated_at->isToday())->toBeFalse();
+    expect($lastAvailableRate->min_stay)->toBe(1);
+
+    expect(Rate::all()->count())->toBe(2);
+});

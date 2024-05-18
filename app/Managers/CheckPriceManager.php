@@ -127,19 +127,42 @@ class CheckPriceManager
     public function processPrices(int $propertyId, Collection $prices): void
     {
         $prices->each(function ($price) use ($propertyId) {
-            $rate = Rate::query()
+            $rates = Rate::query()
                 ->where('property_id', $propertyId)
                 ->whereDate('checkin', $price->checkin)
                 ->orderBy('created_at', 'desc')
-                ->first();
+                ->limit(2)
+                ->get();
 
-            if ($rate && $rate->price == $price->price) {
-                $rate->min_stay = $price->minStay;
-                $rate->extra = $price->extra ?? '[]';
-                $rate->updated_at = now();
-                $rate->save();
+            if (
+                $rates->count() > 0
+                && $rates->first()->price == $price->price
+            ) {
+                $rates->first()->min_stay = $price->minStay;
+                $rates->first()->extra = $price->extra ?? '[]';
+                $rates->first()->updated_at = now();
+                $rates->first()->save();
 
                 return;
+            }
+
+            if (
+                $rates->count() === 2
+                && ! $rates->first()->available
+                && $rates->first()->created_at->isToday()
+                && $rates->last()->available
+                && ! $rates->last()->created_at->isToday()
+            ) {
+                $rates->first()->forceDelete();
+
+                if ($rates->last()->price == $price->price) {
+                    $rates->last()->min_stay = $price->minStay;
+                    $rates->last()->extra = $price->extra ?? '[]';
+                    $rates->last()->updated_at = now();
+                    $rates->last()->save();
+
+                    return;
+                }
             }
 
             Rate::create([
