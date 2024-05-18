@@ -15,7 +15,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -165,20 +164,6 @@ class PropertyResource extends Resource
                     ),
             ])
             ->actions([
-                Action::make('follow')
-                    ->icon(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? 'heroicon-o-x-circle' : 'heroicon-o-user-plus')
-                    ->label(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? __('Unfollow') : __('Follow'))
-                    ->color(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? 'danger' : 'success')
-                    ->action(function ($record) {
-                        $exists = $record->usersFollowing()->where('user_id', auth()->id())->exists();
-                        if ($exists) {
-                            $record->usersFollowing()->detach(auth()->id());
-
-                            return;
-                        }
-
-                        $record->usersFollowing()->attach(auth()->id());
-                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ]);
