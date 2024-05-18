@@ -49,8 +49,6 @@ class GetUnavailableDatesCommand extends Command
                 GetPropertyUnavailableDatesJob::dispatch(
                     propertyId: $ratesGroup->first()->property_id,
                     propertyName: $ratesGroup->first()->property->name,
-                    checkin: $ratesGroup->first()->checkin,
-                    checkout: $ratesGroup->last()->checkin
                 );
             });
     }
