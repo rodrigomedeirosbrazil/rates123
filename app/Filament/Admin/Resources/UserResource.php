@@ -53,6 +53,7 @@ class UserResource extends Resource
                                 ->label('Property')
                                 ->relationship('property', 'name')
                                 ->searchable()
+                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                 ->required(),
 
                             Select::make('role')
