@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Managers\OccupancyManager;
 use App\Models\Property;
-use App\Models\Occupancy;
-use App\Scraper\DTOs\OccupancyDTO;
 use App\Scraper\HitsScraper;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,28 +38,9 @@ class GetOccupancyJob implements ShouldQueue
             now()->addMonths(6)->endOfMonth()
         );
 
-        $occupancies->each(
-            function (OccupancyDTO $occupancy) {
-                $occupancyModel = Occupancy::query()
-                    ->where('property_id', $this->propertyId)
-                    ->whereDate('checkin', $occupancy->checkin)
-                    ->whereDate('created_at', now()->startOfDay())
-                    ->first();
-
-                if (! $occupancyModel) {
-                    return Occupancy::create([
-                        'property_id' => $this->propertyId,
-                        'checkin' => $occupancy->checkin,
-                        'total_rooms' => $occupancy->totalRooms,
-                        'occupied_rooms' => $occupancy->occupiedRooms,
-                    ]);
-                }
-
-                $occupancyModel->update([
-                    'total_rooms' => $occupancy->totalRooms,
-                    'occupied_rooms' => $occupancy->occupiedRooms,
-                ]);
-            }
+        (new OccupancyManager())->processOccupancy(
+            $this->propertyId,
+            $occupancies
         );
     }
 

@@ -7,6 +7,7 @@ use App\DTOs\OccupancyNotificationDTO;
 use App\Models\Occupancy;
 use App\Models\User;
 use App\Models\UserProperty;
+use App\Scraper\DTOs\OccupancyDTO;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 
@@ -127,5 +128,36 @@ class OccupancyManager
 
         return $newNumber > $oldNumber
             && $oldNumberMod > $newNumberMod;
+    }
+
+    public function processOccupancy(int $propertyId, Collection $occupancies)
+    {
+        $occupancies->each(
+            function (OccupancyDTO $occupancy) use ($propertyId) {
+                $occupancyModel = Occupancy::query()
+                    ->where('property_id', $propertyId)
+                    ->whereDate('checkin', $occupancy->checkin)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+
+                if (
+                    $occupancyModel
+                    && $occupancyModel->total_rooms === $occupancy->totalRooms
+                    && $occupancyModel->occupied_rooms === $occupancy->occupiedRooms
+                ) {
+                    $occupancyModel->updated_at = now();
+                    $occupancyModel->save();
+
+                    return $occupancyModel;
+                }
+
+                return Occupancy::create([
+                    'property_id' => $propertyId,
+                    'checkin' => $occupancy->checkin,
+                    'total_rooms' => $occupancy->totalRooms,
+                    'occupied_rooms' => $occupancy->occupiedRooms,
+                ]);
+            }
+        );
     }
 }
