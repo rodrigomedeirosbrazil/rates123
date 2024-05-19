@@ -2,6 +2,7 @@
 
 namespace App\Filament\Shared\Resources\CalendarResource\Widgets;
 
+use App\Models\Occupancy;
 use App\Models\ScheduleEvent;
 use App\Models\Rate;
 use Filament\Actions\Action;
@@ -54,6 +55,39 @@ class CalendarWidget extends FullCalendarWidget
             )
             ->values();
 
+        $hasPermission = auth()->user()->userProperties->contains('id', $this->getFilter('property_id'));
+
+        $occupancies = $hasPermission
+            ? Occupancy::query()
+                ->when(
+                    $this->getFilter('property_id'),
+                    fn ($query) => $query->where('property_id', $this->getFilter('property_id'))
+                )
+                ->where('checkin', '>=', $fetchInfo['start'])
+                ->where('checkin', '<=', $fetchInfo['end'])
+                ->get()
+                ->groupBy('checkin')
+                ->map(
+                    fn ($group) => $group
+                        ->pipe(
+                            fn ($occupancies) => group_by_nearby($occupancies, 'occupancyPercent', 'created_at')
+                        )
+                        ->first()
+                )
+                ->flatten(1)
+                ->map(
+                    fn (Occupancy $occupancy) => EventData::make()
+                        ->id($occupancy->id)
+                        ->title(number_format($occupancy->occupancyPercent, 0) . '%')
+                        ->start($occupancy->checkin)
+                        ->end($occupancy->checkin)
+                        ->backgroundColor('#F87171')
+                        ->borderColor('#F87171')
+                        ->allDay(true)
+                )
+                ->values()
+            : [];
+
         $prices = $this->getEloquentQuery()
             ->when(
                 $this->getFilter('property_id'),
@@ -81,7 +115,8 @@ class CalendarWidget extends FullCalendarWidget
             )
             ->values();
 
-        return $events->merge($prices)->toArray();
+
+        return $events->merge($prices)->merge($occupancies)->toArray();
     }
 
     protected function getFilter(string $key, mixed $default = null): mixed
