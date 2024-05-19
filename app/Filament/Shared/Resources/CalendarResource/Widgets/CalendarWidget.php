@@ -52,6 +52,9 @@ class CalendarWidget extends FullCalendarWidget
                     ->backgroundColor('#9065C7')
                     ->borderColor('#9065C7')
                     ->allDay(true)
+                    ->extendedProps([
+                        'type' => 'schedule-event',
+                    ])
             )
             ->values();
 
@@ -84,6 +87,9 @@ class CalendarWidget extends FullCalendarWidget
                         ->backgroundColor('#F87171')
                         ->borderColor('#F87171')
                         ->allDay(true)
+                        ->extendedProps([
+                            'type' => 'occupancy',
+                        ])
                 )
                 ->values()
             : [];
@@ -112,6 +118,9 @@ class CalendarWidget extends FullCalendarWidget
                     ->start($rate->checkin)
                     ->end($rate->checkin)
                     ->allDay(true)
+                    ->extendedProps([
+                        'type' => 'rate',
+                    ])
             )
             ->values();
 
@@ -130,6 +139,22 @@ class CalendarWidget extends FullCalendarWidget
     }
 
     protected function viewAction(): Action
+    {
+        $eventType = data_get($this->mountedActionsArguments, '0.event.extendedProps.type');
+
+        return match ($eventType) {
+            'rate' => $this->getRateAction(),
+            'occupancy' => $this->getOccupancyAction(),
+            default => parent::viewAction(),
+        };
+    }
+
+    protected function modalActions(): array
+    {
+        return [];
+    }
+
+    private function getRateAction(): Action
     {
         return parent::viewAction()
             ->modalHeading(__('Details'))
@@ -190,8 +215,61 @@ class CalendarWidget extends FullCalendarWidget
             ]);
     }
 
-    protected function modalActions(): array
+    private function getOccupancyAction(): Action
     {
-        return [];
+        $occupancy = Occupancy::find(data_get($this->mountedActionsArguments, '0.event.id'));
+
+        return parent::viewAction()
+            ->modalHeading(__('Details'))
+            ->infolist([
+                InfolistGrid::make([])->schema([
+                    InfolistSection::make([
+                        InfolistGrid::make([])->schema([
+                            TextEntry::make('id')
+                                ->label(__('ID'))
+                                ->formatStateUsing(fn (): string => $occupancy->id),
+
+                            TextEntry::make('id')
+                                ->label(__('Occupancy'))
+                                ->formatStateUsing(fn (): string => Number::percentage($occupancy->occupancyPercent, 0)),
+
+                            TextEntry::make('checkin')
+                                ->label(__('Checkin'))
+                                ->formatStateUsing(fn (): string => format_date_with_weekday($occupancy->checkin)),
+
+                            TextEntry::make('created_at')
+                                ->label(__('Created At'))
+                                ->formatStateUsing(fn (): string => format_date_with_weekday($occupancy->created_at)),
+                        ])
+                            ->columns(4),
+                    ]),
+
+                    InfolistSection::make([
+                        InfolistGrid::make([])->schema([
+                            TextEntry::make('id')
+                                ->label('')
+                                ->formatStateUsing(
+                                    fn (): HtmlString => new HtmlString(
+                                        Occupancy::where('checkin', $occupancy->checkin)
+                                            ->where('property_id', $occupancy->property_id)
+                                            ->get()
+                                            ->pipe(
+                                                fn ($occupancies) => group_by_nearby($occupancies, 'occupancyPercent', 'created_at')
+                                            )
+                                            ->slice(0, 9)
+                                            ->map(
+                                                fn ($occupancyModel) => format_date_with_weekday($occupancyModel->created_at)
+                                                . ': '
+                                                . Number::percentage($occupancyModel->occupancyPercent, 0),
+                                            )
+                                            ->join('<br>')
+                                    )
+                                ),
+                        ])
+                            ->columns(1),
+                    ])
+                        ->description(__('Occupancy History')),
+                ]),
+            ]);
     }
 }
