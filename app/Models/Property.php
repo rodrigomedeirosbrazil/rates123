@@ -43,14 +43,9 @@ class Property extends Model
         return $this->belongsTo(ScrapedPlatform::class, 'scraped_platform_id', 'id');
     }
 
-    public function followByUser(User $user): bool
+    public function followProperties(): HasMany
     {
-        return $this->usersFollowing()->where('user_id', $user->id)->exists();
-    }
-
-    public function usersFollowing(): HasMany
-    {
-        return $this->hasMany(UserFollowedProperty::class);
+        return $this->hasMany(PropertyProperty::class, 'property_id', 'id');
     }
 
     public function syncs(): HasMany

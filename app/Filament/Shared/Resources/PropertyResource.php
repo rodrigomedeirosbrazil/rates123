@@ -7,15 +7,16 @@ use App\Filament\Shared\Resources\PropertyResource\Pages;
 use App\Managers\PriceManager;
 use App\Models\Property;
 use Filament\Forms\Components\Actions\Action as FormAction;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -67,57 +68,78 @@ class PropertyResource extends Resource
                         ->required(),
                 ])->columns(8),
 
-                Grid::make()->schema([
-                    Select::make('country')
-                        ->label(__('Country'))
-                        ->options([
-                            'Brasil' => 'Brasil',
-                        ])
-                        ->selectablePlaceholder(false)
-                        ->default('Brasil')
-                        ->columnSpan(2),
+                Fieldset::make(__('Follow Properties'))->schema([
+                    Repeater::make('followProperties')
+                        ->label('')
+                        ->relationship()
+                        ->simple(
+                            Select::make('followed_property_id')
+                                ->label(__('Property'))
+                                ->options(Property::all()->pluck('name', 'id'))
+                                ->searchable()
+                                ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                                ->required(),
+                        ),
+                ])
+                    ->columnSpanFull(),
 
-                    TextInput::make('city')
-                        ->label(__('City'))
-                        ->columnSpan(3),
+                Fieldset::make(__('Address'))->schema([
 
-                    Select::make('state')
-                        ->label(__('State'))
-                        ->options(BrasilStatesEnum::toArray())
-                        ->default('SP'),
+                    Grid::make()->schema([
+                        Select::make('country')
+                            ->label(__('Country'))
+                            ->options([
+                                'Brasil' => 'Brasil',
+                            ])
+                            ->selectablePlaceholder(false)
+                            ->default('Brasil')
+                            ->columnSpan(2),
 
-                    TextInput::make('neighborhood')
-                        ->label(__('Neighborhood'))
-                        ->columnSpan(2),
-                ])->columns(8),
+                        TextInput::make('city')
+                            ->label(__('City'))
+                            ->columnSpan(3),
 
-                Grid::make()->schema([
-                    TextInput::make('address')
-                        ->label(__('Address'))
-                        ->columnSpan(4),
+                        Select::make('state')
+                            ->label(__('State'))
+                            ->options(BrasilStatesEnum::toArray())
+                            ->default('SP'),
 
-                    TextInput::make('number')
-                        ->label(__('Number')),
+                        TextInput::make('neighborhood')
+                            ->label(__('Neighborhood'))
+                            ->columnSpan(2),
+                    ])->columns(8),
 
-                    TextInput::make('complement')
-                        ->label(__('Complement'))
-                        ->columnSpan(2),
+                    Grid::make()->schema([
+                        TextInput::make('address')
+                            ->label(__('Address'))
+                            ->columnSpan(4),
 
-                    TextInput::make('postal_code')
-                        ->label(__('Postal Code')),
+                        TextInput::make('number')
+                            ->label(__('Number')),
 
-                ])->columns(8),
+                        TextInput::make('complement')
+                            ->label(__('Complement'))
+                            ->columnSpan(2),
 
-                TextInput::make('latitude')
-                    ->label(__('Latitude')),
+                        TextInput::make('postal_code')
+                            ->label(__('Postal Code')),
 
-                TextInput::make('longitude')
-                    ->label(__('Longitude')),
+                    ])->columns(8),
+
+                    TextInput::make('latitude')
+                        ->label(__('Latitude')),
+
+                    TextInput::make('longitude')
+                        ->label(__('Longitude')),
+                ])
+                    ->columnSpanFull(),
 
                 TextInput::make('hits_property_id')
+                    ->hidden()
                     ->label(__('Hits Property ID')),
 
                 Textarea::make('extra')
+                    ->hidden()
                     ->columnSpanFull(),
             ]);
     }
@@ -165,20 +187,6 @@ class PropertyResource extends Resource
                     ),
             ])
             ->actions([
-                Action::make('follow')
-                    ->icon(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? 'heroicon-o-x-circle' : 'heroicon-o-user-plus')
-                    ->label(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? __('Unfollow') : __('Follow'))
-                    ->color(fn ($record) => $record->usersFollowing()->where('user_id', auth()->id())->exists() ? 'danger' : 'success')
-                    ->action(function ($record) {
-                        $exists = $record->usersFollowing()->where('user_id', auth()->id())->exists();
-                        if ($exists) {
-                            $record->usersFollowing()->detach(auth()->id());
-
-                            return;
-                        }
-
-                        $record->usersFollowing()->attach(auth()->id());
-                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ]);
