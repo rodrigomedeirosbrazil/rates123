@@ -7,11 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('property_followed_properties', function (Blueprint $table) {
+        Schema::create('property_properties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('property_id')->constrained();
-            $table->foreignId('followed_property_id')->constrained();
-            $table->timestamps();
+            $table->unsignedBigInteger('property_id');
+            $table->unsignedBigInteger('followed_property_id');
         });
 
         Schema::dropIfExists('user_followed_properties');
@@ -19,6 +18,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('property_followed_properties');
+        Schema::dropIfExists('property_properties');
     }
 };

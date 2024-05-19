@@ -6,7 +6,6 @@ use App\Property\DTOs\PropertyDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -44,19 +43,9 @@ class Property extends Model
         return $this->belongsTo(ScrapedPlatform::class, 'scraped_platform_id', 'id');
     }
 
-    public function followByProperty(Property $property): bool
+    public function followProperties(): HasMany
     {
-        return $this->propertiesFollowing()->where('property_id', $property->id)->exists();
-    }
-
-    public function propertiesFollowing(): HasMany
-    {
-        return $this->hasMany(Property::class);
-    }
-
-    public function followProperties(): BelongsToMany
-    {
-        return $this->belongsToMany(Property::class, 'property_followed_properties', 'property_id', 'followed_property_id');
+        return $this->hasMany(PropertyProperty::class, 'property_id', 'id');
     }
 
     public function syncs(): HasMany
