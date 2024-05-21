@@ -2,25 +2,17 @@
 
 namespace App\Managers;
 
+use App\DTOs\PriceNotificationDTO;
 use App\Enums\PriceNotificationTypeEnum;
 use App\Models\Rate;
-use App\Models\PriceNotification;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Number;
 
 class CheckPriceManager
 {
-    public function checkPropertyPrices(int $propertyId): void
+    public function checkPropertyPrices(int $propertyId): Collection
     {
-        $hasNotificationToday = PriceNotification::query()
-            ->wherePropertyId($propertyId)
-            ->whereDate('created_at', now())
-            ->exists();
-
-        if ($hasNotificationToday) {
-            return;
-        }
-
         $lastPrice = Rate::query()
             ->where('property_id', $propertyId)
             ->orderBy('checkin', 'desc')
@@ -28,13 +20,22 @@ class CheckPriceManager
 
         $date = now()->addDay();
 
+        $priceNotificationDTOs = collect([]);
+
         while ($lastPrice->checkin->gte($date)) {
-            $this->checkPriceDate($propertyId, $date);
+            $priceNotificationDTO = $this->checkPriceDate($propertyId, $date);
+
+            if ($priceNotificationDTO) {
+                $priceNotificationDTOs->push($priceNotificationDTO);
+            }
+
             $date->addDay();
         }
+
+        return $priceNotificationDTOs;
     }
 
-    public function checkPriceDate(int $propertyId, CarbonInterface $date): void
+    public function checkPriceDate(int $propertyId, CarbonInterface $date): ?PriceNotificationDTO
     {
         $prices = Rate::query()
             ->where('property_id', $propertyId)
@@ -44,7 +45,7 @@ class CheckPriceManager
             ->get();
 
         if ($prices->count() < 2) {
-            return;
+            return null;
         }
 
         $newPrice = $prices[0];
@@ -56,72 +57,68 @@ class CheckPriceManager
                 && $newPrice->price === $oldPrice->price)
             || (! $newPrice->available && ! $oldPrice->available)
         ) {
-            return;
+            return null;
         }
 
         if (
             $newPrice->available
             && ! $oldPrice->available
         ) {
-            PriceNotification::create([
-                'property_id' => $propertyId,
-                'checkin' => $date,
-                'type' => PriceNotificationTypeEnum::PriceAvailable,
-                'before' => 0,
-                'after' => $newPrice->price,
-                'average_price' => 0,
-            ]);
-
-            return;
+            return new PriceNotificationDTO(
+                propertyId: $propertyId,
+                checkin: $date,
+                type: PriceNotificationTypeEnum::PriceAvailable,
+                oldPrice: 0,
+                newPrice: $newPrice->price,
+                variationToLastPrice: 0,
+                variationToBasePrice: 0,
+            );
         }
 
         if (
             ! $newPrice->available
             && $oldPrice->available
         ) {
-            PriceNotification::create([
-                'property_id' => $propertyId,
-                'checkin' => $date,
-                'type' => PriceNotificationTypeEnum::PriceUnavailable,
-                'before' => $oldPrice->price,
-                'after' => 0,
-                'average_price' => 0,
-            ]);
-
-            return;
+            return new PriceNotificationDTO(
+                propertyId: $propertyId,
+                checkin: $date,
+                type: PriceNotificationTypeEnum::PriceUnavailable,
+                oldPrice: $oldPrice->price,
+                newPrice: 0,
+                variationToLastPrice: 0,
+                variationToBasePrice: 0,
+            );
         }
 
         if ($newPrice->price > $oldPrice->price) {
-            PriceNotification::create([
-                'property_id' => $propertyId,
-                'checkin' => $date,
-                'type' => PriceNotificationTypeEnum::PriceUp,
-                'before' => $oldPrice->price,
-                'after' => $newPrice->price,
-                'average_price' => number_format(
-                    (new PriceManager())->calculatePropertyModePrice($propertyId),
-                    2
-                ),
-            ]);
+            $propertyBasePrice = (new PriceManager())->calculatePropertyModePrice($propertyId);
 
-            return;
+            return new PriceNotificationDTO(
+                propertyId: $propertyId,
+                checkin: $date,
+                type: PriceNotificationTypeEnum::PriceUp,
+                oldPrice: $oldPrice->price,
+                newPrice: $newPrice->price,
+                variationToLastPrice: Number::format(($newPrice->price - $oldPrice->price) / $oldPrice->price * 100, 0),
+                variationToBasePrice: Number::format(($newPrice->price - $propertyBasePrice) / $propertyBasePrice * 100, 0),
+            );
         }
 
         if ($newPrice->price < $oldPrice->price) {
-            PriceNotification::create([
-                'property_id' => $propertyId,
-                'checkin' => $date,
-                'type' => PriceNotificationTypeEnum::PriceDown,
-                'before' => $oldPrice->price,
-                'after' => $newPrice->price,
-                'average_price' => number_format(
-                    (new PriceManager())->calculatePropertyModePrice($propertyId),
-                    2
-                ),
-            ]);
+            $propertyBasePrice = (new PriceManager())->calculatePropertyModePrice($propertyId);
 
-            return;
+            return new PriceNotificationDTO(
+                propertyId: $propertyId,
+                checkin: $date,
+                type: PriceNotificationTypeEnum::PriceDown,
+                oldPrice: $oldPrice->price,
+                newPrice: $newPrice->price,
+                variationToLastPrice: Number::format(($newPrice->price - $oldPrice->price) / $oldPrice->price * 100, 0),
+                variationToBasePrice: Number::format(($newPrice->price - $propertyBasePrice) / $propertyBasePrice * 100, 0),
+            );
         }
+
+        return null;
     }
 
     public function processPrices(int $propertyId, Collection $prices): void
