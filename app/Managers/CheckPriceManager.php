@@ -50,7 +50,7 @@ class CheckPriceManager
         $newPrice = $prices[0];
         $oldPrice = $prices[1];
 
-        if ($newPrice->created_at->isToday()) {
+        if ($newPrice->updated_at->isToday()) {
             return;
         }
 
@@ -103,8 +103,9 @@ class CheckPriceManager
                 'before' => $oldPrice->price,
                 'after' => $newPrice->price,
                 'average_price' => number_format(
-                    (new PriceManager())->calculatePropertyModePrice($propertyId),
-                    2
+                    num: (new PriceManager())->calculatePropertyModePrice($propertyId),
+                    decimals: 2,
+                    thousands_separator: '',
                 ),
             ]);
 
@@ -119,8 +120,9 @@ class CheckPriceManager
                 'before' => $oldPrice->price,
                 'after' => $newPrice->price,
                 'average_price' => number_format(
-                    (new PriceManager())->calculatePropertyModePrice($propertyId),
-                    2
+                    num: (new PriceManager())->calculatePropertyModePrice($propertyId),
+                    decimals: 2,
+                    thousands_separator: '',
                 ),
             ]);
 
