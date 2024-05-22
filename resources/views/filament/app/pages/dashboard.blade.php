@@ -1,5 +1,5 @@
 <x-filament-panels::page>
-    @foreach ($this->getPriceNotifications() as $priceNotification)
-        @livewire('price-notification', ['priceNotification' => $priceNotification])
+    @foreach (auth()->user()->userProperties as $userProperty)
+        @livewire('price-notifications', ['propertyId' => $userProperty->property->id, 'propertyName' => $userProperty->property->name])
     @endforeach
 </x-filament-panels::page>

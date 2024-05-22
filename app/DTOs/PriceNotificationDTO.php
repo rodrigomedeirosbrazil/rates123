@@ -9,6 +9,7 @@ class PriceNotificationDTO
 {
     public function __construct(
         public int $propertyId,
+        public string $propertyName,
         public CarbonInterface $checkin,
         public PriceNotificationTypeEnum $type,
         public float $oldPrice,

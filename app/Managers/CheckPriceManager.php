@@ -38,6 +38,7 @@ class CheckPriceManager
     public function checkPriceDate(int $propertyId, CarbonInterface $date): ?PriceNotificationDTO
     {
         $prices = Rate::query()
+            ->with('property:id,name')
             ->where('property_id', $propertyId)
             ->whereDate('checkin', $date)
             ->orderBy('created_at', 'desc')
@@ -65,7 +66,8 @@ class CheckPriceManager
             && ! $oldPrice->available
         ) {
             return new PriceNotificationDTO(
-                propertyId: $propertyId,
+                propertyId: $newPrice->property->id,
+                propertyName: $newPrice->property->name,
                 checkin: $date,
                 type: PriceNotificationTypeEnum::PriceAvailable,
                 oldPrice: 0,
@@ -80,7 +82,8 @@ class CheckPriceManager
             && $oldPrice->available
         ) {
             return new PriceNotificationDTO(
-                propertyId: $propertyId,
+                propertyId: $newPrice->property->id,
+                propertyName: $newPrice->property->name,
                 checkin: $date,
                 type: PriceNotificationTypeEnum::PriceUnavailable,
                 oldPrice: $oldPrice->price,
@@ -94,7 +97,8 @@ class CheckPriceManager
             $propertyBasePrice = (new PriceManager())->calculatePropertyModePrice($propertyId);
 
             return new PriceNotificationDTO(
-                propertyId: $propertyId,
+                propertyId: $newPrice->property->id,
+                propertyName: $newPrice->property->name,
                 checkin: $date,
                 type: PriceNotificationTypeEnum::PriceUp,
                 oldPrice: $oldPrice->price,
@@ -108,7 +112,8 @@ class CheckPriceManager
             $propertyBasePrice = (new PriceManager())->calculatePropertyModePrice($propertyId);
 
             return new PriceNotificationDTO(
-                propertyId: $propertyId,
+                propertyId: $newPrice->property->id,
+                propertyName: $newPrice->property->name,
                 checkin: $date,
                 type: PriceNotificationTypeEnum::PriceDown,
                 oldPrice: $oldPrice->price,
