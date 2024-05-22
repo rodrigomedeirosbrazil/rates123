@@ -22,7 +22,7 @@ class PropertyProperty extends Model
 
     public function properties(): HasMany
     {
-        return $this->hasMany(Property::class, 'followed_property_id', 'id');
+        return $this->hasMany(Property::class, 'id', 'followed_property_id');
     }
 
     public function property(): BelongsTo
