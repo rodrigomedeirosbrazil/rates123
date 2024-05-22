@@ -50,6 +50,10 @@ class CheckPriceManager
         $newPrice = $prices[0];
         $oldPrice = $prices[1];
 
+        if ($newPrice->created_at->isToday()) {
+            return;
+        }
+
         if (
             ($newPrice->available
                 && $oldPrice->available
