@@ -55,10 +55,21 @@ class PriceNotification extends Model
     protected function averageVariation(): Attribute
     {
         return Attribute::make(
-            get: fn (mixed $value, array $attributes) => data_get($attributes, 'type') === PriceNotificationTypeEnum::PriceUp->value
-                || data_get($attributes, 'type') === PriceNotificationTypeEnum::PriceDown->value
-                ? (data_get($attributes, 'after') - data_get($attributes, 'average_price')) / data_get($attributes, 'average_price') * 100
-                : 0
+            get: function (mixed $value, array $attributes) {
+                if (data_get($attributes, 'type') === PriceNotificationTypeEnum::PriceUp->value
+                    && data_get($attributes, 'type') === PriceNotificationTypeEnum::PriceDown->value
+                ) {
+                    return 0;
+                }
+
+                $averagePrice = str_replace(
+                    subject: data_get($attributes, 'average_price'),
+                    search: ',',
+                    replace: ''
+                );
+
+                return (data_get($attributes, 'after') - $averagePrice) / $averagePrice * 100;
+            }
         );
     }
 }

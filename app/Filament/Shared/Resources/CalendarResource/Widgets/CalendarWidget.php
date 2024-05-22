@@ -58,7 +58,7 @@ class CalendarWidget extends FullCalendarWidget
             )
             ->values();
 
-        $hasPermission = auth()->user()->userProperties->contains('id', $this->getFilter('property_id'));
+        $hasPermission = auth()->user()->userProperties->contains('property_id', $this->getFilter('property_id'));
 
         $occupancies = $hasPermission
             ? Occupancy::query()
