@@ -9,6 +9,10 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
+        if (! app()->isProduction()) {
+            return;
+        }
+
         $schedule->command('app:monitore')->dailyAt('12:00');
         $schedule->command('app:occupancy')->everyFourHours();
     }
