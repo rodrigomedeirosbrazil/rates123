@@ -4,10 +4,10 @@ namespace App\Livewire;
 
 use App\Models\PriceNotification;
 use App\Models\Property;
-use Illuminate\Support\Collection;
 use Livewire\Component;
+use Illuminate\Support\Collection;
 
-class PriceNotifications extends Component
+class PriceNotificationsComponent extends Component
 {
     public int $propertyId;
     public string $propertyName;
@@ -15,7 +15,7 @@ class PriceNotifications extends Component
 
     public function render()
     {
-        return view('livewire.price-notifications');
+        return view('livewire.price-notifications-component');
     }
 
     public function mount()
