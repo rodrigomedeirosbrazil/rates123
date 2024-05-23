@@ -1,9 +1,104 @@
 <?php
 
+use App\Enums\PriceNotificationTypeEnum;
 use App\Managers\CheckPriceManager;
+use App\Models\PriceNotification;
 use App\Models\Property;
 use App\Models\Rate;
 use App\Scraper\DTOs\DayPriceDTO;
+
+it('should create a price notification with price up', function () {
+    $property = Property::factory()->create();
+
+    Rate::factory()
+        ->create(
+            [
+                'property_id' => $property->id,
+                'checkin' => now()->addDay(),
+                'price' => 100,
+                'available' => true,
+                'created_at' => now()->subDay(),
+                'updated_at' => now()->subDay(),
+            ],
+        );
+
+    Rate::factory()
+        ->create(
+            [
+                'property_id' => $property->id,
+                'checkin' => now()->addDay(),
+                'price' => 200,
+                'available' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        );
+
+    (new CheckPriceManager())->checkPriceDate($property->id, now()->addDay());
+
+    $notification = PriceNotification::query()
+        ->wherePropertyId($property->id)
+        ->whereDate('created_at', now())
+        ->first();
+
+    expect($notification->type)->toBe(PriceNotificationTypeEnum::PriceUp);
+    expect(intval($notification->before))->toBe(100);
+    expect(intval($notification->after))->toBe(200);
+    expect(intval($notification->average_price))->toBe(100);
+});
+
+
+it('shouldnt create a price notification because old rate update', function () {
+    $property = Property::factory()->create();
+
+    Rate::factory()
+        ->create(
+            [
+                'property_id' => $property->id,
+                'checkin' => now()->addDay(),
+                'price' => 100,
+                'available' => true,
+                'created_at' => now()->subDays(2),
+                'updated_at' => now()->subDays(2),
+            ],
+        );
+
+    Rate::factory()
+        ->create(
+            [
+                'property_id' => $property->id,
+                'checkin' => now()->addDay(),
+                'price' => 200,
+                'available' => true,
+                'created_at' => now()->subDays(1),
+                'updated_at' => now()->subDays(2),
+            ],
+        );
+
+    (new CheckPriceManager())->checkPriceDate($property->id, now()->addDay());
+
+    expect(PriceNotification::count())->toBe(0);
+});
+
+it('shouldnt create a price notification because no exist old rate', function () {
+    $property = Property::factory()->create();
+
+    Rate::factory()
+        ->create(
+            [
+                'property_id' => $property->id,
+                'checkin' => now()->addDay(),
+                'price' => 100,
+                'available' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        );
+
+    (new CheckPriceManager())->checkPriceDate($property->id, now()->addDay());
+
+    expect(PriceNotification::count())->toBe(0);
+});
 
 it('should update updated_at field on a rate', function () {
     $price = rand(1, 100);

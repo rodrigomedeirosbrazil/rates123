@@ -107,7 +107,7 @@ it('should get price details', function () {
     $to = Carbon::parse('2022-01-03');
 
     $urlToHttpFake = config('app.scrap.url')
-        . '/booking/prices?url='
+        . '/booking/unavailable-prices?url='
         . urlencode($url)
         . "&checkin={$from->toDateString()}&checkout={$to->toDateString()}";
 
