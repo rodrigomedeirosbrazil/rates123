@@ -68,6 +68,10 @@ class PriceNotification extends Model
                     replace: ''
                 );
 
+                if ($averagePrice < 1) {
+                    return 0;
+                }
+
                 return (data_get($attributes, 'after') - $averagePrice) / $averagePrice * 100;
             }
         );
