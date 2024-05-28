@@ -52,19 +52,25 @@ class PriceManager
             $userModel = $user;
         }
 
-        $followedPropertyIds = $userModel->followProperties->pluck('id');
+        return $userModel->userProperties
+            ->mapWithkeys(
+                function ($userProperty) use ($createdAt) {
+                    $property = $userProperty->property;
 
-        if ($followedPropertyIds->isEmpty()) {
-            return collect();
-        }
+                    $followedPropertyIds = $property->followProperties
+                        ->pluck('followed_property_id');
 
-        $searchDate = $createdAt ?? now();
+                    $searchDate = $createdAt ?? now();
 
-        return PriceNotification::query()
-            ->whereDate('created_at', $searchDate)
-            ->whereIn('property_id', $followedPropertyIds)
-            ->orderBy('checkin', 'asc')
-            ->get();
+                    $priceNotifications = PriceNotification::query()
+                        ->whereDate('created_at', $searchDate)
+                        ->whereIn('property_id', $followedPropertyIds)
+                        ->orderBy('checkin', 'asc')
+                        ->get();
+
+                    return ["{$property->name}" => $priceNotifications];
+                }
+            );
     }
 
     public function getVariationPercentageByModePrice(int $propertyId, float $price, bool $noCache = false): float
