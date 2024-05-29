@@ -52,19 +52,25 @@ class PriceManager
             $userModel = $user;
         }
 
-        $followedPropertyIds = $userModel->followProperties->pluck('id');
+        return $userModel->userProperties
+            ->mapWithkeys(
+                function ($userProperty) use ($createdAt) {
+                    $property = $userProperty->property;
 
-        if ($followedPropertyIds->isEmpty()) {
-            return collect();
-        }
+                    $followedPropertyIds = $property->followProperties
+                        ->pluck('followed_property_id');
 
-        $searchDate = $createdAt ?? now();
+                    $searchDate = $createdAt ?? now();
 
-        return PriceNotification::query()
-            ->whereDate('created_at', $searchDate)
-            ->whereIn('property_id', $followedPropertyIds)
-            ->orderBy('checkin', 'asc')
-            ->get();
+                    $priceNotifications = PriceNotification::query()
+                        ->whereDate('created_at', $searchDate)
+                        ->whereIn('property_id', $followedPropertyIds)
+                        ->orderBy('checkin', 'asc')
+                        ->get();
+
+                    return ["{$property->name}" => $priceNotifications];
+                }
+            );
     }
 
     public function getVariationPercentageByModePrice(int $propertyId, float $price, bool $noCache = false): float
@@ -80,27 +86,38 @@ class PriceManager
             return null;
         }
 
-        return $priceNotifications->map(
-            function (PriceNotification $priceNotification) {
-                $basicInfo = [
-                    __('Checkin') . ': ' . $priceNotification->checkin->translatedFormat('l, d F y') . PHP_EOL,
-                    __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
-                    __('Property') . ': ' . $priceNotification->property->name . PHP_EOL,
-                    __('Before') . ": \${$priceNotification->before}" . PHP_EOL,
-                    __('After') . ": \${$priceNotification->after}" . PHP_EOL,
-                ];
+        return $priceNotifications
+            ->map(
+                function (Collection $priceNotificationOfProperty, $key) {
+                    $priceNotificationTextOfProperty = $priceNotificationOfProperty->map(
+                        function (PriceNotification $priceNotification) {
+                            $basicInfo = [
+                                __('Checkin') . ': ' . $priceNotification->checkin->translatedFormat('l, d F y') . PHP_EOL,
+                                __('Type') . ': ' . __($priceNotification->type->value) . PHP_EOL,
+                                __('Property') . ': ' . $priceNotification->property->name . PHP_EOL,
+                                __('Before') . ": \${$priceNotification->before}" . PHP_EOL,
+                                __('After') . ": \${$priceNotification->after}" . PHP_EOL,
+                            ];
 
-                $variations = $priceNotification->type === PriceNotificationTypeEnum::PriceUp
-                    || $priceNotification->type === PriceNotificationTypeEnum::PriceDown
-                    ? [
-                        __('Variation') . ': ' . number_format($priceNotification->variation, 2) . '%' . PHP_EOL,
-                        __('Avg Variation') . ': ' . number_format($priceNotification->averageVariation, 2) . '%' . PHP_EOL,
-                    ]
-                    : [];
+                            $variations = $priceNotification->type === PriceNotificationTypeEnum::PriceUp
+                                || $priceNotification->type === PriceNotificationTypeEnum::PriceDown
+                                ? [
+                                    __('Variation') . ': ' . number_format($priceNotification->variation, 2) . '%' . PHP_EOL,
+                                    __('Avg Variation') . ': ' . number_format($priceNotification->averageVariation, 2) . '%' . PHP_EOL,
+                                ]
+                                : [];
 
-                return array_merge($basicInfo, $variations, [PHP_EOL]);
-            }
-        )
+                            return array_merge($basicInfo, $variations, [PHP_EOL]);
+                        }
+                    );
+
+                    return array_merge(
+                        [__('Price Notifications to') . ' ' . $key . PHP_EOL],
+                        [PHP_EOL],
+                        $priceNotificationTextOfProperty->flatten()->toArray(),
+                    );
+                }
+            )
             ->flatten()->implode('');
     }
 

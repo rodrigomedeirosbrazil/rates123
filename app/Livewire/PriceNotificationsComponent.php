@@ -23,6 +23,7 @@ class PriceNotificationsComponent extends Component
         $this->priceNotifications = $this->getTodayPriceNotifications();
     }
 
+    // TODO: adjust to use PriceNotification getUserPriceNotificationsByCreatedAt
     public function getTodayPriceNotifications(): Collection
     {
         $property = Property::findOrFail($this->propertyId);
