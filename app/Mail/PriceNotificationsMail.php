@@ -24,10 +24,10 @@ class PriceNotificationsMail extends Mailable
         $priceManager = new PriceManager();
         $priceNotifications = $priceManager->getUserPriceNotificationsByCreatedAt($user);
 
-        $this->priceSuggestionsTextTable = (new PriceManager())->buildPriceSuggestionsTextList(
-            $priceNotifications,
-            $user
-        );
+        // $this->priceSuggestionsTextTable = (new PriceManager())->buildPriceSuggestionsTextList(
+        //     $priceNotifications,
+        //     $user
+        // );
 
         $this->priceNotificationsTextTable = (new PriceManager())->buildPriceNotificationsTextList(
             $priceNotifications
