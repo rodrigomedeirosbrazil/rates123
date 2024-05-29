@@ -22,18 +22,25 @@ ENV APP_HOME /var/www/
 
 WORKDIR $APP_HOME
 
-COPY . $APP_HOME
+COPY --chown=www-data:www-data . $APP_HOME
+
+RUN mkdir -p storage/app \
+    && mkdir -p storage/logs \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/framework/cache \
+    && chown -R www-data:www-data storage \
+    && chmod -R 775 storage
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer && composer install --no-dev
+
+RUN php artisan optimize
 
 COPY ./docker/prod/supervisord.conf /etc/supervisord.conf
 COPY ./docker/prod/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/prod/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./docker/prod/php.ini /usr/local/etc/php/php.ini
 COPY ./docker/prod/sites/* /etc/nginx/sites-available/
-
-#change ownership of application
-RUN chown -R www-data:www-data $APP_HOME
 
 COPY ./docker/prod/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
