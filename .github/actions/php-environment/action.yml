@@ -53,6 +53,10 @@ runs:
       shell: bash
       run: chmod -R 777 storage bootstrap/cache
 
+    - name: Create database sqlite
+      shell: bash
+      run: touch database/database.sqlite
+
     - name: Install Composer dependencies
       shell: bash
       run: |
