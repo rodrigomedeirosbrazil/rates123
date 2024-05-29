@@ -128,7 +128,7 @@ class BookingScraper extends Scraper implements ScraperContract
 
         $numberOfDays = $from->diffInDays($to);
 
-        return collect(range(0, $numberOfDays))
+        return collect(range(0, $numberOfDays - 1))
             ->map(
                 fn ($dayIndex) => new DayPriceDTO(
                     checkin: $from->copy()->addDays($dayIndex),
