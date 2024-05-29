@@ -20,11 +20,9 @@ runs:
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
-      env:
-        RDKAFKA_LIBS: librdkafka-dev
       with:
-        php-version: 8.2
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, rdkafka-arnaud-lb/php-rdkafka@6.0.1
+        php-version: 8.3
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
         coverage: xdebug
 
     - name: Validate composer.json and composer.lock
@@ -57,8 +55,6 @@ runs:
 
     - name: Install Composer dependencies
       shell: bash
-      env:
-        COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ inputs.composer_auth }}"} }'
       run: |
         composer install --no-progress --prefer-dist --optimize-autoloader --ignore-platform-reqs
         php artisan key:generate
