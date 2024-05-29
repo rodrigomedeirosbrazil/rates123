@@ -1,0 +1,68 @@
+name: "laravel-tests"
+description: "Run the tests"
+
+inputs:
+  min_coverage:
+    description: "The minimum coverage percentage"
+    required: false
+    default: '80'
+  mysql_database:
+    description: "The MySQL database to use for testing"
+    required: false
+    default: 'testing'
+  mongo_database:
+    description: "The MongoDB database to use for testing"
+    required: false
+    default: 'tbnb_integrations_service'
+  branch:
+    description: "The branch to deploy"
+    required: false
+    default: ''
+  composer_auth:
+    description: "The auth key to install composer dependencies"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.branch }}
+    - uses: ./.github/actions/php-environment
+      with:
+        composer_auth: ${{ inputs.composer_auth }}
+        branch: ${{ inputs.branch }}
+    - name: Verify MySQL connection and create database
+      shell: bash
+      run: |
+        mysql --version
+        sudo apt-get install -y mysql-client
+        mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -psecret -e "
+          CREATE DATABASE IF NOT EXISTS tbnb_test;
+          GRANT ALL PRIVILEGES ON \`tbnb_test%\`.* TO 'root'@'%';
+        "
+        mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uroot -psecret -e "SHOW DATABASES"
+    - name: Execute tests (Unit and Feature tests) via PestPHP
+      env:
+        DB_HOST: 127.0.0.1
+        DB_DATABASE: ${{ inputs.mysql_database }}
+        DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        DB_USERNAME: root
+        DB_PASSWORD: secret
+        DB_HOST_TURNOVERBNB: 127.0.0.1
+        DB_PORT_TURNOVERBNB: ${{ job.services.mysql.ports[3306] }}
+        DB_DATABASE_TURNOVERBNB: ${{ inputs.mysql_database }}
+        DB_USERNAME_TURNOVERBNB: root
+        DB_PASSWORD_TURNOVERBNB: secret
+        MONGODB_HOST: 127.0.0.1
+        MONGODB_PORT: ${{ job.services.mongodb.ports[27017] }}
+        MONGODB_DATABASE: ${{ inputs.mongo_database }}
+        MONGODB_USERNAME: root
+        MONGODB_PASSWORD: root
+      shell: bash
+      run: |
+        php artisan migrate:fresh
+        echo "Running unit/integration tests"
+        php artisan test --parallel --exclude-group=scenario --coverage --min=${{ inputs.min_coverage }}
+        echo "Running scenario tests"
+        php artisan test --parallel tests/Scenario
