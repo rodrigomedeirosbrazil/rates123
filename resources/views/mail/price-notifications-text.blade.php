@@ -3,10 +3,6 @@
 @if ($priceNotificationsTextTable === null)
 {{__('No price notifications today')}}.
 @else
-{{__("These are today/'s price suggestions")}}:
-
-{{$priceSuggestionsTextTable}}
-
 {{__("These are today/'s price notifications")}}:
 
 {{$priceNotificationsTextTable}}
