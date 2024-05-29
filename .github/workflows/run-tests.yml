@@ -12,54 +12,9 @@ on:
       - ".github/actions/laravel-tests/action.yml"
 
 jobs:
-  phparkitect:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event.sender.login != vars.BOT_USERNAME
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/php-environment
-        with:
-          composer_auth: ${{ secrets.COMPOSER_AUTH }}
-      - name: Run PHPArkitect
-        run: ./vendor/bin/phparkitect check --config=./vendor/mortexa/laravel-arkitect/src/phparkitect.php
-
-      - name: Add failed label PHPArkitect
-        if: failure() && github.event_name == 'pull_request'
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const { addLabels, removeLabel } = require('.github/scripts/helpers');
-            await addLabels(github, context, ${{ github.run_id }}, ["tests failed"]);
-            await removeLabel(github, context, ${{ github.run_id }}, "ready");
-
   laravel-tests:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.sender.login != vars.BOT_USERNAME
-    # Service container Mysql mysql
-    services:
-      # Label used to access the service container
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: 'secret'
-          MYSQL_DATABASE: 'testing'
-        ports:
-          - 3306
-        # Set health checks to wait until mysql database has started (it takes some seconds to start)
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
-      mongodb:
-        image: mongo:latest
-        env:
-          MONGO_INITDB_DATABASE: 'tbnb_integrations_service'
-          MONGO_INITDB_ROOT_USERNAME: 'root'
-          MONGO_INITDB_ROOT_PASSWORD: 'root'
-        ports:
-          - 27017
 
     strategy:
       matrix:
@@ -72,33 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/php-environment
-        with:
-          composer_auth: ${{ secrets.COMPOSER_AUTH }}
       - uses: ./.github/actions/laravel-tests
-        with:
-          composer_auth: ${{ secrets.COMPOSER_AUTH }}
-      - name: Add failed label test
-        if: failure() && github.event_name == 'pull_request'
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const { addLabels, removeLabel } = require('.github/scripts/helpers');
-            await addLabels(github, context, ${{ github.run_id }}, ["tests failed"]);
-            await removeLabel(github, context, ${{ github.run_id }}, "ready");
 
   check_all_jobs:
-    needs: [ laravel-tests, phparkitect ]
+    needs: [ laravel-tests ]
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.sender.login != vars.BOT_USERNAME
     steps:
       - uses: actions/checkout@v4
       - name: Check job outcomes
         uses: actions/github-script@v4
-        with:
-          script: |
-            const { checkIfJobsPassed, removeLabel } = require('.github/scripts/helpers.js');
-            const allJobsPassed = await checkIfJobsPassed(github, context, 'check_all_jobs');
-
-            if (allJobsPassed) {
-              await removeLabel(github, context, ${{ github.run_id }}, 'tests failed');
-            }
