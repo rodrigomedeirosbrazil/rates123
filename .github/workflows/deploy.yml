@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker image
-        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+        run: docker build -f docker/prod/Dockerfile -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Save Docker image as tar file
         run: docker save -o ${{ env.IMAGE_NAME }}-image.tar ${{ env.IMAGE_NAME }}:latest
