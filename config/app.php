@@ -190,6 +190,6 @@ return [
     ])->toArray(),
 
     'scrap' => [
-        'url' => env('SCRAP_URL'),
+        'url' => env('SCRAP_URL', 'http://scraper:3000'),
     ],
 ];

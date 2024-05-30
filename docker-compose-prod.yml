@@ -1,5 +1,6 @@
 services:
     rates123:
+        image: rates123
         build:
             context: ./
             dockerfile: ./docker/prod/Dockerfile
@@ -13,8 +14,9 @@ services:
         environment:
             WWWUSER: '${WWWUSER}'
         volumes:
-            - './database/database.sqlite:/var/www/database/database.sqlite'
-            - './docker/prod/letsencrypt:/etc/letsencrypt'
+            - './.env:/var/www/.env'
+            - './database.sqlite:/var/www/database/database.sqlite'
+            - './letsencrypt:/etc/letsencrypt'
             - './storage:/var/www/storage'
         networks:
             - medeirostec-network

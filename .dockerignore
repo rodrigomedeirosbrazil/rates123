@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
+.env
 .env.backup
 .env.production
 .phpunit.result.cache
@@ -22,7 +23,6 @@ yarn-error.log
 .idea
 node_modules
 vendor
-storage/framework/cache/**
-storage/framework/sessions/**
-storage/framework/views/**
+storage/*
 /docker/prod/letsencrypt
+/database/database.sqlite
