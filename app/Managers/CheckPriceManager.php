@@ -50,7 +50,7 @@ class CheckPriceManager
         $newPrice = $prices[0];
         $oldPrice = $prices[1];
 
-        if (! $newPrice->updated_at->isToday()) {
+        if (! $newPrice->created_at->isToday()) {
             return;
         }
 

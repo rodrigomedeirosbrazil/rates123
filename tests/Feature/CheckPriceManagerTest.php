@@ -80,6 +80,38 @@ it('shouldnt create a price notification because old rate update', function () {
     expect(PriceNotification::count())->toBe(0);
 });
 
+it('shouldnt create a price notification because old rate update #2', function () {
+    $property = Property::factory()->create();
+
+    Rate::factory()
+        ->create(
+            [
+                'property_id' => $property->id,
+                'checkin' => today()->addDay(),
+                'price' => 0,
+                'available' => false,
+                'created_at' => today()->subDays(10),
+                'updated_at' => today()->subDays(10),
+            ],
+        );
+
+    Rate::factory()
+        ->create(
+            [
+                'property_id' => $property->id,
+                'checkin' => today()->addDay(),
+                'price' => 200,
+                'available' => true,
+                'created_at' => today()->subDays(9),
+                'updated_at' => today(),
+            ],
+        );
+
+    (new CheckPriceManager())->checkPriceDate($property->id, today()->addDay());
+
+    expect(PriceNotification::count())->toBe(0);
+});
+
 it('shouldnt create a price notification because no exist old rate', function () {
     $property = Property::factory()->create();
 
