@@ -80,9 +80,8 @@ class OccupancyManager
             return null;
         }
 
-        $oldOccupancy = (int) $occupancies[1]->occupancyPercent;
         $newOccupancy = (int) $occupancies[0]->occupancyPercent;
-
+        $oldOccupancy = (int) $occupancies[1]->occupancyPercent;
 
         return $this->shouldNotifyOccupancyChange(
             oldOccupancy: $oldOccupancy,
