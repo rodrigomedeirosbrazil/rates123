@@ -2,12 +2,7 @@ name: 'deploy'
 on:
   push:
     branches: [main]
-    paths:
-      - '*'
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    workflow_dispatch:
 
 env:
   IMAGE_NAME: rates123
