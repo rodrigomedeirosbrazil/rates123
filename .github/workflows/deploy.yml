@@ -11,10 +11,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    - name: Echo on merging to main
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo "I'm merging!"
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
