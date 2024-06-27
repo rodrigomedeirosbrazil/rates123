@@ -5,9 +5,8 @@ namespace App\Models;
 use App\Enums\RoomTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class Occupancy extends Model
+class PropertyRoom extends Model
 {
     use HasFactory;
 
