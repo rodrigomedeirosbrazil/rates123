@@ -80,6 +80,10 @@ class OccupancyManager
             return null;
         }
 
+        if (! $occupancies[0]->updated_at->isToday()) {
+            return null;
+        }
+
         $newOccupancy = (int) $occupancies[0]->occupancyPercent;
         $oldOccupancy = (int) $occupancies[1]->occupancyPercent;
 

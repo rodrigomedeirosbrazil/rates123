@@ -85,3 +85,69 @@ it('should update last occupancy', function () {
 
     expect(Occupancy::all()->count())->toBe(1);
 });
+
+it('should checkOccupancyDate return OccupancyDiffDTO', function () {
+    $property = Property::factory()->create();
+
+    $checkin = today()->addDays(10);
+
+    Occupancy::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => $checkin,
+            'total_rooms' => 10,
+            'occupied_rooms' => 0,
+            'created_at' => now()->subDays(2),
+            'updated_at' => now()->subDays(2),
+        ]);
+
+    Occupancy::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => $checkin,
+            'total_rooms' => 10,
+            'occupied_rooms' => 5,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+    $occupancyManager = new OccupancyManager();
+
+    $occupancyDiffDTO = $occupancyManager->checkOccupancyDate($property->id, $checkin);
+
+    expect($occupancyDiffDTO->checkin)->toBe($checkin);
+    expect($occupancyDiffDTO->oldOccupancy)->toBe(0);
+    expect($occupancyDiffDTO->newOccupancy)->toBe(50);
+});
+
+it('should checkOccupancyDate NOT return OccupancyDiffDTO', function () {
+    $property = Property::factory()->create();
+
+    $checkin = today()->addDays(10);
+
+    Occupancy::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => $checkin,
+            'total_rooms' => 10,
+            'occupied_rooms' => 0,
+            'created_at' => now()->subDays(2),
+            'updated_at' => now()->subDays(2),
+        ]);
+
+    Occupancy::factory()
+        ->create([
+            'property_id' => $property->id,
+            'checkin' => $checkin,
+            'total_rooms' => 10,
+            'occupied_rooms' => 5,
+            'created_at' => now()->subDays(1),
+            'updated_at' => now()->subDays(1),
+        ]);
+
+    $occupancyManager = new OccupancyManager();
+
+    $occupancyDiffDTO = $occupancyManager->checkOccupancyDate($property->id, $checkin);
+
+    expect($occupancyDiffDTO)->toBeNull();
+});
