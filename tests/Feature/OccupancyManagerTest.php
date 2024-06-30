@@ -120,7 +120,7 @@ it('should checkOccupancyDate return OccupancyDiffDTO', function () {
     expect($occupancyDiffDTO->newOccupancy)->toBe(50);
 });
 
-it('should checkOccupancyDate NOT return OccupancyDiffDTO', function () {
+it('should checkOccupancyDate return null when created at is not today', function () {
     $property = Property::factory()->create();
 
     $checkin = today()->addDays(10);
@@ -141,8 +141,8 @@ it('should checkOccupancyDate NOT return OccupancyDiffDTO', function () {
             'checkin' => $checkin,
             'total_rooms' => 10,
             'occupied_rooms' => 5,
-            'created_at' => now()->subDays(1),
-            'updated_at' => now()->subDays(1),
+            'created_at' => now()->subDays(2),
+            'updated_at' => now(),
         ]);
 
     $occupancyManager = new OccupancyManager();

@@ -80,7 +80,7 @@ class OccupancyManager
             return null;
         }
 
-        if (! $occupancies[0]->updated_at->isToday()) {
+        if (! $occupancies[0]->created_at->isToday()) {
             return null;
         }
 
