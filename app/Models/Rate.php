@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Rate extends Model
 {
@@ -42,5 +43,10 @@ class Rate extends Model
             ->whereDate('checkin', '>', today())
             ->whereDate('updated_at', today())
             ->orderBy('checkin');
+    }
+
+    public function scopeAddMax($query, string $field)
+    {
+        return $query->select(['*', DB::raw("MAX($field) as max")]);
     }
 }
