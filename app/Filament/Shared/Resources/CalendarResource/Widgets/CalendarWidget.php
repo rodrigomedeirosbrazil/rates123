@@ -68,16 +68,9 @@ class CalendarWidget extends FullCalendarWidget
                 )
                 ->where('checkin', '>=', $fetchInfo['start'])
                 ->where('checkin', '<=', $fetchInfo['end'])
-                ->get()
                 ->groupBy('checkin')
-                ->map(
-                    fn ($group) => $group
-                        ->pipe(
-                            fn ($occupancies) => group_by_nearby($occupancies, 'occupancyPercent', 'created_at')
-                        )
-                        ->first()
-                )
-                ->flatten(1)
+                ->addMax('updated_at')
+                ->get()
                 ->map(
                     fn (Occupancy $occupancy) => EventData::make()
                         ->id($occupancy->id)
@@ -101,16 +94,9 @@ class CalendarWidget extends FullCalendarWidget
             )
             ->where('checkin', '>=', $fetchInfo['start'])
             ->where('checkin', '<=', $fetchInfo['end'])
-            ->get()
             ->groupBy('checkin')
-            ->map(
-                fn ($group) => $group
-                    ->pipe(
-                        fn ($rates) => group_by_nearby($rates, 'price', 'created_at')
-                    )
-                    ->first()
-            )
-            ->flatten(1)
+            ->addMax('updated_at')
+            ->get()
             ->map(
                 fn (Rate $rate) => EventData::make()
                     ->id($rate->id)
