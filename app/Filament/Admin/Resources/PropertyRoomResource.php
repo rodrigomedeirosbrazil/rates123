@@ -9,6 +9,7 @@ use App\Models\PropertyRoom;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -27,6 +28,7 @@ class PropertyRoomResource extends Resource
                 Select::make('property_id')
                     ->label(__('Property'))
                     ->options(fn () => Property::all()->pluck('name', 'id'))
+                    ->live(onBlur: true)
                     ->searchable(),
 
                 TextInput::make('name')
@@ -47,6 +49,11 @@ class PropertyRoomResource extends Resource
                     ->required()
                     ->default(0)
                     ->numeric(),
+
+                Select::make('rate_room_id')
+                    ->label(__('Rate Room'))
+                    ->options(fn (Get $get) => PropertyRoom::wherePropertyId($get('property_id'))->get()->pluck('name', 'id'))
+                    ->searchable(),
             ]);
     }
 
@@ -68,13 +75,12 @@ class PropertyRoomResource extends Resource
 
                 TextColumn::make('quantity')
                     ->label(__('Quantity'))
-                    ->numeric()
-                    ->sortable(),
+                    ->numeric(),
 
                 TextColumn::make('percentage')
                     ->label(__('Percentage'))
                     ->numeric()
-                    ->sortable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->label(__('Created At'))
