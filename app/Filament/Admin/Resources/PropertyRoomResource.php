@@ -4,18 +4,15 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\RoomTypeEnum;
 use App\Filament\Admin\Resources\PropertyRoomResource\Pages;
-use App\Filament\Admin\Resources\PropertyRoomResource\RelationManagers;
 use App\Models\Property;
 use App\Models\PropertyRoom;
-use Filament\Forms;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PropertyRoomResource extends Resource
 {
@@ -32,7 +29,7 @@ class PropertyRoomResource extends Resource
                     ->options(fn () => Property::all()->pluck('name', 'id'))
                     ->searchable(),
 
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required(),
 
                 Select::make('type')
@@ -40,8 +37,15 @@ class PropertyRoomResource extends Resource
                     ->options(RoomTypeEnum::toArray())
                     ->required(),
 
-                Forms\Components\TextInput::make('quantity')
+                TextInput::make('quantity')
+                    ->label(__('Quantity'))
                     ->required()
+                    ->numeric(),
+
+                TextInput::make('percentage')
+                    ->label(__('Percentage'))
+                    ->required()
+                    ->default(0)
                     ->numeric(),
             ]);
     }
@@ -64,6 +68,11 @@ class PropertyRoomResource extends Resource
 
                 TextColumn::make('quantity')
                     ->label(__('Quantity'))
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('percentage')
+                    ->label(__('Percentage'))
                     ->numeric()
                     ->sortable(),
 
