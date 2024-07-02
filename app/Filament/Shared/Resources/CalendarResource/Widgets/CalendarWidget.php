@@ -74,7 +74,7 @@ class CalendarWidget extends FullCalendarWidget
                 ->map(
                     fn (Occupancy $occupancy) => EventData::make()
                         ->id($occupancy->id)
-                        ->title(number_format($occupancy->occupancyPercent, 0) . '%')
+                        ->title(number_format($occupancy->occupancyPercent, 0) . '%' . " ({$occupancy->occupied_rooms}/{$occupancy->total_rooms})")
                         ->start($occupancy->checkin)
                         ->end($occupancy->checkin)
                         ->backgroundColor('#F87171')
@@ -217,7 +217,9 @@ class CalendarWidget extends FullCalendarWidget
 
                             TextEntry::make('id')
                                 ->label(__('Occupancy'))
-                                ->formatStateUsing(fn (): string => Number::percentage($occupancy->occupancyPercent, 0)),
+                                // ->formatStateUsing(fn (): string => $occupancy->occupied_rooms),
+                                ->formatStateUsing(fn (): string => Number::percentage($occupancy->occupancyPercent, 0)
+                                    . " ({$occupancy->occupied_rooms}/{$occupancy->total_rooms})"),
 
                             TextEntry::make('checkin')
                                 ->label(__('Checkin'))
