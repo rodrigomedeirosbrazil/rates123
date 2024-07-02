@@ -18,6 +18,7 @@ class PropertyRoom extends Model
         'type',
         'quantity',
         'percentage',
+        'rate_room_id',
     ];
 
     protected $casts = [

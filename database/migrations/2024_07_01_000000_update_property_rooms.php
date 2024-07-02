@@ -12,6 +12,8 @@ return new class () extends Migration {
     {
         Schema::table('property_rooms', function (Blueprint $table) {
             $table->integer('percentage')->default(0);
+            $table->unsignedBigInteger('rate_room_id')->nullable();
+
         });
     }
 
