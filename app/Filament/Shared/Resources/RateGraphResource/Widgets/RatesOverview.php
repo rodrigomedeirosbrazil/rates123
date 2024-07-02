@@ -65,6 +65,7 @@ class RatesOverview extends ApexChartWidget
                 ],
             ];
         }
+
         $properties = Property::query()
             ->select('id', 'name')
             ->whereIn('id', $this->getFilter('property_id'))
@@ -119,25 +120,15 @@ class RatesOverview extends ApexChartWidget
 
     public function getRatesPointsFromProperty(Property $property, CarbonInterface $from, CarbonInterface $to)
     {
-        $cacheKey = "{$property->id}_{$from->toDateString()}_{$to->toDateString()}";
-
         $ratesWithHoles = Rate::query()
-            ->select('id', 'property_id', 'checkin', 'created_at', 'price')
             ->where('property_id', $property->id)
             ->whereDate('checkin', '>=', $from)
             ->whereDate('checkin', '<=', $to)
             ->where('available', true)
-            ->get()
             ->groupBy('checkin')
-            ->map(
-                fn ($group) => $group
-                    ->pipe(
-                        fn ($rates) => group_by_nearby($rates, 'price', 'created_at')
-                    )
-                    ->first()
-            )
-            ->flatten(1)
-            ->sortBy('checkin')
+            ->addMax('updated_at')
+            ->orderBy('checkin')
+            ->get()
             ->values()
             ->mapWithKeys(
                 fn (Rate $rate) => [
@@ -166,8 +157,6 @@ class RatesOverview extends ApexChartWidget
         }
 
         $points = $days->values()->toArray();
-
-        cache()->put($cacheKey, $points, now()->addMinutes(60));
 
         return $points;
     }
