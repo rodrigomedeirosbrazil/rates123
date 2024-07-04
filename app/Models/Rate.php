@@ -17,6 +17,7 @@ class Rate extends Model
         'price',
         'checkin',
         'available',
+        'bar',
         'min_stay',
         'extra',
     ];
