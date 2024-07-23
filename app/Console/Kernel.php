@@ -15,8 +15,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('app:monitore')->dailyAt('12:00');
         $schedule->command('app:send-prices')->dailyAt('15:00');
-        $schedule->command('app:occupancy')->everyFourHours();
-        $schedule->command('app:send-occupancies')->everyFourHours(10);
+        $schedule->command('app:occupancy')->twiceDaily(12, 18);
+        $schedule->command('app:send-occupancies')->twiceDaily(12, 18, 10);
     }
 
     protected function commands(): void
