@@ -17,11 +17,14 @@ class PropertyRoom extends Model
         'name',
         'type',
         'quantity',
+        'percentage',
+        'rate_room_id',
     ];
 
     protected $casts = [
         'type' => 'string',
         'quantity' => 'integer',
+        'percentage' => 'integer',
         'type' => RoomTypeEnum::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

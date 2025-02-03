@@ -63,6 +63,7 @@ class ListRates extends Page
                         Actions\Action::make('apply_filters')
                             ->label(__('Apply'))
                             ->button()
+                            ->submit('refreshRecords')
                             ->action(fn () => ! empty($form->validate()) && $this->refreshRecords()),
                     ]),
                     TextInput::make('submit_hidden_button')

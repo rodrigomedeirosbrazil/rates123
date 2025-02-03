@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
@@ -36,11 +37,17 @@ class RateResource extends Resource
                         ->content(
                             fn ($record) => $record->property->name
                         ),
+
                     Forms\Components\TextInput::make('price')
                         ->numeric()
                         ->prefix('$'),
+
+                    Forms\Components\TextInput::make('bar')
+                        ->numeric(),
+
                     Forms\Components\TextInput::make('min_stay')
                         ->numeric(),
+
                     Forms\Components\Toggle::make('available')
                         ->inline(false),
                 ])->columns(4),
@@ -64,18 +71,29 @@ class RateResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('property.name')
+                TextColumn::make('property.name')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('price')
+
+                TextColumn::make('price')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('min_stay')
+
+                TextColumn::make('min_stay')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('checkin')
+
+                TextColumn::make('bar')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+
+                TextColumn::make('checkin')
                     ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),
+
                 Tables\Columns\IconColumn::make('available')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_at')
+
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->formatStateUsing(fn (string $state): string => format_date_with_weekday($state))
                     ->sortable(),
